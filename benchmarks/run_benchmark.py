@@ -5,7 +5,7 @@ import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib import error, request
+from urllib import request
 
 
 ROOT = Path(__file__).resolve().parent
@@ -95,6 +95,54 @@ def parse_package_ids():
     return out
 
 
+def compress_memory_text(text: str, max_lines: int = 12, max_chars: int = 900) -> str:
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    seen = set()
+    deduped = []
+    for ln in lines:
+        key = normalize_text(ln)
+        if key not in seen:
+            seen.add(key)
+            deduped.append(ln)
+
+    def score(line: str) -> int:
+        s = 0
+        lower = line.lower()
+        if lower.startswith("preference:"):
+            s += 5
+        if lower.startswith("fact:"):
+            s += 5
+        if lower.startswith("project:"):
+            s += 5
+        if "goal" in lower:
+            s += 3
+        if "constraint" in lower:
+            s += 3
+        if "durable update" in lower:
+            s += 3
+        if "portable" in lower or "mergeable" in lower:
+            s += 2
+        if "codex" in lower or "claude" in lower:
+            s += 2
+        if lower.startswith("conversation:"):
+            s += 1
+        return s
+
+    ranked = sorted(deduped, key=lambda x: (-score(x), len(x)))
+    picked = ranked[:max_lines]
+
+    out_lines = []
+    current_len = 0
+    for ln in picked:
+        extra = len(ln) + (1 if out_lines else 0)
+        if current_len + extra > max_chars:
+            break
+        out_lines.append(ln)
+        current_len += extra
+
+    return "\n".join(out_lines).strip()
+
+
 def retrieval_hit_rate(text: str, expected_phrases):
     if not expected_phrases:
         return None, []
@@ -127,7 +175,8 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "top_k": top_k
     }
     retrieval = http_json("POST", f"{base_url}/v1/retrieve/context", retrieve_body)
-    memory_text = retrieval.get("text", "")
+    raw_memory_text = retrieval.get("text", "")
+    memory_text = compress_memory_text(raw_memory_text)
 
     baseline_text = build_transcript_only_context(transcript_files)
     baseline_metrics = compare_to_baseline(memory_text, baseline_text)
@@ -135,7 +184,6 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
 
     merge_summary = None
     merge_success = None
-    conflicts_created = None
     if scenario.get("merge_preview"):
         left_key = scenario["merge_preview"].get("left_package_key")
         right_key = scenario["merge_preview"].get("right_package_key")
@@ -151,8 +199,6 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
             conflicts_created = merge_summary.get("conflicts_created")
             merge_success = True if conflicts_created == 0 else False
 
-    repeated_explanation_items_removed = len(hits) if hits else 0
-
     return {
         "scenario_id": scenario["scenario_id"],
         "title": scenario["title"],
@@ -160,10 +206,11 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "expected_phrases": expected_phrases,
         "matched_phrases": hits,
         "retrieval_hit_rate": round(hit_rate, 4) if hit_rate is not None else None,
-        "repeated_explanation_items_removed": repeated_explanation_items_removed,
+        "repeated_explanation_items_removed": len(hits) if hits else 0,
         "merge_success": merge_success,
         "merge_summary": merge_summary,
-        "retrieval_preview": memory_text[:1500],
+        "retrieval_preview_raw": raw_memory_text[:1500],
+        "retrieval_preview_compressed": memory_text,
         "baseline_preview": baseline_text[:1500],
         **baseline_metrics
     }
@@ -180,6 +227,8 @@ def aggregate_metrics(results):
             if val is not None:
                 conflicts.append(val)
 
+    pkg_count = len([v for v in parse_package_ids().values() if v])
+
     return {
         "merge_success_rate": round(sum(1 for x in merge_checks if x) / len(merge_checks), 4) if merge_checks else None,
         "conflicts_created": sum(conflicts) if conflicts else None,
@@ -190,8 +239,8 @@ def aggregate_metrics(results):
         "context_bytes_with_memory": None,
         "context_reduction_percent": round(sum(reductions) / len(reductions), 2) if reductions else None,
         "repeated_explanation_items_removed": sum(r["repeated_explanation_items_removed"] for r in results),
-        "package_count_used": len([k for k in parse_package_ids().values() if k]),
-        "session_count_used": len([k for k in parse_package_ids().values() if k]),
+        "package_count_used": pkg_count,
+        "session_count_used": pkg_count,
     }
 
 
@@ -202,7 +251,10 @@ def update_history(history_path: Path, entry: dict) -> None:
         "event": "benchmark_run_recorded",
         "run_id": entry["run_id"],
         "status": entry["status"],
-        "scenario_count": len(entry["scenario_results"])
+        "scenario_count": len(entry["scenario_results"]),
+        "retrieval_hit_rate": entry["metrics"].get("retrieval_hit_rate"),
+        "context_reduction_percent": entry["metrics"].get("context_reduction_percent"),
+        "merge_success_rate": entry["metrics"].get("merge_success_rate")
     })
     save_json(history_path, history)
 
@@ -247,12 +299,9 @@ def load_scenarios():
 
 
 def ensure_server(base_url: str):
-    try:
-        with request.urlopen(f"{base_url}/docs", timeout=10) as resp:
-            if resp.status != 200:
-                raise RuntimeError(f"Docs endpoint returned status {resp.status}")
-    except Exception as exc:
-        raise RuntimeError(f"Could not reach API at {base_url}: {exc}")
+    with request.urlopen(f"{base_url}/docs", timeout=10) as resp:
+        if resp.status != 200:
+            raise RuntimeError(f"Docs endpoint returned status {resp.status}")
 
 
 def main():
@@ -290,8 +339,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to structured-memory retrieval.",
-            "Metrics are based on current live API responses and scenario expectations."
+            "This benchmark compares transcript-only continuation to compressed structured-memory retrieval.",
+            "Compression is heuristic and intended to improve context efficiency while preserving signal."
         ]
     }
 
