@@ -448,5 +448,33 @@
         "low_recall_need": 3
       }
     }
+  },
+  {
+    "timestamp": "2026-03-24T10:46:46Z",
+    "event": "benchmark_run_recorded",
+    "run_id": "run-20260324T104646Z-bb07bfee",
+    "status": "completed",
+    "scenario_count": 13,
+    "merge_success_rate": 1.0,
+    "threshold_gated_adaptive_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "context_reduction_percent": -53.95,
+      "repeated_explanation_items_removed": 39,
+      "controller_choices": {
+        "hybrid_fallback": 5,
+        "fragment_escalation": 1,
+        "phrase_saver_escalation": 4,
+        "compression_seed": 3
+      }
+    },
+    "learned_boundary_controller_mode": {
+      "retrieval_hit_rate": 0.7628,
+      "context_reduction_percent": -46.58,
+      "repeated_explanation_items_removed": 33,
+      "controller_choices": {
+        "compression_mode": 8,
+        "hybrid_mode": 5
+      }
+    }
   }
 ]

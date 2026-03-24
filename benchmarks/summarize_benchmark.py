@@ -41,7 +41,7 @@ def main() -> None:
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
         ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
-        ("scenario_classifier_mode", "Scenario-classifier mode"),
+        ("learned_boundary_controller_mode", "Learned-boundary controller mode"),
     ]:
         mode = metrics.get(mode_name, {})
         if mode:
@@ -52,8 +52,6 @@ def main() -> None:
             print(f"  Repeated explanation items removed: {mode.get('repeated_explanation_items_removed')}")
             if "controller_choices" in mode:
                 print(f"  Controller choices: {mode.get('controller_choices')}")
-            if "classifier_labels" in mode:
-                print(f"  Classifier labels: {mode.get('classifier_labels')}")
 
 
 if __name__ == "__main__":
