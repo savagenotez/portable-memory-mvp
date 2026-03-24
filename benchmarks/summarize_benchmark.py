@@ -42,7 +42,7 @@ def main() -> None:
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
         ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
         ("scenario_classifier_mode", "Scenario-classifier mode"),
-        ("fine_grained_learned_controller_mode", "Fine-grained learned controller mode"),
+        ("hybrid_to_phrase_saver_reduction_mode", "Hybrid-to-phrase-saver reduction mode"),
     ]:
         mode = metrics.get(mode_name, {})
         if mode:

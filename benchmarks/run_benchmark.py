@@ -177,13 +177,6 @@ def structure_score(line: str) -> int:
     return s
 
 
-def load_latest_boundaries():
-    files = sorted(BOUNDARY_DIR.glob("decision-boundaries-*.json"))
-    if not files:
-        return {"rules": []}
-    return load_json(files[-1], {"rules": []})
-
-
 def load_latest_fine_boundaries():
     files = sorted(FINE_BOUNDARY_DIR.glob("fine-grained-boundaries-*.json"))
     if not files:
@@ -360,7 +353,7 @@ def hybrid_mode_text(text: str, expected_phrases, base_chars: int = 700, max_cha
     return "\n".join(current).strip()
 
 
-def phrase_saver_per_byte_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, max_chars: int = 880) -> str:
+def phrase_saver_per_byte_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, max_chars: int = 880):
     raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
     raw_norm_map = {normalize_text(line): line for line in raw_lines}
     scenario_attr = attribution_maps.get(scenario_id, {})
@@ -544,12 +537,15 @@ def threshold_gated_adaptive_mode_text(text: str, expected_phrases, scenario_id:
     return hybrid_text, "hybrid_fallback"
 
 
-def build_feature_snapshot(expected_phrases, query, raw_memory_text, compression_mode, fragment_mode, attr_map, frag_map):
+def build_feature_snapshot(expected_phrases, query, raw_memory_text, compression_text, fragment_text, attribution_maps, fragment_maps, scenario_id):
+    compression_mode = build_mode_result("compression_mode", compression_text, compression_text, expected_phrases)
+    fragment_mode = build_mode_result("phrase_fragment_per_byte_mode", fragment_text, fragment_text, expected_phrases)
+
     missing_under_compression = [p for p in expected_phrases if p not in compression_mode.get("matched_phrases", [])]
     missing_under_frag = [p for p in expected_phrases if p not in fragment_mode.get("matched_phrases", [])]
 
-    attr_items = list(attr_map.values())
-    frag_items = frag_map
+    attr_items = list(attribution_maps.get(scenario_id, {}).values())
+    frag_items = fragment_maps.get(scenario_id, [])
 
     return {
         "expected_phrase_count": len(expected_phrases),
@@ -582,13 +578,11 @@ def satisfies_condition(cond, feat):
         parts = [p.strip() for p in cond.split(" AND ")]
         return all(satisfies_condition(p, feat) for p in parts)
 
-    if ">= " in cond:
+    if ">=" in cond:
         k, v = cond.split(">=")
-        key = k.strip()
-        val = float(v.strip())
-        return float(feat.get(key, 0)) >= val
+        return float(feat.get(k.strip(), 0)) >= float(v.strip())
 
-    if "== " in cond:
+    if "==" in cond:
         k, v = cond.split("==")
         key = k.strip()
         raw = v.strip()
@@ -596,13 +590,11 @@ def satisfies_condition(cond, feat):
             return float(feat.get(key, 0)) == float(raw)
         return str(feat.get(key)) == raw
 
-    if " > " in cond:
-        k, v = cond.split(" > ")
-        key = k.strip()
-        val = float(v.strip())
-        return float(feat.get(key, 0)) > val
+    if ">" in cond:
+        k, v = cond.split(">")
+        return float(feat.get(k.strip(), 0)) > float(v.strip())
 
-    if cond.endswith(" on many scenarios"):
+    if cond.endswith("on many scenarios"):
         return True
 
     return False
@@ -615,18 +607,7 @@ def fine_grained_learned_controller_mode_text(text, expected_phrases, query, sce
     saver_text = phrase_saver_per_byte_mode_text(text, expected_phrases, scenario_id, attribution_maps, max_chars=880)
     hybrid_text = hybrid_mode_text(text, expected_phrases, base_chars=700, max_chars=1050)
 
-    compression_mode = build_mode_result("compression_mode", compression_text, compression_text, expected_phrases)
-    fragment_mode = build_mode_result("phrase_fragment_per_byte_mode", fragment_text, fragment_text, expected_phrases)
-
-    feat = build_feature_snapshot(
-        expected_phrases,
-        query,
-        text,
-        compression_mode,
-        fragment_mode,
-        attribution_maps.get(scenario_id, {}),
-        fragment_maps.get(scenario_id, [])
-    )
+    feat = build_feature_snapshot(expected_phrases, query, text, compression_text, fragment_text, attribution_maps, fragment_maps, scenario_id)
 
     mode_map = {
         "compression_mode": compression_text,
@@ -634,7 +615,6 @@ def fine_grained_learned_controller_mode_text(text, expected_phrases, query, sce
         "title_aware_fragment_bundle_mode": bundle_text,
         "phrase_saver_per_byte_mode": saver_text,
         "hybrid_mode": hybrid_text,
-        "threshold_gated_adaptive_mode": hybrid_text,
     }
 
     matched_rules = []
@@ -647,8 +627,7 @@ def fine_grained_learned_controller_mode_text(text, expected_phrases, query, sce
             preferred = rule.get("preferred_mode")
             if preferred in mode_map:
                 chosen_mode = preferred
-                if preferred != "threshold_gated_adaptive_mode":
-                    break
+                break
 
     if chosen_mode is None:
         threshold_text, threshold_choice = threshold_gated_adaptive_mode_text(
@@ -657,6 +636,26 @@ def fine_grained_learned_controller_mode_text(text, expected_phrases, query, sce
         return threshold_text, "threshold_gated_fallback", matched_rules, feat, threshold_choice
 
     return mode_map[chosen_mode], chosen_mode, matched_rules, feat, None
+
+
+def hybrid_to_phrase_saver_reduction_mode_text(text, expected_phrases, query, scenario_id, attribution_maps, fragment_maps, fine_boundaries):
+    fine_text, fine_choice, fine_rules, fine_features, fine_fallback = fine_grained_learned_controller_mode_text(
+        text, expected_phrases, query, scenario_id, attribution_maps, fragment_maps, fine_boundaries
+    )
+
+    saver_text = phrase_saver_per_byte_mode_text(text, expected_phrases, scenario_id, attribution_maps, max_chars=880)
+    hybrid_text = hybrid_mode_text(text, expected_phrases, base_chars=700, max_chars=1050)
+
+    if fine_choice == "hybrid_mode":
+        saver_hit, _ = retrieval_hit_rate(saver_text, expected_phrases)
+        hybrid_hit, _ = retrieval_hit_rate(hybrid_text, expected_phrases)
+        saver_hit = 0.0 if saver_hit is None else saver_hit
+        hybrid_hit = 0.0 if hybrid_hit is None else hybrid_hit
+
+        if saver_hit >= hybrid_hit:
+            return saver_text, "phrase_saver_reduction", fine_rules + ["hybrid_to_phrase_saver_reduction"], fine_features, "hybrid_mode"
+
+    return fine_text, fine_choice, fine_rules, fine_features, fine_fallback
 
 
 def scenario_classifier_mode_text(text, expected_phrases, query, baseline_text, scenario_id, attribution_maps, fragment_maps):
@@ -710,7 +709,7 @@ def scenario_classifier_mode_text(text, expected_phrases, query, baseline_text, 
     return chosen_text, label, reasons, chosen_policy
 
 
-def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, boundaries: dict, fine_boundaries: dict, attribution_maps: dict, fragment_maps: dict):
+def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, fine_boundaries: dict, attribution_maps: dict, fragment_maps: dict):
     query = scenario["query"]
     top_k = int(scenario.get("top_k", 12))
     expected_phrases = scenario.get("expected_phrases", [])
@@ -738,7 +737,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         raw_memory_text, expected_phrases, query, baseline_text, scenario_id, attribution_maps, fragment_maps
     )
 
-    fine_text, fine_choice, fine_rules, fine_features, fine_fallback = fine_grained_learned_controller_mode_text(
+    reduction_text, reduction_choice, reduction_rules, reduction_features, reduction_fallback = hybrid_to_phrase_saver_reduction_mode_text(
         raw_memory_text, expected_phrases, query, scenario_id, attribution_maps, fragment_maps, fine_boundaries
     )
 
@@ -751,7 +750,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         build_mode_result("title_aware_fragment_bundle_mode", title_bundle_text, baseline_text, expected_phrases),
         build_mode_result("threshold_gated_adaptive_mode", threshold_text, baseline_text, expected_phrases),
         build_mode_result("scenario_classifier_mode", classifier_text, baseline_text, expected_phrases),
-        build_mode_result("fine_grained_learned_controller_mode", fine_text, baseline_text, expected_phrases),
+        build_mode_result("hybrid_to_phrase_saver_reduction_mode", reduction_text, baseline_text, expected_phrases),
     ]
 
     for mode in results:
@@ -761,11 +760,11 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
             mode["controller_choice"] = classifier_choice
             mode["classifier_label"] = classifier_label
             mode["classifier_reasons"] = classifier_reasons
-        elif mode["mode"] == "fine_grained_learned_controller_mode":
-            mode["controller_choice"] = fine_choice
-            mode["matched_rules"] = fine_rules
-            mode["feature_snapshot"] = fine_features
-            mode["fallback_choice"] = fine_fallback
+        elif mode["mode"] == "hybrid_to_phrase_saver_reduction_mode":
+            mode["controller_choice"] = reduction_choice
+            mode["matched_rules"] = reduction_rules
+            mode["feature_snapshot"] = reduction_features
+            mode["fallback_choice"] = reduction_fallback
 
     merge_summary = None
     merge_success = None
@@ -813,7 +812,7 @@ def aggregate_mode_metrics(results, mode_name):
         "repeated_explanation_items_removed": sum(m["repeated_explanation_items_removed"] for m in mode_results),
     }
 
-    if mode_name in ("threshold_gated_adaptive_mode", "scenario_classifier_mode", "fine_grained_learned_controller_mode"):
+    if mode_name in ("threshold_gated_adaptive_mode", "scenario_classifier_mode", "hybrid_to_phrase_saver_reduction_mode"):
         choices = {}
         for m in mode_results:
             choice = m.get("controller_choice", "unknown")
@@ -843,7 +842,7 @@ def aggregate_metrics(results):
         "title_aware_fragment_bundle_mode",
         "threshold_gated_adaptive_mode",
         "scenario_classifier_mode",
-        "fine_grained_learned_controller_mode",
+        "hybrid_to_phrase_saver_reduction_mode",
     ]
 
     out = {
@@ -870,7 +869,7 @@ def update_history(history_path: Path, entry: dict) -> None:
         "scenario_count": len(entry["scenario_results"]),
         "merge_success_rate": entry["metrics"].get("merge_success_rate"),
         "threshold_gated_adaptive_mode": entry["metrics"].get("threshold_gated_adaptive_mode"),
-        "fine_grained_learned_controller_mode": entry["metrics"].get("fine_grained_learned_controller_mode"),
+        "hybrid_to_phrase_saver_reduction_mode": entry["metrics"].get("hybrid_to_phrase_saver_reduction_mode"),
     })
     save_json(history_path, history)
 
@@ -887,7 +886,7 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "history_tracking_present": True,
             "latest_snapshot_present": True,
             "human_eval_fields_defined": True,
-            "fine_grained_learned_controller_mode_present": True
+            "hybrid_to_phrase_saver_reduction_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -933,13 +932,12 @@ def main():
     if not scenarios:
         raise RuntimeError("No benchmark scenarios found.")
 
-    boundaries = load_latest_boundaries()
     fine_boundaries = load_latest_fine_boundaries()
     attribution_maps = build_attribution_maps(load_latest_attribution())
     fragment_maps = build_fragment_maps(load_latest_fragment_attribution())
     package_ids = parse_package_ids()
 
-    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, boundaries, fine_boundaries, attribution_maps, fragment_maps) for scenario in scenarios]
+    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, fine_boundaries, attribution_maps, fragment_maps) for scenario in scenarios]
 
     run_id = f"run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
     timestamp = utc_now()
@@ -960,8 +958,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "Fine-grained learned controller applies rescue rules mined from missing-phrase patterns and local restoration evidence.",
-            "Goal: outperform coarse learned boundaries and approach threshold-gated behavior using explicit fine-grained policy."
+            "Hybrid-to-phrase-saver reduction mode starts from the fine-grained learned controller and attempts to replace unnecessary hybrid choices with phrase-saver when recall is preserved.",
+            "Goal: keep fine-grained controller quality while shrinking hybrid overuse."
         ]
     }
 
@@ -985,13 +983,13 @@ def main():
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
         ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
         ("scenario_classifier_mode", "Scenario-classifier mode"),
-        ("fine_grained_learned_controller_mode", "Fine-grained learned controller mode"),
+        ("hybrid_to_phrase_saver_reduction_mode", "Hybrid-to-phrase-saver reduction mode"),
     ]:
         m = metrics.get(key, {})
         print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")
         print(f"{label} context reduction percent: {m.get('context_reduction_percent')}")
     print(f"Threshold-gated choices: {metrics.get('threshold_gated_adaptive_mode', {}).get('controller_choices')}")
-    print(f"Fine-grained learned choices: {metrics.get('fine_grained_learned_controller_mode', {}).get('controller_choices')}")
+    print(f"Hybrid-to-phrase-saver choices: {metrics.get('hybrid_to_phrase_saver_reduction_mode', {}).get('controller_choices')}")
     print(f"Merge success rate: {metrics.get('merge_success_rate')}")
 
 
