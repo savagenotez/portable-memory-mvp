@@ -3,7 +3,6 @@ import json
 import re
 import sys
 import uuid
-from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib import request
@@ -117,6 +116,15 @@ def expected_score(line: str, expected_phrases) -> int:
     return score
 
 
+def expected_hit_count(line: str, expected_phrases) -> int:
+    lower = normalize_text(line)
+    hits = 0
+    for phrase in expected_phrases:
+        if normalize_text(phrase) in lower:
+            hits += 1
+    return hits
+
+
 def structure_score(line: str) -> int:
     lower = line.lower()
     s = 0
@@ -154,6 +162,7 @@ def build_rule_maps(rules):
     keep_priority = {}
     phrase_savers = {}
     compress_candidates = {}
+    keep_durable = {}
 
     for item in rules.get("decision_hints", []):
         line = normalize_text(item.get("line", ""))
@@ -165,6 +174,11 @@ def build_rule_maps(rules):
         if line:
             keep_priority[line] = item.get("score", 0)
 
+    for item in rules.get("ranked_lists", {}).get("keep_durable", []):
+        line = normalize_text(item.get("line", ""))
+        if line:
+            keep_durable[line] = item.get("score", 0)
+
     for item in rules.get("ranked_lists", {}).get("phrase_savers", []):
         line = normalize_text(item.get("line", ""))
         if line:
@@ -175,7 +189,7 @@ def build_rule_maps(rules):
         if line:
             compress_candidates[line] = item.get("score", 0)
 
-    return decision_map, keep_priority, phrase_savers, compress_candidates
+    return decision_map, keep_priority, keep_durable, phrase_savers, compress_candidates
 
 
 def recall_mode_text(text: str, expected_phrases, max_chars: int = 1400) -> str:
@@ -296,9 +310,9 @@ def hybrid_mode_text(text: str, expected_phrases, base_chars: int = 700, max_cha
     return "\n".join(current).strip()
 
 
-def rule_informed_mode_text(text: str, expected_phrases, rules, max_chars: int = 980) -> str:
+def budgeted_rule_informed_mode_text(text: str, expected_phrases, rules, max_chars: int = 900) -> str:
     raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
-    decision_map, keep_priority, phrase_savers, compress_candidates = build_rule_maps(rules)
+    decision_map, keep_priority, keep_durable, phrase_savers, compress_candidates = build_rule_maps(rules)
 
     def line_meta(line):
         norm = normalize_text(line)
@@ -308,69 +322,96 @@ def rule_informed_mode_text(text: str, expected_phrases, rules, max_chars: int =
         decision = hint.get("decision_hint", "review")
         return norm, keep_score, drop_score, decision
 
-    def score(line, chosen_lines):
+    def value_components(line, chosen_lines):
         norm, keep_score, drop_score, decision = line_meta(line)
-        s = 0.0
-        s += structure_score(line)
-        s += expected_score(line, expected_phrases)
-        s += keep_priority.get(norm, 0) * 3.0
-        s += phrase_savers.get(norm, 0) * 4.0
-        s -= compress_candidates.get(norm, 0) * 1.5
-        if decision == "keep_or_prefer":
-            s += 8.0
-        elif decision == "compress_or_drop":
-            s -= 8.0
-        s += max(0, keep_score - drop_score) * 1.25
-        s -= max(0, drop_score - keep_score) * 0.9
+        value = 0.0
+        value += structure_score(line) * 1.0
+        value += expected_score(line, expected_phrases) * 1.8
+        value += keep_priority.get(norm, 0) * 2.5
+        value += keep_durable.get(norm, 0) * 2.0
+        value += phrase_savers.get(norm, 0) * 3.0
 
-        # reward missing phrase coverage
+        if decision == "keep_or_prefer":
+            value += 10.0
+        elif decision == "compress_or_drop":
+            value -= 12.0
+
+        value += max(0, keep_score - drop_score) * 1.25
+        value -= max(0, drop_score - keep_score) * 1.5
+
         joined = "\n".join(chosen_lines)
+        missing_bonus = 0.0
         for phrase in expected_phrases:
             if not contains_phrase(joined, phrase) and contains_phrase(line, phrase):
-                s += 20.0
+                missing_bonus += 25.0
+        value += missing_bonus
 
-        # penalize redundancy with already chosen lines
-        chosen_norms = {normalize_text(x) for x in chosen_lines}
-        if norm in chosen_norms:
-            s -= 100.0
+        cost_penalty = len(line) / 65.0
+        cost_penalty += compress_candidates.get(norm, 0) * 1.2
 
-        # cost penalty
-        s -= len(line) / 120.0
-        return s
+        if line.lower().startswith("conversation:") and expected_hit_count(line, expected_phrases) == 0:
+            cost_penalty += 10.0
 
-    chosen = []
-    remaining = list(raw_lines)
+        ratio = value / max(1.0, cost_penalty)
+        return {
+            "value": value,
+            "cost_penalty": cost_penalty,
+            "ratio": ratio,
+            "decision": decision,
+            "norm": norm,
+        }
 
-    # phase 1: strongly keep preferred durable lines
-    seeded = sorted(
-        remaining,
-        key=lambda ln: (-score(ln, chosen), len(ln))
-    )
-
-    for line in seeded:
-        norm, keep_score, drop_score, decision = line_meta(line)
-        if decision == "keep_or_prefer" or keep_priority.get(norm, 0) > 0 or phrase_savers.get(norm, 0) > 0:
-            tentative = "\n".join(chosen + [line])
-            if bytes_len(tentative) <= max_chars:
-                chosen.append(line)
-
-    # phase 2: fill missed phrases cheaply
-    def missing_phrases():
-        joined = "\n".join(chosen)
+    def missing_phrases(current_lines):
+        joined = "\n".join(current_lines)
         return [p for p in expected_phrases if not contains_phrase(joined, p)]
 
+    chosen = []
+    chosen_norms = set()
+
+    # Phase 1: compact durable anchors only
+    anchors = []
+    for line in raw_lines:
+        meta = value_components(line, chosen)
+        norm = meta["norm"]
+        if (
+            keep_durable.get(norm, 0) > 0
+            or keep_priority.get(norm, 0) > 0
+            or line.lower().startswith("preference:")
+            or line.lower().startswith("fact:")
+            or line.lower().startswith("project:")
+        ):
+            anchors.append((-(meta["ratio"] + meta["value"]), len(line), line))
+
+    anchors.sort()
+    for _, _, line in anchors:
+        norm = normalize_text(line)
+        if norm in chosen_norms:
+            continue
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            continue
+        chosen.append(line)
+        chosen_norms.add(norm)
+
+    # Phase 2: add phrase savers only if they restore missing expected phrases
     while True:
-        missing = missing_phrases()
+        missing = missing_phrases(chosen)
         if not missing:
             break
 
         candidates = []
-        for line in remaining:
-            if normalize_text(line) in {normalize_text(x) for x in chosen}:
+        for line in raw_lines:
+            norm = normalize_text(line)
+            if norm in chosen_norms:
                 continue
-            gain = sum(1 for p in missing if contains_phrase(line, p))
-            if gain > 0:
-                candidates.append((-(score(line, chosen) + gain * 25), len(line), line))
+            hits = sum(1 for p in missing if contains_phrase(line, p))
+            if hits == 0:
+                continue
+            meta = value_components(line, chosen)
+            score = meta["ratio"] + hits * 6.0
+            if phrase_savers.get(norm, 0) > 0:
+                score += 4.0
+            candidates.append((-score, len(line), line))
 
         if not candidates:
             break
@@ -381,22 +422,32 @@ def rule_informed_mode_text(text: str, expected_phrases, rules, max_chars: int =
         if bytes_len(tentative) > max_chars:
             break
         chosen.append(line)
+        chosen_norms.add(normalize_text(line))
 
-    # phase 3: fill remaining budget with best value lines, avoid drop-heavy lines
-    fillers = sorted(
-        [ln for ln in remaining if normalize_text(ln) not in {normalize_text(x) for x in chosen}],
-        key=lambda ln: (-score(ln, chosen), len(ln))
-    )
+    # Phase 3: fill remaining budget with best value-per-byte, but stricter than prior rule mode
+    fillers = []
+    for line in raw_lines:
+        norm = normalize_text(line)
+        if norm in chosen_norms:
+            continue
+        meta = value_components(line, chosen)
 
-    for line in fillers:
-        norm, keep_score, drop_score, decision = line_meta(line)
-        if decision == "compress_or_drop" and expected_score(line, expected_phrases) == 0:
+        if meta["decision"] == "compress_or_drop" and expected_hit_count(line, expected_phrases) == 0:
+            continue
+
+        # stricter threshold for admission
+        fillers.append((-(meta["ratio"]), len(line), line, meta))
+
+    fillers.sort()
+
+    for _, _, line, meta in fillers:
+        if meta["ratio"] < 1.15:
             continue
         tentative = "\n".join(chosen + [line])
         if bytes_len(tentative) > max_chars:
             continue
-        if score(line, chosen) > 0:
-            chosen.append(line)
+        chosen.append(line)
+        chosen_norms.add(normalize_text(line))
 
     return "\n".join(chosen).strip()
 
@@ -452,12 +503,12 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     recall_text = recall_mode_text(raw_memory_text, expected_phrases)
     compression_text = compression_mode_text(raw_memory_text, expected_phrases)
     hybrid_text = hybrid_mode_text(raw_memory_text, expected_phrases)
-    rule_text = rule_informed_mode_text(raw_memory_text, expected_phrases, rules)
+    budgeted_rule_text = budgeted_rule_informed_mode_text(raw_memory_text, expected_phrases, rules)
 
     recall_result = build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases)
     compression_result = build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases)
     hybrid_result = build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases)
-    rule_result = build_mode_result("rule_informed_mode", rule_text, baseline_text, expected_phrases)
+    budgeted_rule_result = build_mode_result("budgeted_rule_informed_mode", budgeted_rule_text, baseline_text, expected_phrases)
 
     merge_summary = None
     merge_success = None
@@ -485,7 +536,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
         "baseline_preview": baseline_text[:1500],
-        "modes": [recall_result, compression_result, hybrid_result, rule_result]
+        "modes": [recall_result, compression_result, hybrid_result, budgeted_rule_result]
     }
 
 
@@ -526,7 +577,7 @@ def aggregate_metrics(results):
         "recall_mode": aggregate_mode_metrics(results, "recall_mode"),
         "compression_mode": aggregate_mode_metrics(results, "compression_mode"),
         "hybrid_mode": aggregate_mode_metrics(results, "hybrid_mode"),
-        "rule_informed_mode": aggregate_mode_metrics(results, "rule_informed_mode"),
+        "budgeted_rule_informed_mode": aggregate_mode_metrics(results, "budgeted_rule_informed_mode"),
     }
 
 
@@ -542,7 +593,7 @@ def update_history(history_path: Path, entry: dict) -> None:
         "recall_mode": entry["metrics"].get("recall_mode"),
         "compression_mode": entry["metrics"].get("compression_mode"),
         "hybrid_mode": entry["metrics"].get("hybrid_mode"),
-        "rule_informed_mode": entry["metrics"].get("rule_informed_mode"),
+        "budgeted_rule_informed_mode": entry["metrics"].get("budgeted_rule_informed_mode"),
     })
     save_json(history_path, history)
 
@@ -561,7 +612,7 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "human_eval_fields_defined": True,
             "dual_mode_present": True,
             "hybrid_mode_present": True,
-            "rule_informed_mode_present": True
+            "budgeted_rule_informed_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -630,8 +681,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to recall, compression, hybrid, and rule-informed structured-memory retrieval.",
-            "Rule-informed mode uses mined upgrade rules to bias line selection."
+            "This benchmark compares transcript-only continuation to recall, compression, hybrid, and budgeted rule-informed structured-memory retrieval.",
+            "Budgeted rule-informed mode uses mined rules plus a harder value-per-byte budget."
         ]
     }
 
@@ -650,7 +701,7 @@ def main():
         ("recall_mode", "Recall mode"),
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
-        ("rule_informed_mode", "Rule-informed mode"),
+        ("budgeted_rule_informed_mode", "Budgeted rule-informed mode"),
     ]:
         m = metrics.get(key, {})
         print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")
