@@ -1,0 +1,159 @@
+{
+  "fragment_attribution_version": "0.1.0",
+  "source_attribution_file": "phrase-saver-attribution-run-20260324T072658Z-8a69706d.json",
+  "run_id": "run-20260324T072658Z-8a69706d",
+  "timestamp": "2026-03-24T07:26:58Z",
+  "scenario_reports": [
+    {
+      "scenario_id": "project_and_constraints",
+      "title": "Project and constraints retrieval",
+      "restored_phrase_count": 0,
+      "line_reports": []
+    },
+    {
+      "scenario_id": "durable_update_retrieval",
+      "title": "Durable update retrieval",
+      "restored_phrase_count": 3,
+      "line_reports": [
+        {
+          "line": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.",
+          "line_kind": "durable_update",
+          "line_length": 319,
+          "restored_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state"
+          ],
+          "best_fragments": [
+            {
+              "fragment_type": "part_1",
+              "fragment": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state",
+              "length": 224,
+              "restored_phrases": [
+                "Durable update ingestion",
+                "Codex CLI and Claude Code should share the same memory layer",
+                "working context should be assembled from structured state"
+              ],
+              "restored_phrase_count": 3,
+              "phrases_per_char": 0.013393
+            },
+            {
+              "fragment_type": "body_only",
+              "fragment": "Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.",
+              "length": 305,
+              "restored_phrases": [
+                "Durable update ingestion",
+                "Codex CLI and Claude Code should share the same memory layer",
+                "working context should be assembled from structured state"
+              ],
+              "restored_phrase_count": 3,
+              "phrases_per_char": 0.009836
+            },
+            {
+              "fragment_type": "full_line",
+              "fragment": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.",
+              "length": 319,
+              "restored_phrases": [
+                "Durable update ingestion",
+                "Codex CLI and Claude Code should share the same memory layer",
+                "working context should be assembled from structured state"
+              ],
+              "restored_phrase_count": 3,
+              "phrases_per_char": 0.009404
+            },
+            {
+              "fragment_type": "window_4_6",
+              "fragment": "Durable update ingestion: user:",
+              "length": 31,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.032258
+            },
+            {
+              "fragment_type": "window_4_2",
+              "fragment": "Durable update ingestion. Summary:",
+              "length": 34,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.029412
+            },
+            {
+              "fragment_type": "window_4_5",
+              "fragment": "Summary: Durable update ingestion:",
+              "length": 34,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.029412
+            },
+            {
+              "fragment_type": "window_4_1",
+              "fragment": "Conversation: Durable update ingestion.",
+              "length": 39,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.025641
+            },
+            {
+              "fragment_type": "window_6_6",
+              "fragment": "Durable update ingestion: user: New durable",
+              "length": 43,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.023256
+            },
+            {
+              "fragment_type": "window_6_5",
+              "fragment": "Summary: Durable update ingestion: user: New",
+              "length": 44,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.022727
+            },
+            {
+              "fragment_type": "window_6_2",
+              "fragment": "Durable update ingestion. Summary: Durable update",
+              "length": 49,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.020408
+            },
+            {
+              "fragment_type": "window_6_4",
+              "fragment": "ingestion. Summary: Durable update ingestion: user:",
+              "length": 51,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.019608
+            },
+            {
+              "fragment_type": "window_6_3",
+              "fragment": "update ingestion. Summary: Durable update ingestion:",
+              "length": 52,
+              "restored_phrases": [
+                "Durable update ingestion"
+              ],
+              "restored_phrase_count": 1,
+              "phrases_per_char": 0.019231
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
