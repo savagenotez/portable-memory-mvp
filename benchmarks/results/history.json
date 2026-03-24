@@ -86,5 +86,28 @@
       "context_reduction_percent": 6.4,
       "repeated_explanation_items_removed": 4
     }
+  },
+  {
+    "timestamp": "2026-03-24T06:18:52Z",
+    "event": "benchmark_run_recorded",
+    "run_id": "run-20260324T061852Z-437d03eb",
+    "status": "completed",
+    "scenario_count": 2,
+    "merge_success_rate": 1.0,
+    "recall_mode": {
+      "retrieval_hit_rate": 0.875,
+      "context_reduction_percent": -181.01,
+      "repeated_explanation_items_removed": 7
+    },
+    "compression_mode": {
+      "retrieval_hit_rate": 0.5,
+      "context_reduction_percent": 6.4,
+      "repeated_explanation_items_removed": 4
+    },
+    "hybrid_mode": {
+      "retrieval_hit_rate": 0.875,
+      "context_reduction_percent": -20.18,
+      "repeated_explanation_items_removed": 7
+    }
   }
 ]
