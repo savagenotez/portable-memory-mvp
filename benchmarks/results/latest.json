@@ -1,40 +1,50 @@
-﻿{
+{
   "schema_version": "0.1.0",
-  "status": "skeleton_run",
-  "updated_at": "2026-03-24T03:58:22Z",
+  "status": "completed",
+  "updated_at": "2026-03-24T04:11:08Z",
   "project": "portable-memory-mvp",
-  "latest_run_id": "run-20260324T035822Z-a67e7582",
+  "latest_run_id": "run-20260324T041108Z-62dcfe68",
   "summary": {
     "benchmark_runner_present": true,
     "history_tracking_present": true,
     "latest_snapshot_present": true,
     "human_eval_fields_defined": true
   },
-  "last_scenario": {
-    "scenario_id": "skeleton-demo",
-    "title": "Benchmark skeleton placeholder run",
-    "mode": "scaffold_only",
-    "description": "This is a placeholder benchmark run produced by the benchmark runner skeleton."
-  },
   "last_metrics": {
-    "merge_success_rate": null,
-    "conflicts_created": null,
+    "merge_success_rate": 1.0,
+    "conflicts_created": 0,
     "conflicts_resolved": null,
-    "retrieval_hit_rate": null,
-    "retrieval_relevance_score": null,
+    "retrieval_hit_rate": 0.875,
+    "retrieval_relevance_score": 0.875,
     "context_bytes_without_memory": null,
     "context_bytes_with_memory": null,
-    "context_reduction_percent": null,
-    "repeated_explanation_items_removed": null,
-    "package_count_used": null,
-    "session_count_used": null
+    "context_reduction_percent": -223.1,
+    "repeated_explanation_items_removed": 7,
+    "package_count_used": 4,
+    "session_count_used": 4
   },
   "last_human_eval": {
     "continuity_rating_0_to_5": null,
     "reduced_reexplaining_yes_no": null,
     "retrieved_right_state_yes_no": null,
     "felt_like_same_project_yes_no": null,
-    "evaluator_notes": "No human evaluation captured in skeleton run."
+    "evaluator_notes": "Human evaluation not supplied for this run."
   },
+  "last_scenarios": [
+    {
+      "scenario_id": "project_and_constraints",
+      "title": "Project and constraints retrieval",
+      "retrieval_hit_rate": 0.75,
+      "context_reduction_percent": -297.35,
+      "merge_success": true
+    },
+    {
+      "scenario_id": "durable_update_retrieval",
+      "title": "Durable update retrieval",
+      "retrieval_hit_rate": 1.0,
+      "context_reduction_percent": -148.84,
+      "merge_success": null
+    }
+  ],
   "note": "This file tracks the most recent benchmark run."
 }
