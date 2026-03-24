@@ -1,0 +1,3939 @@
+{
+  "adversarial_validation_version": "0.1.0",
+  "source_run_file": "run-20260324T131334Z-516d87ae.json",
+  "source_run_id": "run-20260324T131334Z-516d87ae",
+  "timestamp": "2026-03-24T13:13:34Z",
+  "scenario_count": 13,
+  "summary_by_mode": {
+    "recall_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -255.25
+    },
+    "compression_mode": {
+      "avg_exact_hit_rate": 0.6923,
+      "avg_soft_hit_rate": 0.6923,
+      "avg_adversarial_variant_hit_rate": 0.75,
+      "avg_context_reduction_percent": -30.22
+    },
+    "hybrid_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -54.76
+    },
+    "phrase_saver_per_byte_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -54.76
+    },
+    "phrase_saver_pruning_mode": {
+      "avg_exact_hit_rate": 0.9167,
+      "avg_soft_hit_rate": 0.9167,
+      "avg_adversarial_variant_hit_rate": 0.9551,
+      "avg_context_reduction_percent": 25.78
+    },
+    "phrase_fragment_per_byte_mode": {
+      "avg_exact_hit_rate": 0.75,
+      "avg_soft_hit_rate": 0.75,
+      "avg_adversarial_variant_hit_rate": 0.8077,
+      "avg_context_reduction_percent": -33.5
+    },
+    "title_aware_fragment_bundle_mode": {
+      "avg_exact_hit_rate": 0.75,
+      "avg_soft_hit_rate": 0.75,
+      "avg_adversarial_variant_hit_rate": 0.8077,
+      "avg_context_reduction_percent": -33.68
+    },
+    "threshold_gated_adaptive_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -53.95
+    },
+    "scenario_classifier_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -53.95
+    }
+  },
+  "scenario_reports": [
+    {
+      "scenario_id": "project_and_constraints",
+      "title": "Project and constraints retrieval",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 26.26,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 278
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -254.38,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 1336
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "durable_update_retrieval",
+      "title": "Durable update retrieval",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 21.1,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 475
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -14.78,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 691
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -14.78,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 691
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -14.78,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 691
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -17.11,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 705
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -107.64,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 1250
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 0.25,
+          "soft_hit_rate": 0.25,
+          "adversarial_variant_hit_rate": 0.25,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "project_constraints_core",
+      "title": "Project and constraints core retrieval",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 26.26,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 278
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -254.38,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container",
+            "Codex CLI and Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code",
+              "matched_variant": "CLI and Claude Code"
+            }
+          ],
+          "preview_bytes": 1336
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "durable_update_state",
+      "title": "Durable update and current state retrieval",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 21.1,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 475
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -107.64,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "working context should be assembled from structured state",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 1250
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 0.25,
+          "soft_hit_rate": 0.25,
+          "adversarial_variant_hit_rate": 0.25,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 0.25,
+          "soft_hit_rate": 0.25,
+          "adversarial_variant_hit_rate": 0.25,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 0.25,
+          "soft_hit_rate": 0.25,
+          "adversarial_variant_hit_rate": 0.25,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "workflow_continuity_tools",
+      "title": "Workflow continuity across tools",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 21.43,
+          "matched_exact_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 473
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -121.93,
+          "matched_exact_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI and Claude Code should share the same memory layer",
+            "working context should be assembled from structured state",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 1336
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 0.5,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 0.5,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 0.5,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "proof_and_scope_boundary",
+      "title": "Proof boundary and non-proven areas",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 21.1,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 475
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -121.43,
+          "matched_exact_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_soft_phrases": [
+            "Durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "working context should be assembled from structured state",
+            "Codex CLI and Claude Code should share the same memory layer"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Durable update ingestion",
+              "matched_variant": "Durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "working context should be assembled from structured state",
+              "matched_variant": "active context should be assembled from structured state"
+            },
+            {
+              "expected_phrase": "Codex CLI and Claude Code should share the same memory layer",
+              "matched_variant": "CLI and Claude Code should share the same memory layer"
+            }
+          ],
+          "preview_bytes": 1333
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 0.25,
+          "soft_hit_rate": 0.25,
+          "adversarial_variant_hit_rate": 0.25,
+          "context_reduction_percent": 14.12,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 0.25,
+          "soft_hit_rate": 0.25,
+          "adversarial_variant_hit_rate": 0.25,
+          "context_reduction_percent": 14.12,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 0.25,
+          "soft_hit_rate": 0.25,
+          "adversarial_variant_hit_rate": 0.25,
+          "context_reduction_percent": 14.12,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 517
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "memory_identity_summary",
+      "title": "System identity summary retrieval",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -3.98,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 392
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -232.89,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container",
+            "Portable, persistent, mergeable AI memory system",
+            "fastest_working_prototype"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            }
+          ],
+          "preview_bytes": 1255
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "lightweight_repo_identity",
+      "title": "Low-recall: lightweight repo identity",
+      "expected_phrase_count": 2,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 22.73,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 153
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -491.92,
+          "matched_exact_phrases": [
+            "portable memory package"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            }
+          ],
+          "preview_bytes": 1172
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "lightweight_tooling_note",
+      "title": "Low-recall: tooling note",
+      "expected_phrase_count": 2,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 29.94,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 124
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 552
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 552
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 552
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 552
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 552
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 552
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 552
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -654.8,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 1336
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "lightweight_goal_only",
+      "title": "Low-recall: goal only",
+      "expected_phrase_count": 1,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 21.72,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 155
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -531.31,
+          "matched_exact_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_soft_phrases": [
+            "portable, persistent, mergeable AI memory system"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable, persistent, mergeable AI memory system",
+              "matched_variant": "movable persistent, mergeable AI memory system"
+            }
+          ],
+          "preview_bytes": 1250
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    },
+    {
+      "scenario_id": "mixed_project_plus_next_step",
+      "title": "Mixed-recall: project plus next step",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 754
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -107.64,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 1250
+        },
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 0.75,
+          "context_reduction_percent": 47.01,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 319
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 0.75,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 0.75,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 0.5,
+          "soft_hit_rate": 0.5,
+          "adversarial_variant_hit_rate": 0.75,
+          "context_reduction_percent": 27.91,
+          "matched_exact_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable Memory MVP",
+              "matched_variant": "Portable Memory MVP"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 434
+        }
+      ],
+      "winner_by_adversarial_rate": "hybrid_mode"
+    },
+    {
+      "scenario_id": "mixed_constraints_plus_identity",
+      "title": "Mixed-recall: constraints plus identity",
+      "expected_phrase_count": 3,
+      "mode_reports": [
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -15.12,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 434
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -210.88,
+          "matched_exact_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "fastest_working_prototype",
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "fastest_working_prototype",
+              "matched_variant": "fastest_working_prototype"
+            },
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 1172
+        },
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 0.6667,
+          "soft_hit_rate": 0.6667,
+          "adversarial_variant_hit_rate": 0.6667,
+          "context_reduction_percent": 59.42,
+          "matched_exact_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_soft_phrases": [
+            "portable memory package",
+            "mergeable memory container"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "portable memory package",
+              "matched_variant": "movable memory package"
+            },
+            {
+              "expected_phrase": "mergeable memory container",
+              "matched_variant": "combinable memory container"
+            }
+          ],
+          "preview_bytes": 153
+        }
+      ],
+      "winner_by_adversarial_rate": "compression_mode"
+    },
+    {
+      "scenario_id": "mixed_proof_and_workflow",
+      "title": "Mixed-recall: proof and workflow",
+      "expected_phrase_count": 4,
+      "mode_reports": [
+        {
+          "mode": "phrase_saver_pruning_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": 21.1,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 475
+        },
+        {
+          "mode": "hybrid_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "phrase_saver_per_byte_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "threshold_gated_adaptive_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "scenario_classifier_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 837
+        },
+        {
+          "mode": "recall_mode",
+          "exact_hit_rate": 1.0,
+          "soft_hit_rate": 1.0,
+          "adversarial_variant_hit_rate": 1.0,
+          "context_reduction_percent": -121.43,
+          "matched_exact_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "durable update ingestion",
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "durable update ingestion",
+              "matched_variant": "durable revision ingestion"
+            },
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 1333
+        },
+        {
+          "mode": "compression_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 0.75,
+          "context_reduction_percent": 14.12,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "phrase_fragment_per_byte_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 0.75,
+          "context_reduction_percent": 14.12,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 517
+        },
+        {
+          "mode": "title_aware_fragment_bundle_mode",
+          "exact_hit_rate": 0.75,
+          "soft_hit_rate": 0.75,
+          "adversarial_variant_hit_rate": 0.75,
+          "context_reduction_percent": 14.12,
+          "matched_exact_phrases": [
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_soft_phrases": [
+            "Portable, persistent, mergeable AI memory system",
+            "Codex CLI",
+            "Claude Code"
+          ],
+          "matched_adversarial_variants": [
+            {
+              "expected_phrase": "Portable, persistent, mergeable AI memory system",
+              "matched_variant": "Portable, durable mergeable AI memory system"
+            },
+            {
+              "expected_phrase": "Codex CLI",
+              "matched_variant": "Codex CLI"
+            },
+            {
+              "expected_phrase": "Claude Code",
+              "matched_variant": "Claude Code"
+            }
+          ],
+          "preview_bytes": 517
+        }
+      ],
+      "winner_by_adversarial_rate": "phrase_saver_pruning_mode"
+    }
+  ]
+}
