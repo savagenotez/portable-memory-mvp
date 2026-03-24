@@ -1,0 +1,139 @@
+{
+  "deck_version": "0.1.0",
+  "run_id": "run-20260324T214221Z-429eb2dd",
+  "source_files": {
+    "founder_onepager": "founder-one-pager-run-20260324T214221Z-429eb2dd.json",
+    "policy_report": "robustness-aware-policy-report-run-20260324T214221Z-429eb2dd.json",
+    "adversarial_validation": "robustness-aware-pruning-validation-run-20260324T214221Z-429eb2dd.json",
+    "benchmark_run": "run-20260324T214221Z-429eb2dd.json"
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Portable Memory MVP",
+      "subtitle": "Investor Deck Summary",
+      "bullets": [
+        "Robustness-aware pruning preserves continuity while shrinking context.",
+        "Current recommended policy: robustness_aware_pruning_mode.",
+        "Validated against benchmark and adversarial scenario suite."
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Problem",
+      "bullets": [
+        "Memory systems often trade off badly: either preserve signal and bloat context, or compress and lose meaning.",
+        "Long-session continuity becomes expensive, brittle, or both.",
+        "Enterprise memory needs lower cost with stronger continuity guarantees."
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "Solution",
+      "bullets": [
+        "Use a rescue-and-prune controller rather than static summarization.",
+        "Start from phrase-saver rescue context.",
+        "Prune only when exact recall, soft recall, and overlap robustness remain intact."
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "Core Metrics",
+      "bullets": [
+        "Retrieval hit rate: 0.8782",
+        "Soft hit rate: 0.8782",
+        "Context reduction percent: 23.82",
+        "Total pruned lines: 25",
+        "Unbeaten scenarios: 13 / 13"
+      ]
+    },
+    {
+      "slide_number": 5,
+      "title": "Why We Win",
+      "bullets": [
+        "Not just summarization: minimum robust meaning for continuity.",
+        "Interpretable policy with explicit protected properties.",
+        "Preserves high-signal continuity while reducing context cost."
+      ]
+    },
+    {
+      "slide_number": 6,
+      "title": "Comparative Performance",
+      "table_like": {
+        "robustness_aware_pruning_mode": {
+          "retrieval_hit_rate": 0.8782,
+          "soft_hit_rate": 0.8782,
+          "context_reduction_percent": 23.82,
+          "repeated_explanation_items_removed": 39
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 0.8782,
+          "soft_hit_rate": 0.8782,
+          "context_reduction_percent": -53.95,
+          "repeated_explanation_items_removed": 39
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 0.8782,
+          "soft_hit_rate": 0.8782,
+          "context_reduction_percent": -54.76,
+          "repeated_explanation_items_removed": 39
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 0.8782,
+          "soft_hit_rate": 0.8782,
+          "context_reduction_percent": -54.76,
+          "repeated_explanation_items_removed": 39
+        },
+        "compression_mode": {
+          "retrieval_hit_rate": 0.6282,
+          "soft_hit_rate": 0.6282,
+          "context_reduction_percent": -30.22,
+          "repeated_explanation_items_removed": 26
+        }
+      }
+    },
+    {
+      "slide_number": 7,
+      "title": "Defensibility",
+      "bullets": [
+        "Adversarial validation unbeaten scenarios: 13 / 13",
+        "Loss counts by mode: {}",
+        "Protected against over-pruning, loss of token overlap, and paraphrase fragility."
+      ]
+    },
+    {
+      "slide_number": 8,
+      "title": "Business Value",
+      "bullets": [
+        "reduces context size while preserving meaning",
+        "can lower inference cost compared with bloated rescue modes",
+        "can extend usable context windows",
+        "improves continuity across sessions",
+        "makes memory behavior more interpretable",
+        "supports enterprise-grade memory retention policies",
+        "demonstrates that rescue-plus-pruning outperforms static summarization",
+        "shows robustness-aware pruning is a better objective than raw compression",
+        "creates a benchmarkable framework for semantic continuity preservation"
+      ]
+    },
+    {
+      "slide_number": 9,
+      "title": "Go-To-Market Angle",
+      "bullets": [
+        "Memory controller layer for AI assistants and enterprise copilots.",
+        "Value proposition: lower inference cost + stronger session continuity.",
+        "Can be sold as infra, middleware, or premium memory capability."
+      ]
+    },
+    {
+      "slide_number": 10,
+      "title": "Next Steps",
+      "bullets": [
+        "Expand adversarial suite and live usage trace testing.",
+        "Package controller as reusable module.",
+        "Build investor deck / demo narrative around benchmark wins and cost savings.",
+        "Prepare technical note and commercialization roadmap."
+      ]
+    }
+  ]
+}
