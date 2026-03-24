@@ -1,0 +1,173 @@
+{
+  "policy_report_version": "0.1.0",
+  "source_run_file": "run-20260324T214221Z-429eb2dd.json",
+  "source_validation_file": "robustness-aware-pruning-validation-run-20260324T214221Z-429eb2dd.json",
+  "source_run_id": "run-20260324T214221Z-429eb2dd",
+  "timestamp": "2026-03-24T21:42:21Z",
+  "executive_summary": {
+    "recommended_policy": "robustness_aware_pruning_mode",
+    "reason": "Best overall balance of retrieval preservation, soft robustness, compression, and adversarial dominance in the current benchmark suite.",
+    "headline_metrics": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": 23.82,
+      "total_pruned_lines": 25,
+      "unbeaten_scenarios": 13,
+      "scenario_count": 13
+    }
+  },
+  "comparative_metrics": {
+    "robustness_aware_pruning_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": 23.82,
+      "repeated_explanation_items_removed": 39,
+      "controller_choices": {
+        "robust_pruned_phrase_saver": 13
+      },
+      "total_pruned_lines": 25
+    },
+    "threshold_gated_adaptive_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": -53.95,
+      "repeated_explanation_items_removed": 39,
+      "controller_choices": {
+        "hybrid_fallback": 5,
+        "fragment_escalation": 1,
+        "phrase_saver_escalation": 4,
+        "compression_seed": 3
+      }
+    },
+    "hybrid_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": -54.76,
+      "repeated_explanation_items_removed": 39
+    },
+    "phrase_saver_per_byte_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": -54.76,
+      "repeated_explanation_items_removed": 39
+    },
+    "compression_mode": {
+      "retrieval_hit_rate": 0.6282,
+      "soft_hit_rate": 0.6282,
+      "context_reduction_percent": -30.22,
+      "repeated_explanation_items_removed": 26
+    }
+  },
+  "validation_summary": {
+    "target_mode": "robustness_aware_pruning_mode",
+    "scenario_count": 13,
+    "unbeaten_scenarios": 13,
+    "scenarios_with_any_loss": 0,
+    "loss_counts_by_mode": {}
+  },
+  "mode_summary_under_adversarial_validation": {
+    "recall_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -255.25
+    },
+    "compression_mode": {
+      "avg_exact_hit_rate": 0.6282,
+      "avg_soft_hit_rate": 0.6282,
+      "avg_adversarial_variant_hit_rate": 0.6859,
+      "avg_context_reduction_percent": -30.22
+    },
+    "hybrid_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -54.76
+    },
+    "phrase_saver_per_byte_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -54.76
+    },
+    "robustness_aware_pruning_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": 23.82
+    },
+    "phrase_fragment_per_byte_mode": {
+      "avg_exact_hit_rate": 0.6859,
+      "avg_soft_hit_rate": 0.6859,
+      "avg_adversarial_variant_hit_rate": 0.7436,
+      "avg_context_reduction_percent": -33.5
+    },
+    "title_aware_fragment_bundle_mode": {
+      "avg_exact_hit_rate": 0.6859,
+      "avg_soft_hit_rate": 0.6859,
+      "avg_adversarial_variant_hit_rate": 0.7436,
+      "avg_context_reduction_percent": -33.68
+    },
+    "threshold_gated_adaptive_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -53.95
+    },
+    "scenario_classifier_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -53.95
+    }
+  },
+  "policy_spec": {
+    "name": "Robustness-Aware Pruning",
+    "purpose": "Preserve required semantic continuity while pruning context only when exact match, soft match, and overlap robustness remain intact.",
+    "policy_steps": [
+      "Start from phrase-saver-per-byte rescued context.",
+      "Measure exact phrase preservation.",
+      "Measure soft phrase preservation.",
+      "Measure phrase/token overlap robustness.",
+      "Attempt greedy line removal.",
+      "Reject any removal that lowers exact hit rate.",
+      "Reject any removal that lowers soft hit rate.",
+      "Reject any removal that causes overlap robustness to fall below the protected threshold.",
+      "Keep only removals that preserve robustness while saving bytes."
+    ],
+    "protected_properties": [
+      "exact recall",
+      "soft recall",
+      "anchor-token overlap",
+      "adversarial robustness"
+    ],
+    "failure_modes_prevented": [
+      "over-pruning of project identity phrases",
+      "loss of variant-friendly token overlap",
+      "dropping semantic cushion needed under paraphrase"
+    ]
+  },
+  "business_value": {
+    "cost_value": [
+      "reduces context size while preserving meaning",
+      "can lower inference cost compared with bloated rescue modes",
+      "can extend usable context windows"
+    ],
+    "product_value": [
+      "improves continuity across sessions",
+      "makes memory behavior more interpretable",
+      "supports enterprise-grade memory retention policies"
+    ],
+    "research_value": [
+      "demonstrates that rescue-plus-pruning outperforms static summarization",
+      "shows robustness-aware pruning is a better objective than raw compression",
+      "creates a benchmarkable framework for semantic continuity preservation"
+    ]
+  },
+  "next_actions": [
+    "package this policy into a reusable controller module",
+    "run broader scenario expansion with more adversarial paraphrases",
+    "measure token-cost savings against live usage traces",
+    "draft a public-facing technical note or whitepaper summary"
+  ]
+}
