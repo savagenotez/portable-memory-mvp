@@ -1,8 +1,9 @@
 ﻿# Benchmarks
 
-Benchmarking is planned but not yet added in this repo version.
+This folder is for measuring whether Portable Memory MVP creates real continuity value, not just interesting behavior.
 
-Planned benchmark goals:
+## Planned benchmark goals
+
 - re-explaining reduction
 - context size reduction
 - merge success
@@ -10,8 +11,21 @@ Planned benchmark goals:
 - retrieval quality
 - continuity quality
 
-Future outputs:
-- JSON
-- CSV
-- markdown summary
-- history tracking
+## Planned outputs
+
+- latest benchmark snapshot
+- append-only benchmark history
+- per-run benchmark result files
+- human evaluation fields
+- machine-readable JSON outputs
+
+## Intended comparison modes
+
+- with memory vs without memory
+- single-session vs multi-session continuation
+- transcript-only vs structured memory retrieval
+
+## Current status
+
+Scaffolding has been added.
+Benchmark runner implementation is not added yet.
