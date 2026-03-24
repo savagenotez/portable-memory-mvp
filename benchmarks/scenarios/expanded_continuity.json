@@ -1,0 +1,89 @@
+﻿[
+  {
+    "scenario_id": "project_constraints_core",
+    "title": "Project and constraints core retrieval",
+    "query": "What is the core project, what constraints matter most, and what kind of system is being built?",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json"
+    ],
+    "expected_phrases": [
+      "fastest_working_prototype",
+      "portable memory package",
+      "mergeable memory container",
+      "Codex CLI and Claude Code"
+    ],
+    "merge_preview": {
+      "left_package_key": "session_1",
+      "right_package_key": "session_2"
+    }
+  },
+  {
+    "scenario_id": "durable_update_state",
+    "title": "Durable update and current state retrieval",
+    "query": "What has been proven already, what durable update was added, and what should happen next?",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json",
+      "transcript_3.json"
+    ],
+    "expected_phrases": [
+      "Durable update ingestion",
+      "working context should be assembled from structured state",
+      "Portable, persistent, mergeable AI memory system",
+      "Codex CLI and Claude Code should share the same memory layer"
+    ]
+  },
+  {
+    "scenario_id": "workflow_continuity_tools",
+    "title": "Workflow continuity across tools",
+    "query": "How should this memory system support continuity across tools and agent workflows?",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json",
+      "transcript_3.json"
+    ],
+    "expected_phrases": [
+      "Codex CLI and Claude Code should share the same memory layer",
+      "working context should be assembled from structured state",
+      "portable memory package",
+      "mergeable memory container"
+    ]
+  },
+  {
+    "scenario_id": "proof_and_scope_boundary",
+    "title": "Proof boundary and non-proven areas",
+    "query": "What exactly has been proven, and what is not yet proven or production-ready?",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json",
+      "transcript_3.json"
+    ],
+    "expected_phrases": [
+      "Durable update ingestion",
+      "Portable, persistent, mergeable AI memory system",
+      "working context should be assembled from structured state",
+      "Codex CLI and Claude Code should share the same memory layer"
+    ]
+  },
+  {
+    "scenario_id": "memory_identity_summary",
+    "title": "System identity summary retrieval",
+    "query": "Summarize the identity of this system in a compact but correct way.",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json"
+    ],
+    "expected_phrases": [
+      "portable memory package",
+      "mergeable memory container",
+      "Portable, persistent, mergeable AI memory system",
+      "fastest_working_prototype"
+    ]
+  }
+]
