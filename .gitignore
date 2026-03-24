@@ -9,3 +9,11 @@ startup-results.json
 dist/
 benchmarks/results/latest.json
 benchmarks/results/history.json
+
+publish/
+*.zip
+automation-results.json
+package-ids.txt
+step3-results.json
+step4-results.json
+step4-results-fixed.json
