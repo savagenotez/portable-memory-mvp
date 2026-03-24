@@ -1,0 +1,1540 @@
+{
+  "adversarial_robustness_validation_version": "0.1.0",
+  "source_run_file": "run-20260324T214221Z-429eb2dd.json",
+  "source_run_id": "run-20260324T214221Z-429eb2dd",
+  "timestamp": "2026-03-24T21:42:21Z",
+  "overall": {
+    "target_mode": "robustness_aware_pruning_mode",
+    "scenario_count": 13,
+    "unbeaten_scenarios": 13,
+    "scenarios_with_any_loss": 0,
+    "loss_counts_by_mode": {}
+  },
+  "summary_by_mode": {
+    "recall_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -255.25
+    },
+    "compression_mode": {
+      "avg_exact_hit_rate": 0.6282,
+      "avg_soft_hit_rate": 0.6282,
+      "avg_adversarial_variant_hit_rate": 0.6859,
+      "avg_context_reduction_percent": -30.22
+    },
+    "hybrid_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -54.76
+    },
+    "phrase_saver_per_byte_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -54.76
+    },
+    "robustness_aware_pruning_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": 23.82
+    },
+    "phrase_fragment_per_byte_mode": {
+      "avg_exact_hit_rate": 0.6859,
+      "avg_soft_hit_rate": 0.6859,
+      "avg_adversarial_variant_hit_rate": 0.7436,
+      "avg_context_reduction_percent": -33.5
+    },
+    "title_aware_fragment_bundle_mode": {
+      "avg_exact_hit_rate": 0.6859,
+      "avg_soft_hit_rate": 0.6859,
+      "avg_adversarial_variant_hit_rate": 0.7436,
+      "avg_context_reduction_percent": -33.68
+    },
+    "threshold_gated_adaptive_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -53.95
+    },
+    "scenario_classifier_mode": {
+      "avg_exact_hit_rate": 0.8782,
+      "avg_soft_hit_rate": 0.8782,
+      "avg_adversarial_variant_hit_rate": 0.9359,
+      "avg_context_reduction_percent": -53.95
+    }
+  },
+  "scenario_reports": [
+    {
+      "scenario_id": "project_and_constraints",
+      "title": "Project and constraints retrieval",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 0.75,
+        "soft_hit_rate": 0.75,
+        "adversarial_variant_hit_rate": 0.75,
+        "context_reduction_percent": 26.26,
+        "preview_bytes": 278
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "durable_update_retrieval",
+      "title": "Durable update retrieval",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 21.1,
+        "preview_bytes": 475
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -14.78,
+            "preview_bytes": 691
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -14.78,
+            "preview_bytes": 691
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 0.25,
+            "soft_hit_rate": 0.25,
+            "adversarial_variant_hit_rate": 0.25,
+            "context_reduction_percent": 27.91,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "project_constraints_core",
+      "title": "Project and constraints core retrieval",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 0.75,
+        "soft_hit_rate": 0.75,
+        "adversarial_variant_hit_rate": 0.75,
+        "context_reduction_percent": 26.26,
+        "preview_bytes": 278
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 26.26,
+            "preview_bytes": 278
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "durable_update_state",
+      "title": "Durable update and current state retrieval",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 21.1,
+        "preview_bytes": 475
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 0.25,
+            "soft_hit_rate": 0.25,
+            "adversarial_variant_hit_rate": 0.25,
+            "context_reduction_percent": 27.91,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "workflow_continuity_tools",
+      "title": "Workflow continuity across tools",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 21.43,
+        "preview_bytes": 473
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 0.5,
+            "context_reduction_percent": 27.91,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "proof_and_scope_boundary",
+      "title": "Proof boundary and non-proven areas",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 21.1,
+        "preview_bytes": 475
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 0.25,
+            "soft_hit_rate": 0.25,
+            "adversarial_variant_hit_rate": 0.25,
+            "context_reduction_percent": 14.12,
+            "preview_bytes": 517
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "memory_identity_summary",
+      "title": "System identity summary retrieval",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": -3.98,
+        "preview_bytes": 392
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -3.98,
+            "preview_bytes": 392
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -37.14,
+            "preview_bytes": 517
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -3.98,
+            "preview_bytes": 392
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -37.14,
+            "preview_bytes": 517
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -3.98,
+            "preview_bytes": 392
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -37.14,
+            "preview_bytes": 517
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -3.98,
+            "preview_bytes": 392
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -37.14,
+            "preview_bytes": 517
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -3.98,
+            "preview_bytes": 392
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -37.14,
+            "preview_bytes": 517
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "lightweight_repo_identity",
+      "title": "Low-recall: lightweight repo identity",
+      "expected_phrase_count": 2,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 0.5,
+        "soft_hit_rate": 0.5,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 22.73,
+        "preview_bytes": 153
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 22.73,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 22.73,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 22.73,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 22.73,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 22.73,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "lightweight_tooling_note",
+      "title": "Low-recall: tooling note",
+      "expected_phrase_count": 2,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 29.94,
+        "preview_bytes": 124
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 29.94,
+            "preview_bytes": 124
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -211.86,
+            "preview_bytes": 552
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 29.94,
+            "preview_bytes": 124
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -211.86,
+            "preview_bytes": 552
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 29.94,
+            "preview_bytes": 124
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -211.86,
+            "preview_bytes": 552
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 29.94,
+            "preview_bytes": 124
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -211.86,
+            "preview_bytes": 552
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 29.94,
+            "preview_bytes": 124
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -211.86,
+            "preview_bytes": 552
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "lightweight_goal_only",
+      "title": "Low-recall: goal only",
+      "expected_phrase_count": 1,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 21.72,
+        "preview_bytes": 155
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.72,
+            "preview_bytes": 155
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.72,
+            "preview_bytes": 155
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.72,
+            "preview_bytes": 155
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.72,
+            "preview_bytes": 155
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.72,
+            "preview_bytes": 155
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -119.19,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "mixed_project_plus_next_step",
+      "title": "Mixed-recall: project plus next step",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 0.75,
+        "soft_hit_rate": 0.75,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 21.43,
+        "preview_bytes": 473
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -25.25,
+            "preview_bytes": 754
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.43,
+            "preview_bytes": 473
+          },
+          "other": {
+            "exact_hit_rate": 0.5,
+            "soft_hit_rate": 0.5,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 27.91,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "mixed_constraints_plus_identity",
+      "title": "Mixed-recall: constraints plus identity",
+      "expected_phrase_count": 3,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 0.6667,
+        "soft_hit_rate": 0.6667,
+        "adversarial_variant_hit_rate": 0.6667,
+        "context_reduction_percent": 59.42,
+        "preview_bytes": 153
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": 59.42,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": 59.42,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": 59.42,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": 59.42,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": 59.42,
+            "preview_bytes": 153
+          },
+          "other": {
+            "exact_hit_rate": 0.6667,
+            "soft_hit_rate": 0.6667,
+            "adversarial_variant_hit_rate": 0.6667,
+            "context_reduction_percent": -15.12,
+            "preview_bytes": 434
+          }
+        }
+      ]
+    },
+    {
+      "scenario_id": "mixed_proof_and_workflow",
+      "title": "Mixed-recall: proof and workflow",
+      "expected_phrase_count": 4,
+      "target_mode": "robustness_aware_pruning_mode",
+      "target_summary": {
+        "exact_hit_rate": 1.0,
+        "soft_hit_rate": 1.0,
+        "adversarial_variant_hit_rate": 1.0,
+        "context_reduction_percent": 21.1,
+        "preview_bytes": 475
+      },
+      "target_wins_against": [
+        "hybrid_mode",
+        "phrase_saver_per_byte_mode",
+        "threshold_gated_adaptive_mode",
+        "scenario_classifier_mode",
+        "compression_mode"
+      ],
+      "target_loses_against": [],
+      "comparisons": [
+        {
+          "against_mode": "hybrid_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "phrase_saver_per_byte_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "threshold_gated_adaptive_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "scenario_classifier_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": -39.04,
+            "preview_bytes": 837
+          }
+        },
+        {
+          "against_mode": "compression_mode",
+          "winner": "robustness_aware_pruning_mode",
+          "target": {
+            "exact_hit_rate": 1.0,
+            "soft_hit_rate": 1.0,
+            "adversarial_variant_hit_rate": 1.0,
+            "context_reduction_percent": 21.1,
+            "preview_bytes": 475
+          },
+          "other": {
+            "exact_hit_rate": 0.75,
+            "soft_hit_rate": 0.75,
+            "adversarial_variant_hit_rate": 0.75,
+            "context_reduction_percent": 14.12,
+            "preview_bytes": 517
+          }
+        }
+      ]
+    }
+  ]
+}
