@@ -1,0 +1,30 @@
+﻿{
+  "schema_version": "0.1.0",
+  "status": "scaffold_only",
+  "updated_at": "2026-03-24T03:42:53Z",
+  "project": "portable-memory-mvp",
+  "summary": {
+    "benchmark_runner_present": false,
+    "history_tracking_present": true,
+    "latest_snapshot_present": true,
+    "human_eval_fields_defined": true
+  },
+  "planned_metrics": [
+    "merge_success_rate",
+    "conflicts_created",
+    "conflicts_resolved",
+    "retrieval_hit_rate",
+    "retrieval_relevance_score",
+    "context_bytes_without_memory",
+    "context_bytes_with_memory",
+    "context_reduction_percent",
+    "repeated_explanation_items_removed",
+    "package_count_used",
+    "session_count_used",
+    "continuity_rating_0_to_5",
+    "reduced_reexplaining_yes_no",
+    "retrieved_right_state_yes_no",
+    "felt_like_same_project_yes_no"
+  ],
+  "note": "This is benchmark scaffolding only. Real benchmark execution has not been implemented yet."
+}
