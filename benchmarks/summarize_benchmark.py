@@ -38,7 +38,7 @@ def main() -> None:
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
-        ("phrase_saver_pruning_mode", "Phrase-saver pruning mode"),
+        ("robustness_aware_pruning_mode", "Robustness-aware pruning mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
         ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
@@ -49,6 +49,7 @@ def main() -> None:
             print("")
             print(label)
             print(f"  Retrieval hit rate: {mode.get('retrieval_hit_rate')}")
+            print(f"  Soft hit rate: {mode.get('soft_hit_rate')}")
             print(f"  Context reduction percent: {mode.get('context_reduction_percent')}")
             print(f"  Repeated explanation items removed: {mode.get('repeated_explanation_items_removed')}")
             if "controller_choices" in mode:

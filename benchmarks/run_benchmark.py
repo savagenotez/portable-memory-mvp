@@ -11,7 +11,6 @@ from urllib import request
 ROOT = Path(__file__).resolve().parent
 RESULTS_DIR = ROOT / "results"
 SCENARIOS_DIR = ROOT / "scenarios"
-FINE_BOUNDARY_DIR = ROOT / "fine_grained_boundaries"
 ATTR_DIR = ROOT / "attribution"
 FRAG_DIR = ROOT / "fragments"
 REPO_ROOT = ROOT.parent
@@ -49,12 +48,59 @@ def normalize_text(s: str) -> str:
     return s.strip()
 
 
+def normalize_soft(s: str) -> str:
+    s = s.lower()
+    s = re.sub(r"[^a-z0-9\s:_-]", " ", s)
+    s = re.sub(r"\s+", " ", s)
+    return s.strip()
+
+
+def token_set(s: str):
+    return set(t for t in normalize_soft(s).split() if t)
+
+
+def jaccard(a: str, b: str) -> float:
+    sa = token_set(a)
+    sb = token_set(b)
+    if not sa and not sb:
+        return 1.0
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / len(sa | sb)
+
+
 def bytes_len(s: str) -> int:
-    return len(s.encode("utf-8"))
+    return len((s or "").encode("utf-8"))
 
 
 def contains_phrase(text: str, phrase: str) -> bool:
     return normalize_text(phrase) in normalize_text(text)
+
+
+def phrase_hit_soft(text: str, phrase: str, threshold: float = 0.60) -> bool:
+    norm_text = normalize_soft(text)
+    norm_phrase = normalize_soft(phrase)
+    if not norm_phrase:
+        return False
+    if norm_phrase in norm_text:
+        return True
+
+    p_tokens = norm_phrase.split()
+    t_tokens = norm_text.split()
+    if not p_tokens or not t_tokens:
+        return False
+
+    win = max(len(p_tokens), 3)
+    best = 0.0
+    if len(t_tokens) < win:
+        best = jaccard(norm_text, norm_phrase)
+    else:
+        for i in range(0, len(t_tokens) - win + 1):
+            chunk = " ".join(t_tokens[i:i+win])
+            score = jaccard(chunk, norm_phrase)
+            if score > best:
+                best = score
+    return best >= threshold
 
 
 def retrieval_hit_rate(text: str, expected_phrases):
@@ -62,6 +108,21 @@ def retrieval_hit_rate(text: str, expected_phrases):
         return None, []
     hits = [phrase for phrase in expected_phrases if contains_phrase(text, phrase)]
     return len(hits) / len(expected_phrases), hits
+
+
+def soft_hit_rate(text: str, expected_phrases):
+    if not expected_phrases:
+        return None, []
+    hits = [phrase for phrase in expected_phrases if phrase_hit_soft(text, phrase, 0.60)]
+    return len(hits) / len(expected_phrases), hits
+
+
+def overlap_score(a: str, b: str) -> float:
+    sa = token_set(a)
+    sb = token_set(b)
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / max(1, len(sb))
 
 
 def compare_to_baseline(memory_text: str, baseline_text: str):
@@ -79,11 +140,14 @@ def compare_to_baseline(memory_text: str, baseline_text: str):
 
 def build_mode_result(mode_name: str, transformed_text: str, baseline_text: str, expected_phrases):
     hit_rate, hits = retrieval_hit_rate(transformed_text, expected_phrases)
+    soft_rate, soft_hits = soft_hit_rate(transformed_text, expected_phrases)
     metrics = compare_to_baseline(transformed_text, baseline_text)
     return {
         "mode": mode_name,
         "matched_phrases": hits,
+        "soft_matched_phrases": soft_hits,
         "retrieval_hit_rate": round(hit_rate, 4) if hit_rate is not None else None,
+        "soft_hit_rate": round(soft_rate, 4) if soft_rate is not None else None,
         "repeated_explanation_items_removed": len(hits) if hits else 0,
         "preview": transformed_text[:1500],
         **metrics
@@ -174,13 +238,6 @@ def structure_score(line: str) -> int:
         s += 4
     s -= max(0, len(line) // 180)
     return s
-
-
-def load_latest_fine_boundaries():
-    files = sorted(FINE_BOUNDARY_DIR.glob("fine-grained-boundaries-*.json"))
-    if not files:
-        return {"rules": [], "feature_rows": []}
-    return load_json(files[-1], {"rules": [], "feature_rows": []})
 
 
 def load_latest_attribution():
@@ -416,7 +473,7 @@ def phrase_saver_per_byte_mode_text(text: str, expected_phrases, scenario_id: st
     return "\n".join(chosen).strip()
 
 
-def phrase_saver_pruning_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, max_chars: int = 880):
+def robustness_aware_pruning_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, max_chars: int = 880):
     saver_text = phrase_saver_per_byte_mode_text(text, expected_phrases, scenario_id, attribution_maps, max_chars=max_chars)
     lines = [ln.strip() for ln in saver_text.splitlines() if ln.strip()]
     if not lines:
@@ -425,33 +482,74 @@ def phrase_saver_pruning_mode_text(text: str, expected_phrases, scenario_id: str
     current_lines = list(lines)
     prune_log = []
 
-    def current_hit(lines_now):
-        hit, hits = retrieval_hit_rate("\n".join(lines_now), expected_phrases)
-        return (0.0 if hit is None else hit), hits
+    def metrics(lines_now):
+        joined = "\n".join(lines_now)
+        exact_rate, exact_hits = retrieval_hit_rate(joined, expected_phrases)
+        soft_rate, soft_hits = soft_hit_rate(joined, expected_phrases)
+        overlaps = {phrase: overlap_score(joined, phrase) for phrase in expected_phrases}
+        return {
+            "exact_rate": 0.0 if exact_rate is None else exact_rate,
+            "soft_rate": 0.0 if soft_rate is None else soft_rate,
+            "exact_hits": exact_hits,
+            "soft_hits": soft_hits,
+            "overlaps": overlaps,
+        }
 
-    baseline_hit, _ = current_hit(current_lines)
-
+    baseline = metrics(current_lines)
     improved = True
+
     while improved and len(current_lines) > 1:
         improved = False
         best_idx = None
         best_bytes_saved = 0
+        best_trial = None
 
         for idx in range(len(current_lines)):
-            trial = current_lines[:idx] + current_lines[idx+1:]
-            trial_hit, _ = current_hit(trial)
-            if trial_hit >= baseline_hit:
-                bytes_saved = bytes_len("\n".join(current_lines)) - bytes_len("\n".join(trial))
-                if bytes_saved > best_bytes_saved:
-                    best_bytes_saved = bytes_saved
-                    best_idx = idx
+            trial_lines = current_lines[:idx] + current_lines[idx+1:]
+            trial = metrics(trial_lines)
 
-        if best_idx is not None:
-            removed = current_lines.pop(best_idx)
+            # Keep exact and soft rates intact
+            if trial["exact_rate"] < baseline["exact_rate"]:
+                continue
+            if trial["soft_rate"] < baseline["soft_rate"]:
+                continue
+
+            # Protect phrase-specific overlap robustness
+            overlap_ok = True
+            risky_phrases = []
+            for phrase in expected_phrases:
+                base_ov = baseline["overlaps"].get(phrase, 0.0)
+                trial_ov = trial["overlaps"].get(phrase, 0.0)
+
+                if base_ov >= 0.50 and trial_ov < 0.50:
+                    overlap_ok = False
+                    risky_phrases.append(phrase)
+                elif base_ov >= 0.34 and (base_ov - trial_ov) > 0.20:
+                    overlap_ok = False
+                    risky_phrases.append(phrase)
+
+            if not overlap_ok:
+                continue
+
+            bytes_saved = bytes_len("\n".join(current_lines)) - bytes_len("\n".join(trial_lines))
+            if bytes_saved > best_bytes_saved:
+                best_bytes_saved = bytes_saved
+                best_idx = idx
+                best_trial = {
+                    "trial_lines": trial_lines,
+                    "trial_metrics": trial,
+                }
+
+        if best_idx is not None and best_trial is not None:
+            removed = current_lines[best_idx]
+            current_lines = best_trial["trial_lines"]
             prune_log.append({
                 "removed_line": removed,
                 "bytes_saved": best_bytes_saved,
+                "exact_rate_after": round(best_trial["trial_metrics"]["exact_rate"], 4),
+                "soft_rate_after": round(best_trial["trial_metrics"]["soft_rate"], 4),
             })
+            baseline = best_trial["trial_metrics"]
             improved = True
 
     final_text = "\n".join(current_lines).strip()
@@ -629,7 +727,7 @@ def scenario_classifier_mode_text(text, expected_phrases, query, baseline_text, 
     return chosen_text, label, reasons, chosen_policy
 
 
-def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, fine_boundaries: dict, attribution_maps: dict, fragment_maps: dict):
+def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, attribution_maps: dict, fragment_maps: dict):
     query = scenario["query"]
     top_k = int(scenario.get("top_k", 12))
     expected_phrases = scenario.get("expected_phrases", [])
@@ -649,7 +747,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     compression_text = compression_mode_text(raw_memory_text, expected_phrases)
     hybrid_text = hybrid_mode_text(raw_memory_text, expected_phrases)
     phrase_saver_text = phrase_saver_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps)
-    pruned_phrase_saver_text, prune_log = phrase_saver_pruning_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps)
+    robust_prune_text, robust_prune_log = robustness_aware_pruning_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps)
     phrase_fragment_text = phrase_fragment_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps)
     title_bundle_text = title_aware_fragment_bundle_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps)
     threshold_text, threshold_choice = threshold_gated_adaptive_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps, fragment_maps)
@@ -663,7 +761,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases),
         build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases),
         build_mode_result("phrase_saver_per_byte_mode", phrase_saver_text, baseline_text, expected_phrases),
-        build_mode_result("phrase_saver_pruning_mode", pruned_phrase_saver_text, baseline_text, expected_phrases),
+        build_mode_result("robustness_aware_pruning_mode", robust_prune_text, baseline_text, expected_phrases),
         build_mode_result("phrase_fragment_per_byte_mode", phrase_fragment_text, baseline_text, expected_phrases),
         build_mode_result("title_aware_fragment_bundle_mode", title_bundle_text, baseline_text, expected_phrases),
         build_mode_result("threshold_gated_adaptive_mode", threshold_text, baseline_text, expected_phrases),
@@ -677,10 +775,10 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
             mode["controller_choice"] = classifier_choice
             mode["classifier_label"] = classifier_label
             mode["classifier_reasons"] = classifier_reasons
-        elif mode["mode"] == "phrase_saver_pruning_mode":
-            mode["controller_choice"] = "pruned_phrase_saver"
-            mode["prune_log"] = prune_log
-            mode["pruned_line_count"] = len(prune_log)
+        elif mode["mode"] == "robustness_aware_pruning_mode":
+            mode["controller_choice"] = "robust_pruned_phrase_saver"
+            mode["prune_log"] = robust_prune_log
+            mode["pruned_line_count"] = len(robust_prune_log)
 
     merge_summary = None
     merge_success = None
@@ -720,22 +818,24 @@ def aggregate_mode_metrics(results, mode_name):
                 mode_results.append(mode)
 
     hit_rates = [m["retrieval_hit_rate"] for m in mode_results if m["retrieval_hit_rate"] is not None]
+    soft_rates = [m["soft_hit_rate"] for m in mode_results if m.get("soft_hit_rate") is not None]
     reductions = [m["context_reduction_percent"] for m in mode_results if m["context_reduction_percent"] is not None]
 
     out = {
         "retrieval_hit_rate": round(sum(hit_rates) / len(hit_rates), 4) if hit_rates else None,
+        "soft_hit_rate": round(sum(soft_rates) / len(soft_rates), 4) if soft_rates else None,
         "context_reduction_percent": round(sum(reductions) / len(reductions), 2) if reductions else None,
         "repeated_explanation_items_removed": sum(m["repeated_explanation_items_removed"] for m in mode_results),
     }
 
-    if mode_name in ("threshold_gated_adaptive_mode", "scenario_classifier_mode", "phrase_saver_pruning_mode"):
+    if mode_name in ("threshold_gated_adaptive_mode", "scenario_classifier_mode", "robustness_aware_pruning_mode"):
         choices = {}
         for m in mode_results:
             choice = m.get("controller_choice", "unknown")
             choices[choice] = choices.get(choice, 0) + 1
         out["controller_choices"] = choices
 
-    if mode_name == "phrase_saver_pruning_mode":
+    if mode_name == "robustness_aware_pruning_mode":
         out["total_pruned_lines"] = sum(m.get("pruned_line_count", 0) for m in mode_results)
 
     return out
@@ -757,7 +857,7 @@ def aggregate_metrics(results):
         "compression_mode",
         "hybrid_mode",
         "phrase_saver_per_byte_mode",
-        "phrase_saver_pruning_mode",
+        "robustness_aware_pruning_mode",
         "phrase_fragment_per_byte_mode",
         "title_aware_fragment_bundle_mode",
         "threshold_gated_adaptive_mode",
@@ -788,7 +888,7 @@ def update_history(history_path: Path, entry: dict) -> None:
         "scenario_count": len(entry["scenario_results"]),
         "merge_success_rate": entry["metrics"].get("merge_success_rate"),
         "threshold_gated_adaptive_mode": entry["metrics"].get("threshold_gated_adaptive_mode"),
-        "phrase_saver_pruning_mode": entry["metrics"].get("phrase_saver_pruning_mode"),
+        "robustness_aware_pruning_mode": entry["metrics"].get("robustness_aware_pruning_mode"),
     })
     save_json(history_path, history)
 
@@ -805,7 +905,7 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "history_tracking_present": True,
             "latest_snapshot_present": True,
             "human_eval_fields_defined": True,
-            "phrase_saver_pruning_mode_present": True
+            "robustness_aware_pruning_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -851,12 +951,11 @@ def main():
     if not scenarios:
         raise RuntimeError("No benchmark scenarios found.")
 
-    fine_boundaries = load_latest_fine_boundaries()
     attribution_maps = build_attribution_maps(load_latest_attribution())
     fragment_maps = build_fragment_maps(load_latest_fragment_attribution())
     package_ids = parse_package_ids()
 
-    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, fine_boundaries, attribution_maps, fragment_maps) for scenario in scenarios]
+    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, attribution_maps, fragment_maps) for scenario in scenarios]
 
     run_id = f"run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
     timestamp = utc_now()
@@ -877,8 +976,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "Phrase-saver pruning mode starts from phrase-saver-per-byte and greedily removes lines that do not reduce retrieval hit rate.",
-            "Goal: preserve phrase-saver recall while cutting unnecessary bytes."
+            "Robustness-aware pruning starts from phrase-saver-per-byte and prunes lines only if exact, soft, and overlap-based robustness remain intact.",
+            "Goal: keep pruning compactness while avoiding adversarial robustness collapse."
         ]
     }
 
@@ -898,7 +997,7 @@ def main():
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
-        ("phrase_saver_pruning_mode", "Phrase-saver pruning mode"),
+        ("robustness_aware_pruning_mode", "Robustness-aware pruning mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
         ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
@@ -906,10 +1005,11 @@ def main():
     ]:
         m = metrics.get(key, {})
         print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")
+        print(f"{label} soft hit rate: {m.get('soft_hit_rate')}")
         print(f"{label} context reduction percent: {m.get('context_reduction_percent')}")
     print(f"Threshold-gated choices: {metrics.get('threshold_gated_adaptive_mode', {}).get('controller_choices')}")
-    print(f"Phrase-saver pruning choices: {metrics.get('phrase_saver_pruning_mode', {}).get('controller_choices')}")
-    print(f"Total pruned lines: {metrics.get('phrase_saver_pruning_mode', {}).get('total_pruned_lines')}")
+    print(f"Robustness-aware pruning choices: {metrics.get('robustness_aware_pruning_mode', {}).get('controller_choices')}")
+    print(f"Total pruned lines: {metrics.get('robustness_aware_pruning_mode', {}).get('total_pruned_lines')}")
     print(f"Merge success rate: {metrics.get('merge_success_rate')}")
 
 
