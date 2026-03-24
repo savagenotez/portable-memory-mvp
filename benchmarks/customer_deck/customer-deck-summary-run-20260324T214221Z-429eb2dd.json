@@ -1,0 +1,129 @@
+{
+  "deck_version": "0.1.0",
+  "run_id": "run-20260324T214221Z-429eb2dd",
+  "source_files": {
+    "policy_report": "robustness-aware-policy-report-run-20260324T214221Z-429eb2dd.json",
+    "adversarial_validation": "robustness-aware-pruning-validation-run-20260324T214221Z-429eb2dd.json",
+    "benchmark_run": "run-20260324T214221Z-429eb2dd.json"
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "title": "Portable Memory MVP",
+      "subtitle": "Customer Deck",
+      "bullets": [
+        "Keep conversation continuity without dragging around bloated context.",
+        "Reduce context cost while preserving important meaning.",
+        "Designed for AI assistants, copilots, and enterprise memory workflows."
+      ]
+    },
+    {
+      "slide_number": 2,
+      "title": "Customer Problem",
+      "bullets": [
+        "AI sessions forget important context or become too expensive to maintain.",
+        "Summaries often drop the very details users need next.",
+        "Teams need continuity that is cheaper, safer, and easier to trust."
+      ]
+    },
+    {
+      "slide_number": 3,
+      "title": "What We Do",
+      "bullets": [
+        "We rescue the high-signal context that matters.",
+        "We prune only when meaning and robustness are preserved.",
+        "The result is continuity with less wasted context."
+      ]
+    },
+    {
+      "slide_number": 4,
+      "title": "Customer Outcomes",
+      "bullets": [
+        "Lower context usage per continued session.",
+        "Better retention of important project details.",
+        "Fewer dropped instructions, constraints, and identity details.",
+        "More predictable memory behavior across long interactions."
+      ]
+    },
+    {
+      "slide_number": 5,
+      "title": "Core Metrics",
+      "bullets": [
+        "Retrieval hit rate: 0.8782",
+        "Soft hit rate: 0.8782",
+        "Context reduction percent: 23.82",
+        "Total pruned lines: 25",
+        "Unbeaten scenarios: 13 / 13"
+      ]
+    },
+    {
+      "slide_number": 6,
+      "title": "Why Customers Benefit",
+      "bullets": [
+        "You get lower cost without sacrificing continuity quality.",
+        "You keep robust meaning, not just compressed wording.",
+        "You reduce the risk of losing critical context under paraphrase or variation."
+      ]
+    },
+    {
+      "slide_number": 7,
+      "title": "Compared to Simpler Approaches",
+      "table_like": {
+        "robustness_aware_pruning_mode": {
+          "retrieval_hit_rate": 0.8782,
+          "soft_hit_rate": 0.8782,
+          "context_reduction_percent": 23.82,
+          "repeated_explanation_items_removed": 39
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 0.8782,
+          "soft_hit_rate": 0.8782,
+          "context_reduction_percent": -53.95,
+          "repeated_explanation_items_removed": 39
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 0.8782,
+          "soft_hit_rate": 0.8782,
+          "context_reduction_percent": -54.76,
+          "repeated_explanation_items_removed": 39
+        },
+        "compression_mode": {
+          "retrieval_hit_rate": 0.6282,
+          "soft_hit_rate": 0.6282,
+          "context_reduction_percent": -30.22,
+          "repeated_explanation_items_removed": 26
+        }
+      }
+    },
+    {
+      "slide_number": 8,
+      "title": "Where It Fits",
+      "bullets": [
+        "Enterprise copilots",
+        "Long-session assistants",
+        "Knowledge work orchestration",
+        "Support and success copilots",
+        "Memory middleware for AI applications"
+      ]
+    },
+    {
+      "slide_number": 9,
+      "title": "Why It Is Trustworthy",
+      "bullets": [
+        "Adversarial validation unbeaten scenarios: 13 / 13",
+        "Loss counts by mode: {}",
+        "Protected against over-pruning, token-overlap loss, and paraphrase fragility."
+      ]
+    },
+    {
+      "slide_number": 10,
+      "title": "Next Customer Step",
+      "bullets": [
+        "Run the controller on your own conversation traces.",
+        "Measure token and cost savings against your current method.",
+        "Compare continuity quality on real workflows.",
+        "Decide whether to deploy as memory middleware or premium capability."
+      ]
+    }
+  ]
+}
