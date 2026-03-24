@@ -37,11 +37,10 @@ def main() -> None:
         ("recall_mode", "Recall mode"),
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
-        ("budgeted_rule_informed_mode", "Budgeted rule-informed mode"),
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
-        ("adaptive_composite_mode", "Adaptive composite mode"),
+        ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
     ]:
         mode = metrics.get(mode_name, {})
         if mode:
@@ -50,6 +49,8 @@ def main() -> None:
             print(f"  Retrieval hit rate: {mode.get('retrieval_hit_rate')}")
             print(f"  Context reduction percent: {mode.get('context_reduction_percent')}")
             print(f"  Repeated explanation items removed: {mode.get('repeated_explanation_items_removed')}")
+            if mode_name == "threshold_gated_adaptive_mode":
+                print(f"  Controller choices: {mode.get('controller_choices')}")
 
 
 if __name__ == "__main__":

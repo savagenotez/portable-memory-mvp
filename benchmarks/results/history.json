@@ -360,5 +360,24 @@
       "context_reduction_percent": -1.75,
       "repeated_explanation_items_removed": 18
     }
+  },
+  {
+    "timestamp": "2026-03-24T09:18:58Z",
+    "event": "benchmark_run_recorded",
+    "run_id": "run-20260324T091858Z-426614e9",
+    "status": "completed",
+    "scenario_count": 7,
+    "merge_success_rate": 1.0,
+    "threshold_gated_adaptive_mode": {
+      "retrieval_hit_rate": 0.9286,
+      "context_reduction_percent": -24.53,
+      "repeated_explanation_items_removed": 26,
+      "controller_choices": {
+        "hybrid_fallback": 2,
+        "fragment_escalation": 1,
+        "phrase_saver_escalation": 3,
+        "compression_seed": 1
+      }
+    }
   }
 ]

@@ -57,6 +57,39 @@ def contains_phrase(text: str, phrase: str) -> bool:
     return normalize_text(phrase) in normalize_text(text)
 
 
+def retrieval_hit_rate(text: str, expected_phrases):
+    if not expected_phrases:
+        return None, []
+    hits = [phrase for phrase in expected_phrases if contains_phrase(text, phrase)]
+    return len(hits) / len(expected_phrases), hits
+
+
+def compare_to_baseline(memory_text: str, baseline_text: str):
+    mem_bytes = bytes_len(memory_text)
+    base_bytes = bytes_len(baseline_text)
+    reduction = None
+    if base_bytes > 0:
+        reduction = round(((base_bytes - mem_bytes) / base_bytes) * 100.0, 2)
+    return {
+        "context_bytes_without_memory": base_bytes,
+        "context_bytes_with_memory": mem_bytes,
+        "context_reduction_percent": reduction,
+    }
+
+
+def build_mode_result(mode_name: str, transformed_text: str, baseline_text: str, expected_phrases):
+    hit_rate, hits = retrieval_hit_rate(transformed_text, expected_phrases)
+    metrics = compare_to_baseline(transformed_text, baseline_text)
+    return {
+        "mode": mode_name,
+        "matched_phrases": hits,
+        "retrieval_hit_rate": round(hit_rate, 4) if hit_rate is not None else None,
+        "repeated_explanation_items_removed": len(hits) if hits else 0,
+        "preview": transformed_text[:1500],
+        **metrics
+    }
+
+
 def read_transcript_payload(name: str) -> dict:
     path = REPO_ROOT / "sample_payloads" / name
     return json.loads(path.read_text(encoding="utf-8-sig"))
@@ -367,144 +400,6 @@ def hybrid_mode_text(text: str, expected_phrases, base_chars: int = 700, max_cha
     return "\n".join(current).strip()
 
 
-def budgeted_rule_informed_mode_text(text: str, expected_phrases, rules, max_chars: int = 900) -> str:
-    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
-    decision_map, keep_priority, keep_durable, phrase_savers, compress_candidates = build_rule_maps(rules)
-
-    def line_meta(line):
-        norm = normalize_text(line)
-        hint = decision_map.get(norm, {})
-        keep_score = hint.get("keep_score", 0)
-        drop_score = hint.get("drop_score", 0)
-        decision = hint.get("decision_hint", "review")
-        return norm, keep_score, drop_score, decision
-
-    def value_components(line, chosen_lines):
-        norm, keep_score, drop_score, decision = line_meta(line)
-        value = 0.0
-        value += structure_score(line) * 1.0
-        value += expected_score(line, expected_phrases) * 1.8
-        value += keep_priority.get(norm, 0) * 2.5
-        value += keep_durable.get(norm, 0) * 2.0
-        value += phrase_savers.get(norm, 0) * 3.0
-
-        if decision == "keep_or_prefer":
-            value += 10.0
-        elif decision == "compress_or_drop":
-            value -= 12.0
-
-        value += max(0, keep_score - drop_score) * 1.25
-        value -= max(0, drop_score - keep_score) * 1.5
-
-        joined = "\n".join(chosen_lines)
-        missing_bonus = 0.0
-        for phrase in expected_phrases:
-            if not contains_phrase(joined, phrase) and contains_phrase(line, phrase):
-                missing_bonus += 25.0
-        value += missing_bonus
-
-        cost_penalty = len(line) / 65.0
-        cost_penalty += compress_candidates.get(norm, 0) * 1.2
-
-        if line.lower().startswith("conversation:") and expected_hit_count(line, expected_phrases) == 0:
-            cost_penalty += 10.0
-
-        ratio = value / max(1.0, cost_penalty)
-        return {
-            "value": value,
-            "cost_penalty": cost_penalty,
-            "ratio": ratio,
-            "decision": decision,
-            "norm": norm,
-        }
-
-    def missing_phrases(current_lines):
-        joined = "\n".join(current_lines)
-        return [p for p in expected_phrases if not contains_phrase(joined, p)]
-
-    chosen = []
-    chosen_norms = set()
-
-    anchors = []
-    for line in raw_lines:
-        meta = value_components(line, chosen)
-        norm = meta["norm"]
-        if (
-            keep_durable.get(norm, 0) > 0
-            or keep_priority.get(norm, 0) > 0
-            or line.lower().startswith("preference:")
-            or line.lower().startswith("fact:")
-            or line.lower().startswith("project:")
-        ):
-            anchors.append((-(meta["ratio"] + meta["value"]), len(line), line))
-
-    anchors.sort()
-    for _, _, line in anchors:
-        norm = normalize_text(line)
-        if norm in chosen_norms:
-            continue
-        tentative = "\n".join(chosen + [line])
-        if bytes_len(tentative) > max_chars:
-            continue
-        chosen.append(line)
-        chosen_norms.add(norm)
-
-    while True:
-        missing = missing_phrases(chosen)
-        if not missing:
-            break
-
-        candidates = []
-        for line in raw_lines:
-            norm = normalize_text(line)
-            if norm in chosen_norms:
-                continue
-            hits = sum(1 for p in missing if contains_phrase(line, p))
-            if hits == 0:
-                continue
-            meta = value_components(line, chosen)
-            score = meta["ratio"] + hits * 6.0
-            if phrase_savers.get(norm, 0) > 0:
-                score += 4.0
-            candidates.append((-score, len(line), line))
-
-        if not candidates:
-            break
-
-        candidates.sort()
-        line = candidates[0][2]
-        tentative = "\n".join(chosen + [line])
-        if bytes_len(tentative) > max_chars:
-            break
-        chosen.append(line)
-        chosen_norms.add(normalize_text(line))
-
-    fillers = []
-    for line in raw_lines:
-        norm = normalize_text(line)
-        if norm in chosen_norms:
-            continue
-        meta = value_components(line, chosen)
-
-        if meta["decision"] == "compress_or_drop" and expected_hit_count(line, expected_phrases) == 0:
-            continue
-
-        fillers.append((-(meta["ratio"]), len(line), line, meta))
-
-    fillers.sort()
-
-    for _, _, line, meta in fillers:
-        if meta["ratio"] < 1.15:
-            continue
-        tentative = "\n".join(chosen + [line])
-        if bytes_len(tentative) > max_chars:
-            continue
-        chosen.append(line)
-        chosen_norms.add(normalize_text(line))
-
-    return "\n".join(chosen).strip()
-
-
 def phrase_saver_per_byte_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, max_chars: int = 880) -> str:
     raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
     raw_norm_map = {normalize_text(line): line for line in raw_lines}
@@ -630,56 +525,6 @@ def phrase_fragment_per_byte_mode_text(text: str, expected_phrases, scenario_id:
             chosen_units.append(fragment)
             chosen_norms.add(normalize_text(fragment))
 
-    while True:
-        missing = missing_phrases(chosen_units)
-        if not missing:
-            break
-
-        candidates = []
-        for line in raw_lines:
-            words = line.split()
-            for size in (4, 6, 8):
-                if len(words) >= size:
-                    for i in range(0, len(words) - size + 1):
-                        frag = " ".join(words[i:i+size]).strip()
-                        norm = normalize_text(frag)
-                        if norm in chosen_norms or len(frag) < 12:
-                            continue
-                        hit_count = sum(1 for p in missing if contains_phrase(frag, p))
-                        if hit_count == 0:
-                            continue
-                        score = (hit_count * 120.0 + structure_score(frag)) / max(1, len(frag))
-                        candidates.append((-score, len(frag), frag))
-
-        if not candidates:
-            break
-
-        candidates.sort()
-        frag = candidates[0][2]
-        tentative = "\n".join(chosen_units + [frag])
-        if bytes_len(tentative) > max_chars:
-            break
-        chosen_units.append(frag)
-        chosen_norms.add(normalize_text(frag))
-
-    anchors = []
-    for line in raw_lines:
-        lower = line.lower()
-        if lower.startswith("preference:") or lower.startswith("fact:") or lower.startswith("project:"):
-            short = line[:110].strip()
-            norm = normalize_text(short)
-            if norm not in chosen_norms:
-                score = (structure_score(short) + expected_score(short, expected_phrases)) / max(1, len(short))
-                anchors.append((-score, len(short), short))
-    anchors.sort()
-
-    for _, _, short in anchors:
-        tentative = "\n".join(chosen_units + [short])
-        if bytes_len(tentative) > max_chars:
-            continue
-        chosen_units.append(short)
-        chosen_norms.add(normalize_text(short))
-
     return "\n".join(chosen_units).strip()
 
 
@@ -742,158 +587,37 @@ def title_aware_fragment_bundle_mode_text(text: str, expected_phrases, scenario_
     return "\n".join(chosen_units).strip()
 
 
-def adaptive_composite_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, fragment_maps, max_chars: int = 980) -> str:
-    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
-    raw_norm_map = {normalize_text(line): line for line in raw_lines}
-    scenario_attr = attribution_maps.get(scenario_id, {})
-    scenario_frags = fragment_maps.get(scenario_id, [])
+def threshold_gated_adaptive_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, fragment_maps, threshold: float = 0.90):
+    baseline_candidates = []
 
-    chosen = dedupe_lines([ln for ln in compression_mode_text(text, expected_phrases, max_chars=650).splitlines() if ln.strip()])
-    chosen_norms = {normalize_text(x) for x in chosen}
+    compression_text = compression_mode_text(text, expected_phrases, max_chars=650)
+    frag_text = phrase_fragment_per_byte_mode_text(text, expected_phrases, scenario_id, fragment_maps, max_chars=820)
+    bundle_text = title_aware_fragment_bundle_mode_text(text, expected_phrases, scenario_id, fragment_maps, max_chars=900)
+    saver_text = phrase_saver_per_byte_mode_text(text, expected_phrases, scenario_id, attribution_maps, max_chars=880)
+    hybrid_text = hybrid_mode_text(text, expected_phrases, base_chars=700, max_chars=1050)
 
-    def joined():
-        return "\n".join(chosen)
+    baseline_candidates.append(("compression_seed", compression_text))
+    baseline_candidates.append(("fragment_escalation", frag_text))
+    baseline_candidates.append(("bundle_escalation", bundle_text))
+    baseline_candidates.append(("phrase_saver_escalation", saver_text))
+    baseline_candidates.append(("hybrid_fallback", hybrid_text))
 
-    def missing_phrases():
-        j = joined()
-        return [p for p in expected_phrases if not contains_phrase(j, p)]
+    chosen_name = None
+    chosen_text = None
 
-    # Phase 1: exact high-value fragments first
-    frag_candidates = []
-    for frag in scenario_frags:
-        fragment = frag.get("fragment", "").strip()
-        if not fragment:
-            continue
-        norm = normalize_text(fragment)
-        if norm in chosen_norms:
-            continue
-        hit_count = sum(1 for p in missing_phrases() if contains_phrase(fragment, p))
-        if hit_count == 0:
-            continue
-        ratio = frag.get("phrases_per_char", 0.0)
-        restored_count = frag.get("restored_phrase_count", 0)
-        score = ratio * 10000.0 + restored_count * 10.0 + structure_score(fragment)
-        frag_candidates.append((-score, len(fragment), fragment))
-    frag_candidates.sort()
-
-    for _, _, fragment in frag_candidates:
-        if not missing_phrases():
+    for name, candidate in baseline_candidates:
+        hit_rate, _ = retrieval_hit_rate(candidate, expected_phrases)
+        hit_rate = 0.0 if hit_rate is None else hit_rate
+        if hit_rate >= threshold:
+            chosen_name = name
+            chosen_text = candidate
             break
-        tentative = "\n".join(chosen + [fragment])
-        if bytes_len(tentative) > max_chars:
-            continue
-        if sum(1 for p in missing_phrases() if contains_phrase(fragment, p)) > 0:
-            chosen.append(fragment)
-            chosen_norms.add(normalize_text(fragment))
 
-    # Phase 2: title-aware bundles only for still-missing phrases
-    bundle_candidates = []
-    for frag in scenario_frags:
-        fragment = frag.get("fragment", "").strip()
-        source_line = frag.get("source_line", "").strip()
-        if not fragment or not source_line:
-            continue
-        bundle = fragment
-        if ":" in source_line and not source_line.lower().startswith(fragment.lower()):
-            title = source_line.split(":", 1)[0].strip()
-            if title:
-                bundle = f"{title}: {fragment}"
-        norm = normalize_text(bundle)
-        if norm in chosen_norms:
-            continue
-        hit_count = sum(1 for p in missing_phrases() if contains_phrase(bundle, p))
-        if hit_count == 0:
-            continue
-        score = (hit_count * 200.0 + structure_score(bundle)) / max(1, len(bundle))
-        bundle_candidates.append((-score, len(bundle), bundle))
-    bundle_candidates.sort()
+    if chosen_text is None:
+        chosen_name = baseline_candidates[-1][0]
+        chosen_text = baseline_candidates[-1][1]
 
-    for _, _, bundle in bundle_candidates:
-        if not missing_phrases():
-            break
-        tentative = "\n".join(chosen + [bundle])
-        if bytes_len(tentative) > max_chars:
-            continue
-        if sum(1 for p in missing_phrases() if contains_phrase(bundle, p)) > 0:
-            chosen.append(bundle)
-            chosen_norms.add(normalize_text(bundle))
-
-    # Phase 3: escalate to exact phrase-saver lines only if phrases still missing
-    line_candidates = []
-    for norm, item in scenario_attr.items():
-        line = raw_norm_map.get(norm)
-        if not line or norm in chosen_norms:
-            continue
-        hit_count = sum(1 for p in missing_phrases() if contains_phrase(line, p))
-        if hit_count == 0:
-            continue
-        score = item.get("phrases_per_byte", 0.0) * 1000.0 + item.get("restored_phrase_count", 0) * 20.0 + structure_score(line)
-        line_candidates.append((-score, len(line), line))
-    line_candidates.sort()
-
-    for _, _, line in line_candidates:
-        if not missing_phrases():
-            break
-        tentative = "\n".join(chosen + [line])
-        if bytes_len(tentative) > max_chars:
-            continue
-        if sum(1 for p in missing_phrases() if contains_phrase(line, p)) > 0:
-            chosen.append(line)
-            chosen_norms.add(normalize_text(line))
-
-    # Phase 4: compact durable anchors if budget remains
-    anchors = []
-    for line in raw_lines:
-        norm = normalize_text(line)
-        if norm in chosen_norms:
-            continue
-        lower = line.lower()
-        if lower.startswith("preference:") or lower.startswith("fact:") or lower.startswith("project:"):
-            score = (structure_score(line) + expected_score(line, expected_phrases)) / max(1, len(line))
-            anchors.append((-score, len(line), line))
-    anchors.sort()
-
-    for _, _, line in anchors:
-        tentative = "\n".join(chosen + [line])
-        if bytes_len(tentative) > max_chars:
-            continue
-        chosen.append(line)
-        chosen_norms.add(normalize_text(line))
-
-    return "\n".join(chosen).strip()
-
-
-def retrieval_hit_rate(text: str, expected_phrases):
-    if not expected_phrases:
-        return None, []
-    hits = [phrase for phrase in expected_phrases if contains_phrase(text, phrase)]
-    return len(hits) / len(expected_phrases), hits
-
-
-def compare_to_baseline(memory_text: str, baseline_text: str):
-    mem_bytes = bytes_len(memory_text)
-    base_bytes = bytes_len(baseline_text)
-    reduction = None
-    if base_bytes > 0:
-        reduction = round(((base_bytes - mem_bytes) / base_bytes) * 100.0, 2)
-    return {
-        "context_bytes_without_memory": base_bytes,
-        "context_bytes_with_memory": mem_bytes,
-        "context_reduction_percent": reduction,
-    }
-
-
-def build_mode_result(mode_name: str, transformed_text: str, baseline_text: str, expected_phrases):
-    hit_rate, hits = retrieval_hit_rate(transformed_text, expected_phrases)
-    metrics = compare_to_baseline(transformed_text, baseline_text)
-    return {
-        "mode": mode_name,
-        "matched_phrases": hits,
-        "retrieval_hit_rate": round(hit_rate, 4) if hit_rate is not None else None,
-        "repeated_explanation_items_removed": len(hits) if hits else 0,
-        "preview": transformed_text[:1500],
-        **metrics
-    }
+    return chosen_text, chosen_name
 
 
 def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, rules: dict, attribution_maps: dict, fragment_maps: dict):
@@ -912,16 +636,23 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     raw_memory_text = retrieval.get("text", "")
     baseline_text = build_transcript_only_context(transcript_files)
 
+    adaptive_text, adaptive_choice = threshold_gated_adaptive_mode_text(
+        raw_memory_text, expected_phrases, scenario_id, attribution_maps, fragment_maps
+    )
+
     results = [
         build_mode_result("recall_mode", recall_mode_text(raw_memory_text, expected_phrases), baseline_text, expected_phrases),
         build_mode_result("compression_mode", compression_mode_text(raw_memory_text, expected_phrases), baseline_text, expected_phrases),
         build_mode_result("hybrid_mode", hybrid_mode_text(raw_memory_text, expected_phrases), baseline_text, expected_phrases),
-        build_mode_result("budgeted_rule_informed_mode", budgeted_rule_informed_mode_text(raw_memory_text, expected_phrases, rules), baseline_text, expected_phrases),
         build_mode_result("phrase_saver_per_byte_mode", phrase_saver_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps), baseline_text, expected_phrases),
         build_mode_result("phrase_fragment_per_byte_mode", phrase_fragment_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps), baseline_text, expected_phrases),
         build_mode_result("title_aware_fragment_bundle_mode", title_aware_fragment_bundle_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps), baseline_text, expected_phrases),
-        build_mode_result("adaptive_composite_mode", adaptive_composite_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps, fragment_maps), baseline_text, expected_phrases),
+        build_mode_result("threshold_gated_adaptive_mode", adaptive_text, baseline_text, expected_phrases),
     ]
+
+    for mode in results:
+        if mode["mode"] == "threshold_gated_adaptive_mode":
+            mode["controller_choice"] = adaptive_choice
 
     merge_summary = None
     merge_success = None
@@ -963,11 +694,20 @@ def aggregate_mode_metrics(results, mode_name):
     hit_rates = [m["retrieval_hit_rate"] for m in mode_results if m["retrieval_hit_rate"] is not None]
     reductions = [m["context_reduction_percent"] for m in mode_results if m["context_reduction_percent"] is not None]
 
-    return {
+    out = {
         "retrieval_hit_rate": round(sum(hit_rates) / len(hit_rates), 4) if hit_rates else None,
         "context_reduction_percent": round(sum(reductions) / len(reductions), 2) if reductions else None,
         "repeated_explanation_items_removed": sum(m["repeated_explanation_items_removed"] for m in mode_results),
     }
+
+    if mode_name == "threshold_gated_adaptive_mode":
+        choices = {}
+        for m in mode_results:
+            choice = m.get("controller_choice", "unknown")
+            choices[choice] = choices.get(choice, 0) + 1
+        out["controller_choices"] = choices
+
+    return out
 
 
 def aggregate_metrics(results):
@@ -985,11 +725,10 @@ def aggregate_metrics(results):
         "recall_mode",
         "compression_mode",
         "hybrid_mode",
-        "budgeted_rule_informed_mode",
         "phrase_saver_per_byte_mode",
         "phrase_fragment_per_byte_mode",
         "title_aware_fragment_bundle_mode",
-        "adaptive_composite_mode",
+        "threshold_gated_adaptive_mode",
     ]
 
     out = {
@@ -1015,14 +754,7 @@ def update_history(history_path: Path, entry: dict) -> None:
         "status": entry["status"],
         "scenario_count": len(entry["scenario_results"]),
         "merge_success_rate": entry["metrics"].get("merge_success_rate"),
-        "recall_mode": entry["metrics"].get("recall_mode"),
-        "compression_mode": entry["metrics"].get("compression_mode"),
-        "hybrid_mode": entry["metrics"].get("hybrid_mode"),
-        "budgeted_rule_informed_mode": entry["metrics"].get("budgeted_rule_informed_mode"),
-        "phrase_saver_per_byte_mode": entry["metrics"].get("phrase_saver_per_byte_mode"),
-        "phrase_fragment_per_byte_mode": entry["metrics"].get("phrase_fragment_per_byte_mode"),
-        "title_aware_fragment_bundle_mode": entry["metrics"].get("title_aware_fragment_bundle_mode"),
-        "adaptive_composite_mode": entry["metrics"].get("adaptive_composite_mode"),
+        "threshold_gated_adaptive_mode": entry["metrics"].get("threshold_gated_adaptive_mode"),
     })
     save_json(history_path, history)
 
@@ -1039,7 +771,7 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "history_tracking_present": True,
             "latest_snapshot_present": True,
             "human_eval_fields_defined": True,
-            "adaptive_composite_mode_present": True
+            "threshold_gated_adaptive_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -1111,8 +843,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "Adaptive composite mode starts from compression, then escalates through fragments, bundles, and full phrase-saver lines only as needed.",
-            "Goal: preserve the least-cost unit that restores required meaning."
+            "Threshold-gated adaptive mode skips weak middle states unless they actually meet the recall target.",
+            "Goal: quality threshold first, budget second."
         ]
     }
 
@@ -1131,15 +863,15 @@ def main():
         ("recall_mode", "Recall mode"),
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
-        ("budgeted_rule_informed_mode", "Budgeted rule-informed mode"),
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
-        ("adaptive_composite_mode", "Adaptive composite mode"),
+        ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
     ]:
         m = metrics.get(key, {})
         print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")
         print(f"{label} context reduction percent: {m.get('context_reduction_percent')}")
+    print(f"Threshold-gated controller choices: {metrics.get('threshold_gated_adaptive_mode', {}).get('controller_choices')}")
     print(f"Merge success rate: {metrics.get('merge_success_rate')}")
 
 
