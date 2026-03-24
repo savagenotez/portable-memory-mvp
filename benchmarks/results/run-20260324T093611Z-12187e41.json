@@ -1,91 +1,28 @@
 {
   "schema_version": "0.1.0",
+  "run_id": "run-20260324T093611Z-12187e41",
+  "timestamp": "2026-03-24T09:36:11Z",
   "status": "completed",
-  "updated_at": "2026-03-24T09:36:11Z",
   "project": "portable-memory-mvp",
-  "latest_run_id": "run-20260324T093611Z-12187e41",
-  "summary": {
-    "benchmark_runner_present": true,
-    "history_tracking_present": true,
-    "latest_snapshot_present": true,
-    "human_eval_fields_defined": true,
-    "scenario_classifier_mode_present": true
-  },
-  "last_metrics": {
-    "merge_success_rate": 1.0,
-    "conflicts_created": 0,
-    "conflicts_resolved": null,
-    "package_count_used": 4,
-    "session_count_used": 4,
-    "recall_mode": {
-      "retrieval_hit_rate": 0.9286,
-      "context_reduction_percent": -171.47,
-      "repeated_explanation_items_removed": 26
-    },
-    "compression_mode": {
-      "retrieval_hit_rate": 0.5357,
-      "context_reduction_percent": 4.35,
-      "repeated_explanation_items_removed": 15
-    },
-    "hybrid_mode": {
-      "retrieval_hit_rate": 0.9286,
-      "context_reduction_percent": -26.02,
-      "repeated_explanation_items_removed": 26
-    },
-    "phrase_saver_per_byte_mode": {
-      "retrieval_hit_rate": 0.9286,
-      "context_reduction_percent": -26.02,
-      "repeated_explanation_items_removed": 26
-    },
-    "phrase_fragment_per_byte_mode": {
-      "retrieval_hit_rate": 0.6429,
-      "context_reduction_percent": -1.75,
-      "repeated_explanation_items_removed": 18
-    },
-    "title_aware_fragment_bundle_mode": {
-      "retrieval_hit_rate": 0.6429,
-      "context_reduction_percent": -2.08,
-      "repeated_explanation_items_removed": 18
-    },
-    "threshold_gated_adaptive_mode": {
-      "retrieval_hit_rate": 0.9286,
-      "context_reduction_percent": -24.53,
-      "repeated_explanation_items_removed": 26,
-      "controller_choices": {
-        "hybrid_fallback": 2,
-        "fragment_escalation": 1,
-        "phrase_saver_escalation": 3,
-        "compression_seed": 1
-      }
-    },
-    "scenario_classifier_mode": {
-      "retrieval_hit_rate": 0.9286,
-      "context_reduction_percent": -24.53,
-      "repeated_explanation_items_removed": 26,
-      "controller_choices": {
-        "hybrid_fallback": 2,
-        "fragment_escalation": 1,
-        "phrase_saver_escalation": 3,
-        "compression_seed": 1
-      },
-      "classifier_labels": {
-        "high_recall_need": 6,
-        "medium_recall_need": 1
-      }
-    }
-  },
-  "last_human_eval": {
-    "continuity_rating_0_to_5": null,
-    "reduced_reexplaining_yes_no": null,
-    "retrieved_right_state_yes_no": null,
-    "felt_like_same_project_yes_no": null,
-    "evaluator_notes": "Human evaluation not supplied for this run."
-  },
-  "last_scenarios": [
+  "scenario_results": [
     {
       "scenario_id": "project_and_constraints",
       "title": "Project and constraints retrieval",
+      "query": "What is the project and what are the constraints?",
+      "expected_phrases": [
+        "fastest_working_prototype",
+        "portable memory package",
+        "mergeable memory container",
+        "Codex CLI and Claude Code"
+      ],
       "merge_success": true,
+      "merge_summary": {
+        "objects_examined": 7,
+        "objects_merged": 7,
+        "conflicts_created": 0
+      },
+      "retrieval_preview_raw": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.\n\nConversation: Portable memory system durable updates. Summary: Portable memory system durable updates: user: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript. | assistant: Noted.\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nConversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\n\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.",
+      "baseline_preview": "# Conversation: Portable memory system planning\nuser: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nassistant: Understood.\n\n# Conversation: Portable memory system follow-up\nuser: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nassistant: Got it.",
       "modes": [
         {
           "mode": "recall_mode",
@@ -214,7 +151,17 @@
     {
       "scenario_id": "durable_update_retrieval",
       "title": "Durable update retrieval",
+      "query": "What has now been proven and what should happen next?",
+      "expected_phrases": [
+        "Durable update ingestion",
+        "Codex CLI and Claude Code should share the same memory layer",
+        "working context should be assembled from structured state",
+        "Portable, persistent, mergeable AI memory system"
+      ],
       "merge_success": null,
+      "merge_summary": null,
+      "retrieval_preview_raw": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.\n\nConversation: Portable memory system durable updates. Summary: Portable memory system durable updates: user: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript. | assistant: Noted.\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nConversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\n\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.",
+      "baseline_preview": "# Conversation: Portable memory system planning\nuser: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nassistant: Understood.\n\n# Conversation: Portable memory system follow-up\nuser: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nassistant: Got it.\n\n# Conversation: Portable memory system durable updates\nuser: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript.\nassistant: Noted.",
       "modes": [
         {
           "mode": "recall_mode",
@@ -349,7 +296,21 @@
     {
       "scenario_id": "project_constraints_core",
       "title": "Project and constraints core retrieval",
+      "query": "What is the core project, what constraints matter most, and what kind of system is being built?",
+      "expected_phrases": [
+        "fastest_working_prototype",
+        "portable memory package",
+        "mergeable memory container",
+        "Codex CLI and Claude Code"
+      ],
       "merge_success": true,
+      "merge_summary": {
+        "objects_examined": 7,
+        "objects_merged": 7,
+        "conflicts_created": 0
+      },
+      "retrieval_preview_raw": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.\n\nConversation: Portable memory system durable updates. Summary: Portable memory system durable updates: user: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript. | assistant: Noted.\n\nConversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.",
+      "baseline_preview": "# Conversation: Portable memory system planning\nuser: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nassistant: Understood.\n\n# Conversation: Portable memory system follow-up\nuser: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nassistant: Got it.",
       "modes": [
         {
           "mode": "recall_mode",
@@ -477,7 +438,17 @@
     {
       "scenario_id": "durable_update_state",
       "title": "Durable update and current state retrieval",
+      "query": "What has been proven already, what durable update was added, and what should happen next?",
+      "expected_phrases": [
+        "Durable update ingestion",
+        "working context should be assembled from structured state",
+        "Portable, persistent, mergeable AI memory system",
+        "Codex CLI and Claude Code should share the same memory layer"
+      ],
       "merge_success": null,
+      "merge_summary": null,
+      "retrieval_preview_raw": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.\n\nConversation: Portable memory system durable updates. Summary: Portable memory system durable updates: user: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript. | assistant: Noted.\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nConversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\n\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.",
+      "baseline_preview": "# Conversation: Portable memory system planning\nuser: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nassistant: Understood.\n\n# Conversation: Portable memory system follow-up\nuser: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nassistant: Got it.\n\n# Conversation: Portable memory system durable updates\nuser: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript.\nassistant: Noted.",
       "modes": [
         {
           "mode": "recall_mode",
@@ -606,7 +577,17 @@
     {
       "scenario_id": "workflow_continuity_tools",
       "title": "Workflow continuity across tools",
+      "query": "How should this memory system support continuity across tools and agent workflows?",
+      "expected_phrases": [
+        "Codex CLI and Claude Code should share the same memory layer",
+        "working context should be assembled from structured state",
+        "portable memory package",
+        "mergeable memory container"
+      ],
       "merge_success": null,
+      "merge_summary": null,
+      "retrieval_preview_raw": "Project: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.\n\nConversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.\n\nConversation: Portable memory system durable updates. Summary: Portable memory system durable updates: user: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript. | assistant: Noted.\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.",
+      "baseline_preview": "# Conversation: Portable memory system planning\nuser: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nassistant: Understood.\n\n# Conversation: Portable memory system follow-up\nuser: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nassistant: Got it.\n\n# Conversation: Portable memory system durable updates\nuser: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript.\nassistant: Noted.",
       "modes": [
         {
           "mode": "recall_mode",
@@ -736,7 +717,17 @@
     {
       "scenario_id": "proof_and_scope_boundary",
       "title": "Proof boundary and non-proven areas",
+      "query": "What exactly has been proven, and what is not yet proven or production-ready?",
+      "expected_phrases": [
+        "Durable update ingestion",
+        "Portable, persistent, mergeable AI memory system",
+        "working context should be assembled from structured state",
+        "Codex CLI and Claude Code should share the same memory layer"
+      ],
       "merge_success": null,
+      "merge_summary": null,
+      "retrieval_preview_raw": "Conversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.\n\nConversation: Portable memory system durable updates. Summary: Portable memory system durable updates: user: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript. | assistant: Noted.\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nConversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\n\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.\n\n",
+      "baseline_preview": "# Conversation: Portable memory system planning\nuser: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nassistant: Understood.\n\n# Conversation: Portable memory system follow-up\nuser: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nassistant: Got it.\n\n# Conversation: Portable memory system durable updates\nuser: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript.\nassistant: Noted.",
       "modes": [
         {
           "mode": "recall_mode",
@@ -864,7 +855,17 @@
     {
       "scenario_id": "memory_identity_summary",
       "title": "System identity summary retrieval",
+      "query": "Summarize the identity of this system in a compact but correct way.",
+      "expected_phrases": [
+        "portable memory package",
+        "mergeable memory container",
+        "Portable, persistent, mergeable AI memory system",
+        "fastest_working_prototype"
+      ],
       "merge_success": null,
+      "merge_summary": null,
+      "retrieval_preview_raw": "Conversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Durable update ingestion. Summary: Durable update ingestion: user: New durable update: - Codex CLI and Claude Code should share the same memory layer. - Working context should be assembled from structured state, not raw transcript. - The memory package system has now | assistant: Durable update recorded.\n\nConversation: Portable memory system durable updates. Summary: Portable memory system durable updates: user: We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript. | assistant: Noted.\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\n\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.\n\n",
+      "baseline_preview": "# Conversation: Portable memory system planning\nuser: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nassistant: Understood.\n\n# Conversation: Portable memory system follow-up\nuser: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nassistant: Got it.",
       "modes": [
         {
           "mode": "recall_mode",
@@ -996,5 +997,78 @@
       ]
     }
   ],
-  "note": "This file tracks the most recent benchmark run."
+  "metrics": {
+    "merge_success_rate": 1.0,
+    "conflicts_created": 0,
+    "conflicts_resolved": null,
+    "package_count_used": 4,
+    "session_count_used": 4,
+    "recall_mode": {
+      "retrieval_hit_rate": 0.9286,
+      "context_reduction_percent": -171.47,
+      "repeated_explanation_items_removed": 26
+    },
+    "compression_mode": {
+      "retrieval_hit_rate": 0.5357,
+      "context_reduction_percent": 4.35,
+      "repeated_explanation_items_removed": 15
+    },
+    "hybrid_mode": {
+      "retrieval_hit_rate": 0.9286,
+      "context_reduction_percent": -26.02,
+      "repeated_explanation_items_removed": 26
+    },
+    "phrase_saver_per_byte_mode": {
+      "retrieval_hit_rate": 0.9286,
+      "context_reduction_percent": -26.02,
+      "repeated_explanation_items_removed": 26
+    },
+    "phrase_fragment_per_byte_mode": {
+      "retrieval_hit_rate": 0.6429,
+      "context_reduction_percent": -1.75,
+      "repeated_explanation_items_removed": 18
+    },
+    "title_aware_fragment_bundle_mode": {
+      "retrieval_hit_rate": 0.6429,
+      "context_reduction_percent": -2.08,
+      "repeated_explanation_items_removed": 18
+    },
+    "threshold_gated_adaptive_mode": {
+      "retrieval_hit_rate": 0.9286,
+      "context_reduction_percent": -24.53,
+      "repeated_explanation_items_removed": 26,
+      "controller_choices": {
+        "hybrid_fallback": 2,
+        "fragment_escalation": 1,
+        "phrase_saver_escalation": 3,
+        "compression_seed": 1
+      }
+    },
+    "scenario_classifier_mode": {
+      "retrieval_hit_rate": 0.9286,
+      "context_reduction_percent": -24.53,
+      "repeated_explanation_items_removed": 26,
+      "controller_choices": {
+        "hybrid_fallback": 2,
+        "fragment_escalation": 1,
+        "phrase_saver_escalation": 3,
+        "compression_seed": 1
+      },
+      "classifier_labels": {
+        "high_recall_need": 6,
+        "medium_recall_need": 1
+      }
+    }
+  },
+  "human_eval": {
+    "continuity_rating_0_to_5": null,
+    "reduced_reexplaining_yes_no": null,
+    "retrieved_right_state_yes_no": null,
+    "felt_like_same_project_yes_no": null,
+    "evaluator_notes": "Human evaluation not supplied for this run."
+  },
+  "notes": [
+    "Scenario-classifier mode predicts likely recall need before selecting a preservation policy.",
+    "Goal: smarter routing before context assembly."
+  ]
 }
