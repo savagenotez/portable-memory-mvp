@@ -1,22 +1,16 @@
 {
   "schema_version": "0.1.0",
+  "run_id": "run-20260324T035541Z-422ac566",
+  "timestamp": "2026-03-24T03:55:41Z",
   "status": "skeleton_run",
-  "updated_at": "2026-03-24T03:55:41Z",
   "project": "portable-memory-mvp",
-  "latest_run_id": "run-20260324T035541Z-422ac566",
-  "summary": {
-    "benchmark_runner_present": true,
-    "history_tracking_present": true,
-    "latest_snapshot_present": true,
-    "human_eval_fields_defined": true
-  },
-  "last_scenario": {
+  "scenario": {
     "scenario_id": "skeleton-demo",
     "title": "Benchmark skeleton placeholder run",
     "mode": "scaffold_only",
     "description": "This is a placeholder benchmark run produced by the benchmark runner skeleton."
   },
-  "last_metrics": {
+  "metrics": {
     "merge_success_rate": null,
     "conflicts_created": null,
     "conflicts_resolved": null,
@@ -29,12 +23,15 @@
     "package_count_used": null,
     "session_count_used": null
   },
-  "last_human_eval": {
+  "human_eval": {
     "continuity_rating_0_to_5": null,
     "reduced_reexplaining_yes_no": null,
     "retrieved_right_state_yes_no": null,
     "felt_like_same_project_yes_no": null,
     "evaluator_notes": "No human evaluation captured in skeleton run."
   },
-  "note": "This file tracks the most recent benchmark run."
+  "notes": [
+    "Benchmark runner skeleton executed successfully.",
+    "Real benchmark logic has not been implemented yet."
+  ]
 }

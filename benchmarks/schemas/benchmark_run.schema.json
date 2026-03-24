@@ -1,0 +1,45 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/portable-memory-mvp/benchmark-run.schema.json",
+  "title": "BenchmarkRun",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "timestamp",
+    "status",
+    "project",
+    "scenario",
+    "metrics",
+    "human_eval"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "run_id": { "type": "string" },
+    "timestamp": { "type": "string" },
+    "status": { "type": "string" },
+    "project": { "type": "string" },
+    "scenario": {
+      "type": "object",
+      "required": ["scenario_id", "title", "mode", "description"],
+      "properties": {
+        "scenario_id": { "type": "string" },
+        "title": { "type": "string" },
+        "mode": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "human_eval": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
