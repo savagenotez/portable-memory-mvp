@@ -1,0 +1,14 @@
+﻿{
+    "retrieval_preview":  "Preference: engineering.optimization_target = fastest_working_prototype\n\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\n\nConversation: Portable memory system follow-up. Summary: Portable memory system follow-up: user: The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype. | assistant: Got it.\n\nConversation: Portable memory system planning. Summary: Portable memory system planning: user: We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded. | assistant: Understood.\n\nFact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\n\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents.",
+    "transcript_2_package_id":  "3affe5aa-2d7a-4b41-ba08-9eab959185d6",
+    "server_pid":  16280,
+    "ok":  true,
+    "merge_preview":  {
+                          "objects_examined":  7,
+                          "objects_merged":  7,
+                          "conflicts_created":  0
+                      },
+    "port":  8011,
+    "transcript_1_package_id":  "ee95252d-1660-44c1-915d-358a6bd5622f",
+    "docs_url":  "http://127.0.0.1:8011/docs"
+}

@@ -1,0 +1,26 @@
+﻿Portable Memory MVP - Publish Manifest
+
+Included:
+- README.md
+- LICENSE.txt
+- ROADMAP.md
+- OPEN_SOURCE_NOTES.md
+- app.py
+- requirements.txt
+- AGENTS.md
+- CLAUDE.md
+- start.ps1
+- sample_payloads\
+- .ai-memory\
+- artifacts\
+- docs\
+- benchmarks\
+- scripts\
+- examples\
+- memory\
+
+Excluded:
+- .venv
+- transient logs
+- local database files
+- prior dist/publish folders

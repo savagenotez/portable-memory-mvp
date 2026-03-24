@@ -1,0 +1,18 @@
+﻿Portable Memory Packaging Checklist
+
+[x] Base app runs
+[x] Ingest works
+[x] Retrieval works
+[x] Session 3 durable updates ingested
+[x] Session 4 durable update note ingested
+[x] Working context file generated
+[x] AGENTS.md generated
+[x] CLAUDE.md generated
+
+[ ] Auto-port bootstrap
+[ ] Clean startup script
+[ ] Repo README
+[ ] Open-source folder cleanup
+[ ] Benchmark module
+[ ] Codex/Claude workflow demo
+[ ] MCP adapter

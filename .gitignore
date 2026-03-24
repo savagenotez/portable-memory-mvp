@@ -1,0 +1,11 @@
+﻿.venv/
+__pycache__/
+*.pyc
+portable_memory.db
+uvicorn-out.log
+uvicorn-err.log
+server-startup-log.txt
+startup-results.json
+dist/
+benchmarks/results/latest.json
+benchmarks/results/history.json

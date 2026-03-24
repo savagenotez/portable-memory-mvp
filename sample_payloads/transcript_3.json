@@ -1,0 +1,15 @@
+﻿{
+  "agent_id": "alvin-savage",
+  "conversation_id": "chat-003",
+  "title": "Portable memory system durable updates",
+  "messages": [
+    {
+      "role": "user",
+      "content": "We want Codex CLI and Claude Code to share the same memory layer. Working context should be assembled from structured state, not raw transcript."
+    },
+    {
+      "role": "assistant",
+      "content": "Noted."
+    }
+  ]
+}

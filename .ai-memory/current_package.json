@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "package_id": "11111111-1111-1111-1111-111111111111",
+  "agent_id": "alvin-savage",
+  "created_at": "2026-03-23T15:00:00Z",
+  "updated_at": "2026-03-23T15:00:00Z",
+  "lineage": {
+    "parent_package_ids": [],
+    "merge_ancestor_ids": []
+  },
+  "state": {
+    "facts": [
+      {
+        "fact_id": "22222222-2222-2222-2222-222222222222",
+        "key": "product.core_insight",
+        "value": "The real product is a portable, persistent, mergeable AI memory package.",
+        "status": "active",
+        "updated_at": "2026-03-23T15:00:00Z",
+        "provenance": {
+          "source_type": "chat",
+          "source_id": "chat-transfer-001",
+          "message_id": "m1",
+          "captured_at": "2026-03-23T15:00:00Z",
+          "confidence": 0.99
+        }
+      }
+    ],
+    "preferences": [
+      {
+        "preference_id": "33333333-3333-3333-3333-333333333333",
+        "key": "response.style",
+        "value": "direct_grounded",
+        "strength": "required",
+        "updated_at": "2026-03-23T15:00:00Z",
+        "provenance": {
+          "source_type": "chat",
+          "source_id": "chat-transfer-001",
+          "message_id": "m2",
+          "captured_at": "2026-03-23T15:00:00Z",
+          "confidence": 0.98
+        }
+      }
+    ],
+    "projects": [
+      {
+        "project_id": "44444444-4444-4444-4444-444444444444",
+        "name": "Portable persistent mergeable AI chat memory system",
+        "summary": "Build a system that carries knowledge across chats, merges new knowledge, preserves history and conflicts, and keeps growing over time.",
+        "status": "active",
+        "updated_at": "2026-03-23T15:00:00Z",
+        "provenance": {
+          "source_type": "chat",
+          "source_id": "chat-transfer-001",
+          "message_id": "m3",
+          "captured_at": "2026-03-23T15:00:00Z",
+          "confidence": 0.99
+        }
+      }
+    ],
+    "conversation_summaries": [
+      {
+        "conversation_id": "chat-transfer-001",
+        "title": "Transfer capsule continuation",
+        "summary": "The symbolic layer is conceptual; the real product is a portable, mergeable AI memory container with JSON serialization, merge logic, storage, and API integration.",
+        "updated_at": "2026-03-23T15:00:00Z",
+        "provenance": {
+          "source_type": "chat",
+          "source_id": "chat-transfer-001",
+          "message_id": "m4",
+          "captured_at": "2026-03-23T15:00:00Z",
+          "confidence": 0.97
+        }
+      }
+    ],
+    "conflicts": []
+  }
+}
