@@ -1,0 +1,88 @@
+{
+  "demo_script_version": "0.1.0",
+  "source_run_file": "run-20260324T214221Z-429eb2dd.json",
+  "source_policy_report": "robustness-aware-policy-report-run-20260324T214221Z-429eb2dd.json",
+  "source_customer_deck": "customer-deck-summary-run-20260324T214221Z-429eb2dd.json",
+  "run_id": "run-20260324T214221Z-429eb2dd",
+  "selected_scenario": {
+    "scenario_id": "mixed_constraints_plus_identity",
+    "title": "Mixed-recall: constraints plus identity",
+    "query": "What are the main constraints and what system is being built?",
+    "expected_phrases": [
+      "fastest_working_prototype",
+      "portable memory package",
+      "mergeable memory container"
+    ]
+  },
+  "comparison": {
+    "compression_mode": {
+      "retrieval_hit_rate": 0.6667,
+      "soft_hit_rate": 0.6667,
+      "context_reduction_percent": -15.12,
+      "preview": "Fact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents."
+    },
+    "hybrid_mode": {
+      "retrieval_hit_rate": 0.6667,
+      "soft_hit_rate": 0.6667,
+      "context_reduction_percent": -15.12,
+      "preview": "Fact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents."
+    },
+    "robustness_aware_pruning_mode": {
+      "retrieval_hit_rate": 0.6667,
+      "soft_hit_rate": 0.6667,
+      "context_reduction_percent": 59.42,
+      "preview": "Fact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.",
+      "pruned_line_count": 2,
+      "controller_choice": "robust_pruned_phrase_saver"
+    }
+  },
+  "demo_talk_track": [
+    "Start by stating the problem: memory systems either keep too much context or lose important meaning.",
+    "Show the selected scenario and the user question.",
+    "Show compression mode first and explain what it saves, but point out what it risks losing.",
+    "Show hybrid mode next and explain that it rescues meaning, but grows context too much.",
+    "Show robustness-aware pruning last and explain that it keeps the rescue value while cutting context safely.",
+    "Call out the exact metrics on screen: retrieval hit rate, soft hit rate, and context reduction percent.",
+    "Close with the message that this is minimum robust meaning for continuity, not naive summarization."
+  ],
+  "demo_flow": [
+    {
+      "step": 1,
+      "title": "Frame the problem",
+      "script": "We need memory that preserves continuity without dragging unnecessary context forward."
+    },
+    {
+      "step": 2,
+      "title": "Introduce the scenario",
+      "script": "Here is a real benchmark scenario: Mixed-recall: constraints plus identity. The query is: What are the main constraints and what system is being built?"
+    },
+    {
+      "step": 3,
+      "title": "Show compression baseline",
+      "script": "Compression mode gets hit rate 0.6667 with context reduction -15.12. It compresses, but risks losing meaning.",
+      "preview": "Fact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents."
+    },
+    {
+      "step": 4,
+      "title": "Show hybrid rescue",
+      "script": "Hybrid mode rescues meaning with hit rate 0.6667, but context reduction is -15.12, which means it is still bloated.",
+      "preview": "Fact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded.\nFact: project.goal = The goal is to make this work across Codex CLI and Claude Code. Optimize for fastest working prototype.\nProject: Portable memory system planning. Status: active. Summary: Portable, persistent, mergeable AI memory system for continuity across chats and agents."
+    },
+    {
+      "step": 5,
+      "title": "Show robustness-aware pruning",
+      "script": "Robustness-aware pruning keeps hit rate 0.6667 and soft hit rate 0.6667 while reaching context reduction 59.42.",
+      "preview": "Fact: product.core_definition = We want a portable memory package for AI chats. The real product is a mergeable memory container. Be direct and grounded."
+    },
+    {
+      "step": 6,
+      "title": "Explain why it wins",
+      "script": "It starts from rescued context, then prunes only when exact recall, soft recall, and overlap robustness remain intact."
+    },
+    {
+      "step": 7,
+      "title": "Close with business value",
+      "script": "That means lower context cost, stronger continuity, and more trustworthy memory behavior for real AI products."
+    }
+  ]
+}
