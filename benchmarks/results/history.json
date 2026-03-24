@@ -68,5 +68,23 @@
     "retrieval_hit_rate": 0.5,
     "context_reduction_percent": 6.4,
     "merge_success_rate": 1.0
+  },
+  {
+    "timestamp": "2026-03-24T05:45:07Z",
+    "event": "benchmark_run_recorded",
+    "run_id": "run-20260324T054507Z-395a4d59",
+    "status": "completed",
+    "scenario_count": 2,
+    "merge_success_rate": 1.0,
+    "recall_mode": {
+      "retrieval_hit_rate": 0.875,
+      "context_reduction_percent": -181.01,
+      "repeated_explanation_items_removed": 7
+    },
+    "compression_mode": {
+      "retrieval_hit_rate": 0.5,
+      "context_reduction_percent": 6.4,
+      "repeated_explanation_items_removed": 4
+    }
   }
 ]

@@ -106,17 +106,59 @@ def dedupe_lines(lines):
     return out
 
 
-def strict_summary_first_memory_text(text: str, expected_phrases, max_chars: int = 700) -> str:
-    raw_lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-    raw_lines = dedupe_lines(raw_lines)
+def expected_score(line: str, expected_phrases) -> int:
+    lower = normalize_text(line)
+    score = 0
+    for phrase in expected_phrases:
+        if normalize_text(phrase) in lower:
+            score += 10
+    return score
 
-    prefs = []
-    facts = []
-    projects = []
-    durable = []
-    convos = []
-    other = []
 
+def recall_mode_text(text: str, expected_phrases, max_chars: int = 1400) -> str:
+    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
+
+    def score(line: str) -> int:
+        lower = line.lower()
+        s = 0
+        if lower.startswith("preference:"):
+            s += 8
+        if lower.startswith("fact:"):
+            s += 8
+        if lower.startswith("project:"):
+            s += 8
+        if "durable update" in lower:
+            s += 6
+        if lower.startswith("conversation:"):
+            s += 3
+        if "goal" in lower:
+            s += 4
+        if "constraint" in lower:
+            s += 4
+        if "portable" in lower or "mergeable" in lower:
+            s += 4
+        if "codex" in lower or "claude" in lower:
+            s += 4
+        s += expected_score(line, expected_phrases)
+        s -= max(0, len(line) // 180)
+        return s
+
+    ranked = sorted(raw_lines, key=lambda x: (-score(x), len(x)))
+    out = []
+    cur = 0
+    for line in ranked:
+        extra = len(line) + (1 if out else 0)
+        if cur + extra > max_chars:
+            break
+        out.append(line)
+        cur += extra
+    return "\n".join(out).strip()
+
+
+def compression_mode_text(text: str, expected_phrases, max_chars: int = 700) -> str:
+    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
+
+    prefs, facts, projects, durable, convos, other = [], [], [], [], [], []
     for line in raw_lines:
         lower = line.lower()
         if lower.startswith("preference:"):
@@ -132,39 +174,28 @@ def strict_summary_first_memory_text(text: str, expected_phrases, max_chars: int
         else:
             other.append(line)
 
-    def expected_score(line: str) -> int:
-        lower = normalize_text(line)
-        score = 0
-        for phrase in expected_phrases:
-            if normalize_text(phrase) in lower:
-                score += 10
-        return score
+    sorter = lambda items: sorted(items, key=lambda x: (-expected_score(x, expected_phrases), len(x)))
+    prefs = sorter(prefs)
+    facts = sorter(facts)
+    projects = sorter(projects)
+    durable = sorter(durable)
+    convos = sorter(convos)
+    other = sorter(other)
 
-    def sort_group(lines):
-        return sorted(lines, key=lambda x: (-expected_score(x), len(x)))
-
-    prefs = sort_group(prefs)
-    facts = sort_group(facts)
-    projects = sort_group(projects)
-    durable = sort_group(durable)
-    convos = sort_group(convos)
-    other = sort_group(other)
-
-    selected_convos = [c for c in convos if expected_score(c) > 0][:1]
-    selected_other = [o for o in other if expected_score(o) > 0][:1]
+    selected_convos = [c for c in convos if expected_score(c, expected_phrases) > 0][:1]
+    selected_other = [o for o in other if expected_score(o, expected_phrases) > 0][:1]
 
     ordered = prefs + facts + projects + durable + selected_convos + selected_other
 
-    final_lines = []
-    current_len = 0
+    out = []
+    cur = 0
     for line in ordered:
-        extra = len(line) + (1 if final_lines else 0)
-        if current_len + extra > max_chars:
+        extra = len(line) + (1 if out else 0)
+        if cur + extra > max_chars:
             break
-        final_lines.append(line)
-        current_len += extra
-
-    return "\n".join(final_lines).strip()
+        out.append(line)
+        cur += extra
+    return "\n".join(out).strip()
 
 
 def retrieval_hit_rate(text: str, expected_phrases):
@@ -187,6 +218,19 @@ def compare_to_baseline(memory_text: str, baseline_text: str):
     }
 
 
+def build_mode_result(mode_name: str, transformed_text: str, baseline_text: str, expected_phrases):
+    hit_rate, hits = retrieval_hit_rate(transformed_text, expected_phrases)
+    metrics = compare_to_baseline(transformed_text, baseline_text)
+    return {
+        "mode": mode_name,
+        "matched_phrases": hits,
+        "retrieval_hit_rate": round(hit_rate, 4) if hit_rate is not None else None,
+        "repeated_explanation_items_removed": len(hits) if hits else 0,
+        "preview": transformed_text[:1500],
+        **metrics
+    }
+
+
 def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict):
     query = scenario["query"]
     top_k = int(scenario.get("top_k", 12))
@@ -200,11 +244,13 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     }
     retrieval = http_json("POST", f"{base_url}/v1/retrieve/context", retrieve_body)
     raw_memory_text = retrieval.get("text", "")
-    memory_text = strict_summary_first_memory_text(raw_memory_text, expected_phrases)
-
     baseline_text = build_transcript_only_context(transcript_files)
-    baseline_metrics = compare_to_baseline(memory_text, baseline_text)
-    hit_rate, hits = retrieval_hit_rate(memory_text, expected_phrases)
+
+    recall_text = recall_mode_text(raw_memory_text, expected_phrases)
+    compression_text = compression_mode_text(raw_memory_text, expected_phrases)
+
+    recall_result = build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases)
+    compression_result = build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases)
 
     merge_summary = None
     merge_success = None
@@ -228,21 +274,32 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "title": scenario["title"],
         "query": query,
         "expected_phrases": expected_phrases,
-        "matched_phrases": hits,
-        "retrieval_hit_rate": round(hit_rate, 4) if hit_rate is not None else None,
-        "repeated_explanation_items_removed": len(hits) if hits else 0,
         "merge_success": merge_success,
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
-        "retrieval_preview_strict_summary_first": memory_text,
         "baseline_preview": baseline_text[:1500],
-        **baseline_metrics
+        "modes": [recall_result, compression_result]
+    }
+
+
+def aggregate_mode_metrics(results, mode_name):
+    mode_results = []
+    for scenario in results:
+        for mode in scenario["modes"]:
+            if mode["mode"] == mode_name:
+                mode_results.append(mode)
+
+    hit_rates = [m["retrieval_hit_rate"] for m in mode_results if m["retrieval_hit_rate"] is not None]
+    reductions = [m["context_reduction_percent"] for m in mode_results if m["context_reduction_percent"] is not None]
+
+    return {
+        "retrieval_hit_rate": round(sum(hit_rates) / len(hit_rates), 4) if hit_rates else None,
+        "context_reduction_percent": round(sum(reductions) / len(reductions), 2) if reductions else None,
+        "repeated_explanation_items_removed": sum(m["repeated_explanation_items_removed"] for m in mode_results),
     }
 
 
 def aggregate_metrics(results):
-    hit_rates = [r["retrieval_hit_rate"] for r in results if r["retrieval_hit_rate"] is not None]
-    reductions = [r["context_reduction_percent"] for r in results if r["context_reduction_percent"] is not None]
     merge_checks = [r["merge_success"] for r in results if r["merge_success"] is not None]
     conflicts = []
     for r in results:
@@ -253,18 +310,17 @@ def aggregate_metrics(results):
 
     pkg_count = len([v for v in parse_package_ids().values() if v])
 
+    recall_metrics = aggregate_mode_metrics(results, "recall_mode")
+    compression_metrics = aggregate_mode_metrics(results, "compression_mode")
+
     return {
         "merge_success_rate": round(sum(1 for x in merge_checks if x) / len(merge_checks), 4) if merge_checks else None,
         "conflicts_created": sum(conflicts) if conflicts else None,
         "conflicts_resolved": None,
-        "retrieval_hit_rate": round(sum(hit_rates) / len(hit_rates), 4) if hit_rates else None,
-        "retrieval_relevance_score": round(sum(hit_rates) / len(hit_rates), 4) if hit_rates else None,
-        "context_bytes_without_memory": None,
-        "context_bytes_with_memory": None,
-        "context_reduction_percent": round(sum(reductions) / len(reductions), 2) if reductions else None,
-        "repeated_explanation_items_removed": sum(r["repeated_explanation_items_removed"] for r in results),
         "package_count_used": pkg_count,
         "session_count_used": pkg_count,
+        "recall_mode": recall_metrics,
+        "compression_mode": compression_metrics,
     }
 
 
@@ -276,9 +332,9 @@ def update_history(history_path: Path, entry: dict) -> None:
         "run_id": entry["run_id"],
         "status": entry["status"],
         "scenario_count": len(entry["scenario_results"]),
-        "retrieval_hit_rate": entry["metrics"].get("retrieval_hit_rate"),
-        "context_reduction_percent": entry["metrics"].get("context_reduction_percent"),
-        "merge_success_rate": entry["metrics"].get("merge_success_rate")
+        "merge_success_rate": entry["metrics"].get("merge_success_rate"),
+        "recall_mode": entry["metrics"].get("recall_mode"),
+        "compression_mode": entry["metrics"].get("compression_mode")
     })
     save_json(history_path, history)
 
@@ -294,7 +350,8 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "benchmark_runner_present": True,
             "history_tracking_present": True,
             "latest_snapshot_present": True,
-            "human_eval_fields_defined": True
+            "human_eval_fields_defined": True,
+            "dual_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -302,9 +359,8 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             {
                 "scenario_id": s["scenario_id"],
                 "title": s["title"],
-                "retrieval_hit_rate": s["retrieval_hit_rate"],
-                "context_reduction_percent": s["context_reduction_percent"],
-                "merge_success": s["merge_success"]
+                "merge_success": s["merge_success"],
+                "modes": s["modes"]
             }
             for s in entry["scenario_results"]
         ],
@@ -363,8 +419,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to strict summary-first structured-memory retrieval.",
-            "Strict summary-first mode minimizes conversation carryover unless it directly preserves expected signal."
+            "This benchmark compares transcript-only continuation to dual-mode structured-memory retrieval.",
+            "Recall mode prioritizes signal retention. Compression mode prioritizes shorter context."
         ]
     }
 
@@ -376,10 +432,15 @@ def main():
     update_latest(latest_path, run)
     update_history(history_path, run)
 
+    recall = run["metrics"]["recall_mode"]
+    comp = run["metrics"]["compression_mode"]
+
     print("Benchmark run completed.")
     print(f"Run file: {run_path}")
-    print(f"Average retrieval hit rate: {run['metrics']['retrieval_hit_rate']}")
-    print(f"Average context reduction percent: {run['metrics']['context_reduction_percent']}")
+    print(f"Recall mode retrieval hit rate: {recall.get('retrieval_hit_rate')}")
+    print(f"Recall mode context reduction percent: {recall.get('context_reduction_percent')}")
+    print(f"Compression mode retrieval hit rate: {comp.get('retrieval_hit_rate')}")
+    print(f"Compression mode context reduction percent: {comp.get('context_reduction_percent')}")
     print(f"Merge success rate: {run['metrics']['merge_success_rate']}")
 
 
