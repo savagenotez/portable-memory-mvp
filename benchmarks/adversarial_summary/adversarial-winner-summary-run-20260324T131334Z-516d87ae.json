@@ -1,0 +1,213 @@
+{
+  "adversarial_summary_version": "0.1.0",
+  "source_adversarial_file": "adversarial-pruning-validation-run-20260324T131334Z-516d87ae.json",
+  "source_run_id": "run-20260324T131334Z-516d87ae",
+  "timestamp": "2026-03-24T13:13:34Z",
+  "scenario_count": 13,
+  "winner_counts_by_mode": {
+    "phrase_saver_pruning_mode": 11,
+    "hybrid_mode": 1,
+    "compression_mode": 1
+  },
+  "ranked_winners": [
+    {
+      "mode": "phrase_saver_pruning_mode",
+      "win_count": 11,
+      "avg_exact_hit_rate": 0.9167,
+      "avg_soft_hit_rate": 0.9167,
+      "avg_adversarial_variant_hit_rate": 0.9551,
+      "avg_context_reduction_percent": 25.78
+    },
+    {
+      "mode": "hybrid_mode",
+      "win_count": 1,
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -54.76
+    },
+    {
+      "mode": "compression_mode",
+      "win_count": 1,
+      "avg_exact_hit_rate": 0.6923,
+      "avg_soft_hit_rate": 0.6923,
+      "avg_adversarial_variant_hit_rate": 0.75,
+      "avg_context_reduction_percent": -30.22
+    }
+  ],
+  "winner_details": [
+    {
+      "scenario_id": "project_and_constraints",
+      "title": "Project and constraints retrieval",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 26.26
+    },
+    {
+      "scenario_id": "durable_update_retrieval",
+      "title": "Durable update retrieval",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 21.1
+    },
+    {
+      "scenario_id": "project_constraints_core",
+      "title": "Project and constraints core retrieval",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 26.26
+    },
+    {
+      "scenario_id": "durable_update_state",
+      "title": "Durable update and current state retrieval",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 21.1
+    },
+    {
+      "scenario_id": "workflow_continuity_tools",
+      "title": "Workflow continuity across tools",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 21.43
+    },
+    {
+      "scenario_id": "proof_and_scope_boundary",
+      "title": "Proof boundary and non-proven areas",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 21.1
+    },
+    {
+      "scenario_id": "memory_identity_summary",
+      "title": "System identity summary retrieval",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": -3.98
+    },
+    {
+      "scenario_id": "lightweight_repo_identity",
+      "title": "Low-recall: lightweight repo identity",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 0.5,
+      "winner_exact_hit_rate": 0.5,
+      "winner_context_reduction_percent": 22.73
+    },
+    {
+      "scenario_id": "lightweight_tooling_note",
+      "title": "Low-recall: tooling note",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 29.94
+    },
+    {
+      "scenario_id": "lightweight_goal_only",
+      "title": "Low-recall: goal only",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 21.72
+    },
+    {
+      "scenario_id": "mixed_project_plus_next_step",
+      "title": "Mixed-recall: project plus next step",
+      "winner_mode": "hybrid_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 0.75,
+      "winner_exact_hit_rate": 0.75,
+      "winner_context_reduction_percent": -25.25
+    },
+    {
+      "scenario_id": "mixed_constraints_plus_identity",
+      "title": "Mixed-recall: constraints plus identity",
+      "winner_mode": "compression_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": -15.12
+    },
+    {
+      "scenario_id": "mixed_proof_and_workflow",
+      "title": "Mixed-recall: proof and workflow",
+      "winner_mode": "phrase_saver_pruning_mode",
+      "winner_adversarial_variant_hit_rate": 1.0,
+      "winner_soft_hit_rate": 1.0,
+      "winner_exact_hit_rate": 1.0,
+      "winner_context_reduction_percent": 21.1
+    }
+  ],
+  "summary_by_mode": {
+    "recall_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -255.25
+    },
+    "compression_mode": {
+      "avg_exact_hit_rate": 0.6923,
+      "avg_soft_hit_rate": 0.6923,
+      "avg_adversarial_variant_hit_rate": 0.75,
+      "avg_context_reduction_percent": -30.22
+    },
+    "hybrid_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -54.76
+    },
+    "phrase_saver_per_byte_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -54.76
+    },
+    "phrase_saver_pruning_mode": {
+      "avg_exact_hit_rate": 0.9167,
+      "avg_soft_hit_rate": 0.9167,
+      "avg_adversarial_variant_hit_rate": 0.9551,
+      "avg_context_reduction_percent": 25.78
+    },
+    "phrase_fragment_per_byte_mode": {
+      "avg_exact_hit_rate": 0.75,
+      "avg_soft_hit_rate": 0.75,
+      "avg_adversarial_variant_hit_rate": 0.8077,
+      "avg_context_reduction_percent": -33.5
+    },
+    "title_aware_fragment_bundle_mode": {
+      "avg_exact_hit_rate": 0.75,
+      "avg_soft_hit_rate": 0.75,
+      "avg_adversarial_variant_hit_rate": 0.8077,
+      "avg_context_reduction_percent": -33.68
+    },
+    "threshold_gated_adaptive_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -53.95
+    },
+    "scenario_classifier_mode": {
+      "avg_exact_hit_rate": 0.9423,
+      "avg_soft_hit_rate": 0.9423,
+      "avg_adversarial_variant_hit_rate": 1.0,
+      "avg_context_reduction_percent": -53.95
+    }
+  }
+}
