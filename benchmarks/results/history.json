@@ -48,5 +48,15 @@
     "retrieval_hit_rate": 0.875,
     "context_reduction_percent": -181.01,
     "merge_success_rate": 1.0
+  },
+  {
+    "timestamp": "2026-03-24T05:32:54Z",
+    "event": "benchmark_run_recorded",
+    "run_id": "run-20260324T053254Z-a2e6f6b6",
+    "status": "completed",
+    "scenario_count": 2,
+    "retrieval_hit_rate": 0.875,
+    "context_reduction_percent": -56.52,
+    "merge_success_rate": 1.0
   }
 ]

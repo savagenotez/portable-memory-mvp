@@ -1,9 +1,9 @@
 {
   "schema_version": "0.1.0",
   "status": "completed",
-  "updated_at": "2026-03-24T05:17:52Z",
+  "updated_at": "2026-03-24T05:32:54Z",
   "project": "portable-memory-mvp",
-  "latest_run_id": "run-20260324T051752Z-1c664ce5",
+  "latest_run_id": "run-20260324T053254Z-a2e6f6b6",
   "summary": {
     "benchmark_runner_present": true,
     "history_tracking_present": true,
@@ -18,7 +18,7 @@
     "retrieval_relevance_score": 0.875,
     "context_bytes_without_memory": null,
     "context_bytes_with_memory": null,
-    "context_reduction_percent": -181.01,
+    "context_reduction_percent": -56.52,
     "repeated_explanation_items_removed": 7,
     "package_count_used": 4,
     "session_count_used": 4
@@ -35,14 +35,14 @@
       "scenario_id": "project_and_constraints",
       "title": "Project and constraints retrieval",
       "retrieval_hit_rate": 0.75,
-      "context_reduction_percent": -254.38,
+      "context_reduction_percent": -87.8,
       "merge_success": true
     },
     {
       "scenario_id": "durable_update_retrieval",
       "title": "Durable update retrieval",
       "retrieval_hit_rate": 1.0,
-      "context_reduction_percent": -107.64,
+      "context_reduction_percent": -25.25,
       "merge_success": null
     }
   ],
