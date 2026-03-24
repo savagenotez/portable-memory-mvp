@@ -1,0 +1,1 @@
+﻿Early prototype for portable, persistent, mergeable AI memory continuity across sessions, updates, and agent workflows.

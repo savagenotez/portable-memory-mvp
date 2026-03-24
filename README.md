@@ -1,13 +1,19 @@
 ﻿# Portable Memory MVP
 
-Portable Memory MVP is an early prototype for a portable, persistent, mergeable AI memory layer.
+Portable Memory MVP is an early open-source prototype for a portable, persistent, mergeable AI memory layer.
 
-It is designed to prove that knowledge from one session can be:
-- extracted
-- stored
-- merged
-- retrieved
-- carried into later sessions without starting from scratch
+It is built to test a simple but important idea:
+
+Can an AI system carry forward durable working state across sessions instead of repeatedly starting over from raw transcript history alone?
+
+This prototype demonstrates an early yes.
+
+It shows that session knowledge can be:
+- ingested from transcripts
+- turned into structured package state
+- accumulated across sessions
+- retrieved later as usable working context
+- extended with durable update notes that re-enter the memory stream
 
 ## What this prototype currently proves
 
@@ -19,80 +25,52 @@ This version has already demonstrated:
 - durable update note ingestion works
 - working context regeneration works
 
-## Core idea
+## Why this matters
 
-The core idea is not transcript replay.
+Most AI workflows still rely heavily on fragile session history and repeated re-explanation.
 
-The core idea is:
+This project explores a different direction:
 
 a structured memory package that survives across sessions and can be merged forward
 
-This allows an AI workflow to preserve:
+That makes it possible to preserve:
 - project state
 - constraints
 - durable updates
 - prior decisions
-- accumulated context
+- accumulated working context
 
-## Current architecture
+## Current status
+
+This is an early working prototype, not a production-ready system.
+
+It is best understood as:
+- a proof of concept
+- an open prototype
+- a foundation for future benchmarks, integrations, and workflow tooling
+
+## Repository contents
 
 - app.py - FastAPI MVP
 - sample_payloads/ - sample transcripts for testing
 - .ai-memory/ - working memory files
-- artifacts/ - successful proof outputs
-- docs/ - status, runbook, packaging notes
+- artifacts/ - proof outputs from successful runs
+- docs/ - status, runbook, and packaging notes
 
 ## Quick start
 
-Open PowerShell in this folder and run:
-
-powershell -ExecutionPolicy Bypass -File .\dist\portable_memory_automation_clean\start-clean.ps1
-
-Or run the app manually:
+Run locally with:
 
 .\.venv\Scripts\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8011
 
-Then open the docs URL shown in the terminal.
+Then open the docs endpoint shown in the terminal.
 
-## What success looks like
+## What comes next
 
-A successful run should allow you to:
-- ingest multiple sessions
-- retrieve accumulated project context
-- ingest durable update notes
-- regenerate a working context file
-- continue without fully re-explaining prior state
-
-## Current proof artifacts
-
-See:
-- artifacts/automation-results.json
-- artifacts/step3-results.json
-- artifacts/step4-results.json
-- artifacts/package-ids.txt
-- artifacts/working_context_snapshot.md
-
-## Current status
-
-This is still an early prototype, not a production-ready system.
-
-Not yet included:
-- enterprise auth
-- robust conflict UI
+Planned next steps include:
 - benchmark module
-- MCP adapter
-- Codex/Claude live integration harness
-- production reliability hardening
-
-## Next steps
-
-- benchmark module
-- automated port-safe bootstrap
+- cleaner startup automation
 - Codex CLI workflow example
 - Claude Code workflow example
-- open-source cleanup
 - MCP-compatible interface layer
-
-## Why this matters
-
-This project is exploring whether AI systems can carry forward durable working state in a structured way instead of relying on raw transcript length alone.
+- stronger conflict handling and evaluation

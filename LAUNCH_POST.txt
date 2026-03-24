@@ -1,0 +1,17 @@
+﻿I just open-sourced an early prototype called Portable Memory MVP.
+
+It explores a simple question:
+
+Can AI working state be carried across sessions in a structured, mergeable way instead of constantly restarting from transcript history?
+
+So far the prototype has demonstrated:
+- transcript ingest
+- package creation
+- multi-session accumulation
+- retrieval of accumulated context
+- durable update note ingestion back into memory
+
+It is still early, but the core idea is now working in a real prototype.
+
+Repo:
+https://github.com/savagenotez/portable-memory-mvp
