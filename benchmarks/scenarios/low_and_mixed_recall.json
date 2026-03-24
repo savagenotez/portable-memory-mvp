@@ -1,0 +1,97 @@
+﻿[
+  {
+    "scenario_id": "lightweight_repo_identity",
+    "title": "Low-recall: lightweight repo identity",
+    "query": "What project is this?",
+    "top_k": 8,
+    "baseline_transcripts": [
+      "transcript_1.json"
+    ],
+    "expected_phrases": [
+      "Portable Memory MVP",
+      "portable memory package"
+    ],
+    "merge_preview": {
+      "left_package_key": "session_1",
+      "right_package_key": "session_2"
+    }
+  },
+  {
+    "scenario_id": "lightweight_tooling_note",
+    "title": "Low-recall: tooling note",
+    "query": "Which tools are part of the workflow?",
+    "top_k": 8,
+    "baseline_transcripts": [
+      "transcript_2.json"
+    ],
+    "expected_phrases": [
+      "Codex CLI",
+      "Claude Code"
+    ]
+  },
+  {
+    "scenario_id": "lightweight_goal_only",
+    "title": "Low-recall: goal only",
+    "query": "What is the core goal?",
+    "top_k": 8,
+    "baseline_transcripts": [
+      "transcript_1.json"
+    ],
+    "expected_phrases": [
+      "portable, persistent, mergeable AI memory system"
+    ]
+  },
+  {
+    "scenario_id": "mixed_project_plus_next_step",
+    "title": "Mixed-recall: project plus next step",
+    "query": "What is the project and what should happen next?",
+    "top_k": 10,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json",
+      "transcript_3.json"
+    ],
+    "expected_phrases": [
+      "Portable Memory MVP",
+      "durable update ingestion",
+      "Codex CLI",
+      "Claude Code"
+    ]
+  },
+  {
+    "scenario_id": "mixed_constraints_plus_identity",
+    "title": "Mixed-recall: constraints plus identity",
+    "query": "What are the main constraints and what system is being built?",
+    "top_k": 10,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json"
+    ],
+    "expected_phrases": [
+      "fastest_working_prototype",
+      "portable memory package",
+      "mergeable memory container"
+    ],
+    "merge_preview": {
+      "left_package_key": "session_1",
+      "right_package_key": "session_2"
+    }
+  },
+  {
+    "scenario_id": "mixed_proof_and_workflow",
+    "title": "Mixed-recall: proof and workflow",
+    "query": "What has been proven and how do Codex CLI and Claude Code relate to it?",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json",
+      "transcript_3.json"
+    ],
+    "expected_phrases": [
+      "durable update ingestion",
+      "Portable, persistent, mergeable AI memory system",
+      "Codex CLI",
+      "Claude Code"
+    ]
+  }
+]
