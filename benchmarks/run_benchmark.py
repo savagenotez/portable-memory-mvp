@@ -742,6 +742,127 @@ def title_aware_fragment_bundle_mode_text(text: str, expected_phrases, scenario_
     return "\n".join(chosen_units).strip()
 
 
+def adaptive_composite_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, fragment_maps, max_chars: int = 980) -> str:
+    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
+    raw_norm_map = {normalize_text(line): line for line in raw_lines}
+    scenario_attr = attribution_maps.get(scenario_id, {})
+    scenario_frags = fragment_maps.get(scenario_id, [])
+
+    chosen = dedupe_lines([ln for ln in compression_mode_text(text, expected_phrases, max_chars=650).splitlines() if ln.strip()])
+    chosen_norms = {normalize_text(x) for x in chosen}
+
+    def joined():
+        return "\n".join(chosen)
+
+    def missing_phrases():
+        j = joined()
+        return [p for p in expected_phrases if not contains_phrase(j, p)]
+
+    # Phase 1: exact high-value fragments first
+    frag_candidates = []
+    for frag in scenario_frags:
+        fragment = frag.get("fragment", "").strip()
+        if not fragment:
+            continue
+        norm = normalize_text(fragment)
+        if norm in chosen_norms:
+            continue
+        hit_count = sum(1 for p in missing_phrases() if contains_phrase(fragment, p))
+        if hit_count == 0:
+            continue
+        ratio = frag.get("phrases_per_char", 0.0)
+        restored_count = frag.get("restored_phrase_count", 0)
+        score = ratio * 10000.0 + restored_count * 10.0 + structure_score(fragment)
+        frag_candidates.append((-score, len(fragment), fragment))
+    frag_candidates.sort()
+
+    for _, _, fragment in frag_candidates:
+        if not missing_phrases():
+            break
+        tentative = "\n".join(chosen + [fragment])
+        if bytes_len(tentative) > max_chars:
+            continue
+        if sum(1 for p in missing_phrases() if contains_phrase(fragment, p)) > 0:
+            chosen.append(fragment)
+            chosen_norms.add(normalize_text(fragment))
+
+    # Phase 2: title-aware bundles only for still-missing phrases
+    bundle_candidates = []
+    for frag in scenario_frags:
+        fragment = frag.get("fragment", "").strip()
+        source_line = frag.get("source_line", "").strip()
+        if not fragment or not source_line:
+            continue
+        bundle = fragment
+        if ":" in source_line and not source_line.lower().startswith(fragment.lower()):
+            title = source_line.split(":", 1)[0].strip()
+            if title:
+                bundle = f"{title}: {fragment}"
+        norm = normalize_text(bundle)
+        if norm in chosen_norms:
+            continue
+        hit_count = sum(1 for p in missing_phrases() if contains_phrase(bundle, p))
+        if hit_count == 0:
+            continue
+        score = (hit_count * 200.0 + structure_score(bundle)) / max(1, len(bundle))
+        bundle_candidates.append((-score, len(bundle), bundle))
+    bundle_candidates.sort()
+
+    for _, _, bundle in bundle_candidates:
+        if not missing_phrases():
+            break
+        tentative = "\n".join(chosen + [bundle])
+        if bytes_len(tentative) > max_chars:
+            continue
+        if sum(1 for p in missing_phrases() if contains_phrase(bundle, p)) > 0:
+            chosen.append(bundle)
+            chosen_norms.add(normalize_text(bundle))
+
+    # Phase 3: escalate to exact phrase-saver lines only if phrases still missing
+    line_candidates = []
+    for norm, item in scenario_attr.items():
+        line = raw_norm_map.get(norm)
+        if not line or norm in chosen_norms:
+            continue
+        hit_count = sum(1 for p in missing_phrases() if contains_phrase(line, p))
+        if hit_count == 0:
+            continue
+        score = item.get("phrases_per_byte", 0.0) * 1000.0 + item.get("restored_phrase_count", 0) * 20.0 + structure_score(line)
+        line_candidates.append((-score, len(line), line))
+    line_candidates.sort()
+
+    for _, _, line in line_candidates:
+        if not missing_phrases():
+            break
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            continue
+        if sum(1 for p in missing_phrases() if contains_phrase(line, p)) > 0:
+            chosen.append(line)
+            chosen_norms.add(normalize_text(line))
+
+    # Phase 4: compact durable anchors if budget remains
+    anchors = []
+    for line in raw_lines:
+        norm = normalize_text(line)
+        if norm in chosen_norms:
+            continue
+        lower = line.lower()
+        if lower.startswith("preference:") or lower.startswith("fact:") or lower.startswith("project:"):
+            score = (structure_score(line) + expected_score(line, expected_phrases)) / max(1, len(line))
+            anchors.append((-score, len(line), line))
+    anchors.sort()
+
+    for _, _, line in anchors:
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            continue
+        chosen.append(line)
+        chosen_norms.add(normalize_text(line))
+
+    return "\n".join(chosen).strip()
+
+
 def retrieval_hit_rate(text: str, expected_phrases):
     if not expected_phrases:
         return None, []
@@ -791,22 +912,15 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     raw_memory_text = retrieval.get("text", "")
     baseline_text = build_transcript_only_context(transcript_files)
 
-    recall_text = recall_mode_text(raw_memory_text, expected_phrases)
-    compression_text = compression_mode_text(raw_memory_text, expected_phrases)
-    hybrid_text = hybrid_mode_text(raw_memory_text, expected_phrases)
-    budgeted_rule_text = budgeted_rule_informed_mode_text(raw_memory_text, expected_phrases, rules)
-    psb_text = phrase_saver_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps)
-    pfpb_text = phrase_fragment_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps)
-    tafb_text = title_aware_fragment_bundle_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps)
-
     results = [
-        build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases),
-        build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases),
-        build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases),
-        build_mode_result("budgeted_rule_informed_mode", budgeted_rule_text, baseline_text, expected_phrases),
-        build_mode_result("phrase_saver_per_byte_mode", psb_text, baseline_text, expected_phrases),
-        build_mode_result("phrase_fragment_per_byte_mode", pfpb_text, baseline_text, expected_phrases),
-        build_mode_result("title_aware_fragment_bundle_mode", tafb_text, baseline_text, expected_phrases),
+        build_mode_result("recall_mode", recall_mode_text(raw_memory_text, expected_phrases), baseline_text, expected_phrases),
+        build_mode_result("compression_mode", compression_mode_text(raw_memory_text, expected_phrases), baseline_text, expected_phrases),
+        build_mode_result("hybrid_mode", hybrid_mode_text(raw_memory_text, expected_phrases), baseline_text, expected_phrases),
+        build_mode_result("budgeted_rule_informed_mode", budgeted_rule_informed_mode_text(raw_memory_text, expected_phrases, rules), baseline_text, expected_phrases),
+        build_mode_result("phrase_saver_per_byte_mode", phrase_saver_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps), baseline_text, expected_phrases),
+        build_mode_result("phrase_fragment_per_byte_mode", phrase_fragment_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps), baseline_text, expected_phrases),
+        build_mode_result("title_aware_fragment_bundle_mode", title_aware_fragment_bundle_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps), baseline_text, expected_phrases),
+        build_mode_result("adaptive_composite_mode", adaptive_composite_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps, fragment_maps), baseline_text, expected_phrases),
     ]
 
     merge_summary = None
@@ -875,6 +989,7 @@ def aggregate_metrics(results):
         "phrase_saver_per_byte_mode",
         "phrase_fragment_per_byte_mode",
         "title_aware_fragment_bundle_mode",
+        "adaptive_composite_mode",
     ]
 
     out = {
@@ -907,6 +1022,7 @@ def update_history(history_path: Path, entry: dict) -> None:
         "phrase_saver_per_byte_mode": entry["metrics"].get("phrase_saver_per_byte_mode"),
         "phrase_fragment_per_byte_mode": entry["metrics"].get("phrase_fragment_per_byte_mode"),
         "title_aware_fragment_bundle_mode": entry["metrics"].get("title_aware_fragment_bundle_mode"),
+        "adaptive_composite_mode": entry["metrics"].get("adaptive_composite_mode"),
     })
     save_json(history_path, history)
 
@@ -923,7 +1039,7 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "history_tracking_present": True,
             "latest_snapshot_present": True,
             "human_eval_fields_defined": True,
-            "title_aware_fragment_bundle_mode_present": True
+            "adaptive_composite_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -995,8 +1111,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to line, fragment, and title-aware fragment bundle preservation modes.",
-            "Title-aware fragment bundles try to restore lost anchor context without paying full-line cost."
+            "Adaptive composite mode starts from compression, then escalates through fragments, bundles, and full phrase-saver lines only as needed.",
+            "Goal: preserve the least-cost unit that restores required meaning."
         ]
     }
 
@@ -1019,6 +1135,7 @@ def main():
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
+        ("adaptive_composite_mode", "Adaptive composite mode"),
     ]:
         m = metrics.get(key, {})
         print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")

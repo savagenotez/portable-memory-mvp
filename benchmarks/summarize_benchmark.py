@@ -41,6 +41,7 @@ def main() -> None:
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
+        ("adaptive_composite_mode", "Adaptive composite mode"),
     ]:
         mode = metrics.get(mode_name, {})
         if mode:
