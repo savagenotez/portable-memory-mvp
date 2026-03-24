@@ -115,33 +115,36 @@ def expected_score(line: str, expected_phrases) -> int:
     return score
 
 
+def structure_score(line: str) -> int:
+    lower = line.lower()
+    s = 0
+    if lower.startswith("preference:"):
+        s += 8
+    if lower.startswith("fact:"):
+        s += 8
+    if lower.startswith("project:"):
+        s += 8
+    if "durable update" in lower:
+        s += 6
+    if lower.startswith("conversation:"):
+        s += 3
+    if "goal" in lower:
+        s += 4
+    if "constraint" in lower:
+        s += 4
+    if "portable" in lower or "mergeable" in lower:
+        s += 4
+    if "codex" in lower or "claude" in lower:
+        s += 4
+    s -= max(0, len(line) // 180)
+    return s
+
+
 def recall_mode_text(text: str, expected_phrases, max_chars: int = 1400) -> str:
     raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
 
     def score(line: str) -> int:
-        lower = line.lower()
-        s = 0
-        if lower.startswith("preference:"):
-            s += 8
-        if lower.startswith("fact:"):
-            s += 8
-        if lower.startswith("project:"):
-            s += 8
-        if "durable update" in lower:
-            s += 6
-        if lower.startswith("conversation:"):
-            s += 3
-        if "goal" in lower:
-            s += 4
-        if "constraint" in lower:
-            s += 4
-        if "portable" in lower or "mergeable" in lower:
-            s += 4
-        if "codex" in lower or "claude" in lower:
-            s += 4
-        s += expected_score(line, expected_phrases)
-        s -= max(0, len(line) // 180)
-        return s
+        return structure_score(line) + expected_score(line, expected_phrases)
 
     ranked = sorted(raw_lines, key=lambda x: (-score(x), len(x)))
     out = []
@@ -174,7 +177,7 @@ def compression_mode_text(text: str, expected_phrases, max_chars: int = 700) -> 
         else:
             other.append(line)
 
-    sorter = lambda items: sorted(items, key=lambda x: (-expected_score(x, expected_phrases), len(x)))
+    sorter = lambda items: sorted(items, key=lambda x: (-(expected_score(x, expected_phrases) + structure_score(x)), len(x)))
     prefs = sorter(prefs)
     facts = sorter(facts)
     projects = sorter(projects)
@@ -196,6 +199,63 @@ def compression_mode_text(text: str, expected_phrases, max_chars: int = 700) -> 
         out.append(line)
         cur += extra
     return "\n".join(out).strip()
+
+
+def hybrid_mode_text(text: str, expected_phrases, base_chars: int = 700, max_chars: int = 1050) -> str:
+    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
+
+    base_text = compression_mode_text(text, expected_phrases, max_chars=base_chars)
+    selected = dedupe_lines([ln for ln in base_text.splitlines() if ln.strip()])
+    selected_norm = {normalize_text(x) for x in selected}
+
+    def missing_phrases(current_lines):
+        joined = "\n".join(current_lines)
+        return [p for p in expected_phrases if not contains_phrase(joined, p)]
+
+    def candidate_gain(line, current_lines):
+        current_missing = set(missing_phrases(current_lines))
+        if not current_missing:
+            return 0
+        gain = 0
+        lower = normalize_text(line)
+        for phrase in current_missing:
+            if normalize_text(phrase) in lower:
+                gain += 1
+        return gain
+
+    candidates = [ln for ln in raw_lines if normalize_text(ln) not in selected_norm]
+
+    def rank_candidate(line, current_lines):
+        gain = candidate_gain(line, current_lines)
+        value = (gain * 50) + structure_score(line) + expected_score(line, expected_phrases)
+        cost = max(1, len(line))
+        return value / cost, gain, value
+
+    current = list(selected)
+    while True:
+        ranked = []
+        for line in candidates:
+            ratio, gain, value = rank_candidate(line, current)
+            if gain > 0:
+                ranked.append((ratio, gain, value, line))
+        if not ranked:
+            break
+
+        ranked.sort(key=lambda x: (-x[0], -x[1], -x[2], len(x[3])))
+        chosen = ranked[0][3]
+
+        tentative = current + [chosen]
+        joined = "\n".join(tentative)
+        if bytes_len(joined) > max_chars:
+            break
+
+        current.append(chosen)
+        candidates = [c for c in candidates if normalize_text(c) != normalize_text(chosen)]
+
+        if not missing_phrases(current):
+            break
+
+    return "\n".join(current).strip()
 
 
 def retrieval_hit_rate(text: str, expected_phrases):
@@ -248,9 +308,11 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
 
     recall_text = recall_mode_text(raw_memory_text, expected_phrases)
     compression_text = compression_mode_text(raw_memory_text, expected_phrases)
+    hybrid_text = hybrid_mode_text(raw_memory_text, expected_phrases)
 
     recall_result = build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases)
     compression_result = build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases)
+    hybrid_result = build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases)
 
     merge_summary = None
     merge_success = None
@@ -278,7 +340,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
         "baseline_preview": baseline_text[:1500],
-        "modes": [recall_result, compression_result]
+        "modes": [recall_result, compression_result, hybrid_result]
     }
 
 
@@ -312,6 +374,7 @@ def aggregate_metrics(results):
 
     recall_metrics = aggregate_mode_metrics(results, "recall_mode")
     compression_metrics = aggregate_mode_metrics(results, "compression_mode")
+    hybrid_metrics = aggregate_mode_metrics(results, "hybrid_mode")
 
     return {
         "merge_success_rate": round(sum(1 for x in merge_checks if x) / len(merge_checks), 4) if merge_checks else None,
@@ -321,6 +384,7 @@ def aggregate_metrics(results):
         "session_count_used": pkg_count,
         "recall_mode": recall_metrics,
         "compression_mode": compression_metrics,
+        "hybrid_mode": hybrid_metrics,
     }
 
 
@@ -334,7 +398,8 @@ def update_history(history_path: Path, entry: dict) -> None:
         "scenario_count": len(entry["scenario_results"]),
         "merge_success_rate": entry["metrics"].get("merge_success_rate"),
         "recall_mode": entry["metrics"].get("recall_mode"),
-        "compression_mode": entry["metrics"].get("compression_mode")
+        "compression_mode": entry["metrics"].get("compression_mode"),
+        "hybrid_mode": entry["metrics"].get("hybrid_mode")
     })
     save_json(history_path, history)
 
@@ -351,7 +416,8 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "history_tracking_present": True,
             "latest_snapshot_present": True,
             "human_eval_fields_defined": True,
-            "dual_mode_present": True
+            "dual_mode_present": True,
+            "hybrid_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -419,8 +485,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to dual-mode structured-memory retrieval.",
-            "Recall mode prioritizes signal retention. Compression mode prioritizes shorter context."
+            "This benchmark compares transcript-only continuation to recall, compression, and hybrid structured-memory retrieval.",
+            "Hybrid mode tries to recover expected signal while keeping context size closer to compression mode."
         ]
     }
 
@@ -434,6 +500,7 @@ def main():
 
     recall = run["metrics"]["recall_mode"]
     comp = run["metrics"]["compression_mode"]
+    hybrid = run["metrics"]["hybrid_mode"]
 
     print("Benchmark run completed.")
     print(f"Run file: {run_path}")
@@ -441,6 +508,8 @@ def main():
     print(f"Recall mode context reduction percent: {recall.get('context_reduction_percent')}")
     print(f"Compression mode retrieval hit rate: {comp.get('retrieval_hit_rate')}")
     print(f"Compression mode context reduction percent: {comp.get('context_reduction_percent')}")
+    print(f"Hybrid mode retrieval hit rate: {hybrid.get('retrieval_hit_rate')}")
+    print(f"Hybrid mode context reduction percent: {hybrid.get('context_reduction_percent')}")
     print(f"Merge success rate: {run['metrics']['merge_success_rate']}")
 
 
