@@ -9,7 +9,7 @@ RESULTS_DIR = ROOT / "results"
 def load_json(path: Path, default):
     if not path.exists():
         return default
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
 def main() -> None:
@@ -35,3 +35,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

@@ -4,5 +4,12 @@
     "event": "benchmark_scaffolding_initialized",
     "status": "scaffold_only",
     "note": "Initial benchmark files and plan created."
+  },
+  {
+    "timestamp": "2026-03-24T03:58:22Z",
+    "event": "benchmark_run_recorded",
+    "run_id": "run-20260324T035822Z-a67e7582",
+    "status": "skeleton_run",
+    "scenario_id": "skeleton-demo"
   }
 ]

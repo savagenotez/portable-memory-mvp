@@ -15,11 +15,11 @@ def utc_now() -> str:
 def load_json(path: Path, default):
     if not path.exists():
         return default
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
 def save_json(path: Path, data) -> None:
-    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    path.write_text(json.dumps(data, indent=2), encoding="utf-8-sig")
 
 
 def build_placeholder_run() -> dict:
@@ -118,3 +118,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
