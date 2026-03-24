@@ -40,6 +40,7 @@ def main() -> None:
         ("budgeted_rule_informed_mode", "Budgeted rule-informed mode"),
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
+        ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
     ]:
         mode = metrics.get(mode_name, {})
         if mode:

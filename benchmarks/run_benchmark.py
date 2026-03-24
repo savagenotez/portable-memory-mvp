@@ -602,7 +602,6 @@ def phrase_fragment_per_byte_mode_text(text: str, expected_phrases, scenario_id:
         joined = "\n".join(current_units)
         return [p for p in expected_phrases if not contains_phrase(joined, p)]
 
-    # phase 1: use attributed fragments that restore missing phrases most cheaply
     ranked_frags = []
     for frag in scenario_frags:
         fragment = frag.get("fragment", "").strip()
@@ -631,18 +630,6 @@ def phrase_fragment_per_byte_mode_text(text: str, expected_phrases, scenario_id:
             chosen_units.append(fragment)
             chosen_norms.add(normalize_text(fragment))
 
-    # phase 2: fallback fragment windows from raw lines if still missing
-    def fragment_windows(line):
-        out = []
-        words = line.split()
-        for size in (4, 6, 8):
-            if len(words) >= size:
-                for i in range(0, len(words) - size + 1):
-                    frag = " ".join(words[i:i+size]).strip()
-                    if len(frag) >= 12:
-                        out.append(frag)
-        return dedupe_lines(out)
-
     while True:
         missing = missing_phrases(chosen_units)
         if not missing:
@@ -650,15 +637,19 @@ def phrase_fragment_per_byte_mode_text(text: str, expected_phrases, scenario_id:
 
         candidates = []
         for line in raw_lines:
-            for frag in fragment_windows(line):
-                norm = normalize_text(frag)
-                if norm in chosen_norms:
-                    continue
-                hit_count = sum(1 for p in missing if contains_phrase(frag, p))
-                if hit_count == 0:
-                    continue
-                score = (hit_count * 120.0 + structure_score(frag)) / max(1, len(frag))
-                candidates.append((-score, len(frag), frag))
+            words = line.split()
+            for size in (4, 6, 8):
+                if len(words) >= size:
+                    for i in range(0, len(words) - size + 1):
+                        frag = " ".join(words[i:i+size]).strip()
+                        norm = normalize_text(frag)
+                        if norm in chosen_norms or len(frag) < 12:
+                            continue
+                        hit_count = sum(1 for p in missing if contains_phrase(frag, p))
+                        if hit_count == 0:
+                            continue
+                        score = (hit_count * 120.0 + structure_score(frag)) / max(1, len(frag))
+                        candidates.append((-score, len(frag), frag))
 
         if not candidates:
             break
@@ -671,7 +662,6 @@ def phrase_fragment_per_byte_mode_text(text: str, expected_phrases, scenario_id:
         chosen_units.append(frag)
         chosen_norms.add(normalize_text(frag))
 
-    # phase 3: small anchors only
     anchors = []
     for line in raw_lines:
         lower = line.lower()
@@ -689,6 +679,65 @@ def phrase_fragment_per_byte_mode_text(text: str, expected_phrases, scenario_id:
             continue
         chosen_units.append(short)
         chosen_norms.add(normalize_text(short))
+
+    return "\n".join(chosen_units).strip()
+
+
+def title_aware_fragment_bundle_mode_text(text: str, expected_phrases, scenario_id: str, fragment_maps, max_chars: int = 900) -> str:
+    scenario_frags = fragment_maps.get(scenario_id, [])
+
+    base_text = compression_mode_text(text, expected_phrases, max_chars=650)
+    chosen_units = dedupe_lines([ln for ln in base_text.splitlines() if ln.strip()])
+    chosen_norms = {normalize_text(x) for x in chosen_units}
+
+    def missing_phrases(current_units):
+        joined = "\n".join(current_units)
+        return [p for p in expected_phrases if not contains_phrase(joined, p)]
+
+    bundles = []
+    for frag in scenario_frags:
+        fragment = frag.get("fragment", "").strip()
+        source_line = frag.get("source_line", "").strip()
+        if not fragment or not source_line:
+            continue
+
+        bundle = fragment
+        if ":" in source_line and not source_line.lower().startswith(fragment.lower()):
+            title = source_line.split(":", 1)[0].strip()
+            if title:
+                bundle = f"{title}: {fragment}"
+
+        restored_count = frag.get("restored_phrase_count", 0)
+        phrases_per_char = frag.get("phrases_per_char", 0.0)
+        bundles.append({
+            "bundle": bundle,
+            "restored_count": restored_count,
+            "phrases_per_char": phrases_per_char,
+            "length": len(bundle),
+        })
+
+    ranked = []
+    for item in bundles:
+        bundle = item["bundle"]
+        norm = normalize_text(bundle)
+        if norm in chosen_norms:
+            continue
+        hits_now = sum(1 for p in missing_phrases(chosen_units) if contains_phrase(bundle, p))
+        if hits_now == 0:
+            continue
+        score = item["phrases_per_char"] * 10000.0 + item["restored_count"] * 20.0 + structure_score(bundle)
+        ranked.append((-score, item["length"], bundle))
+
+    ranked.sort()
+    for _, _, bundle in ranked:
+        if not missing_phrases(chosen_units):
+            break
+        tentative = "\n".join(chosen_units + [bundle])
+        if bytes_len(tentative) > max_chars:
+            continue
+        if sum(1 for p in missing_phrases(chosen_units) if contains_phrase(bundle, p)) > 0:
+            chosen_units.append(bundle)
+            chosen_norms.add(normalize_text(bundle))
 
     return "\n".join(chosen_units).strip()
 
@@ -748,13 +797,17 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     budgeted_rule_text = budgeted_rule_informed_mode_text(raw_memory_text, expected_phrases, rules)
     psb_text = phrase_saver_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps)
     pfpb_text = phrase_fragment_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps)
+    tafb_text = title_aware_fragment_bundle_mode_text(raw_memory_text, expected_phrases, scenario_id, fragment_maps)
 
-    recall_result = build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases)
-    compression_result = build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases)
-    hybrid_result = build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases)
-    budgeted_rule_result = build_mode_result("budgeted_rule_informed_mode", budgeted_rule_text, baseline_text, expected_phrases)
-    psb_result = build_mode_result("phrase_saver_per_byte_mode", psb_text, baseline_text, expected_phrases)
-    pfpb_result = build_mode_result("phrase_fragment_per_byte_mode", pfpb_text, baseline_text, expected_phrases)
+    results = [
+        build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases),
+        build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases),
+        build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases),
+        build_mode_result("budgeted_rule_informed_mode", budgeted_rule_text, baseline_text, expected_phrases),
+        build_mode_result("phrase_saver_per_byte_mode", psb_text, baseline_text, expected_phrases),
+        build_mode_result("phrase_fragment_per_byte_mode", pfpb_text, baseline_text, expected_phrases),
+        build_mode_result("title_aware_fragment_bundle_mode", tafb_text, baseline_text, expected_phrases),
+    ]
 
     merge_summary = None
     merge_success = None
@@ -782,7 +835,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
         "baseline_preview": baseline_text[:1500],
-        "modes": [recall_result, compression_result, hybrid_result, budgeted_rule_result, psb_result, pfpb_result]
+        "modes": results
     }
 
 
@@ -814,19 +867,28 @@ def aggregate_metrics(results):
 
     pkg_count = len([v for v in parse_package_ids().values() if v])
 
-    return {
+    metric_names = [
+        "recall_mode",
+        "compression_mode",
+        "hybrid_mode",
+        "budgeted_rule_informed_mode",
+        "phrase_saver_per_byte_mode",
+        "phrase_fragment_per_byte_mode",
+        "title_aware_fragment_bundle_mode",
+    ]
+
+    out = {
         "merge_success_rate": round(sum(1 for x in merge_checks if x) / len(merge_checks), 4) if merge_checks else None,
         "conflicts_created": sum(conflicts) if conflicts else None,
         "conflicts_resolved": None,
         "package_count_used": pkg_count,
         "session_count_used": pkg_count,
-        "recall_mode": aggregate_mode_metrics(results, "recall_mode"),
-        "compression_mode": aggregate_mode_metrics(results, "compression_mode"),
-        "hybrid_mode": aggregate_mode_metrics(results, "hybrid_mode"),
-        "budgeted_rule_informed_mode": aggregate_mode_metrics(results, "budgeted_rule_informed_mode"),
-        "phrase_saver_per_byte_mode": aggregate_mode_metrics(results, "phrase_saver_per_byte_mode"),
-        "phrase_fragment_per_byte_mode": aggregate_mode_metrics(results, "phrase_fragment_per_byte_mode"),
     }
+
+    for name in metric_names:
+        out[name] = aggregate_mode_metrics(results, name)
+
+    return out
 
 
 def update_history(history_path: Path, entry: dict) -> None:
@@ -844,6 +906,7 @@ def update_history(history_path: Path, entry: dict) -> None:
         "budgeted_rule_informed_mode": entry["metrics"].get("budgeted_rule_informed_mode"),
         "phrase_saver_per_byte_mode": entry["metrics"].get("phrase_saver_per_byte_mode"),
         "phrase_fragment_per_byte_mode": entry["metrics"].get("phrase_fragment_per_byte_mode"),
+        "title_aware_fragment_bundle_mode": entry["metrics"].get("title_aware_fragment_bundle_mode"),
     })
     save_json(history_path, history)
 
@@ -860,11 +923,7 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "history_tracking_present": True,
             "latest_snapshot_present": True,
             "human_eval_fields_defined": True,
-            "dual_mode_present": True,
-            "hybrid_mode_present": True,
-            "budgeted_rule_informed_mode_present": True,
-            "phrase_saver_per_byte_mode_present": True,
-            "phrase_fragment_per_byte_mode_present": True
+            "title_aware_fragment_bundle_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -914,6 +973,7 @@ def main():
     attribution_maps = build_attribution_maps(load_latest_attribution())
     fragment_maps = build_fragment_maps(load_latest_fragment_attribution())
     package_ids = parse_package_ids()
+
     results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, rules, attribution_maps, fragment_maps) for scenario in scenarios]
 
     run_id = f"run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
@@ -935,8 +995,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to recall, compression, hybrid, budgeted rule-informed, phrase-saver-per-byte, and phrase-fragment-per-byte retrieval.",
-            "Phrase-fragment-per-byte mode uses fragment attribution to keep smaller semantic units when possible."
+            "This benchmark compares transcript-only continuation to line, fragment, and title-aware fragment bundle preservation modes.",
+            "Title-aware fragment bundles try to restore lost anchor context without paying full-line cost."
         ]
     }
 
@@ -958,6 +1018,7 @@ def main():
         ("budgeted_rule_informed_mode", "Budgeted rule-informed mode"),
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
+        ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
     ]:
         m = metrics.get(key, {})
         print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")
