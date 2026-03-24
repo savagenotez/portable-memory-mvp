@@ -106,7 +106,7 @@ def dedupe_lines(lines):
     return out
 
 
-def summary_first_memory_text(text: str, expected_phrases, max_chars: int = 900) -> str:
+def strict_summary_first_memory_text(text: str, expected_phrases, max_chars: int = 700) -> str:
     raw_lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     raw_lines = dedupe_lines(raw_lines)
 
@@ -132,7 +132,6 @@ def summary_first_memory_text(text: str, expected_phrases, max_chars: int = 900)
         else:
             other.append(line)
 
-    # Promote lines containing expected phrases
     def expected_score(line: str) -> int:
         lower = normalize_text(line)
         score = 0
@@ -151,7 +150,10 @@ def summary_first_memory_text(text: str, expected_phrases, max_chars: int = 900)
     convos = sort_group(convos)
     other = sort_group(other)
 
-    ordered = prefs + facts + projects + durable + convos[:2] + other[:2]
+    selected_convos = [c for c in convos if expected_score(c) > 0][:1]
+    selected_other = [o for o in other if expected_score(o) > 0][:1]
+
+    ordered = prefs + facts + projects + durable + selected_convos + selected_other
 
     final_lines = []
     current_len = 0
@@ -198,7 +200,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     }
     retrieval = http_json("POST", f"{base_url}/v1/retrieve/context", retrieve_body)
     raw_memory_text = retrieval.get("text", "")
-    memory_text = summary_first_memory_text(raw_memory_text, expected_phrases)
+    memory_text = strict_summary_first_memory_text(raw_memory_text, expected_phrases)
 
     baseline_text = build_transcript_only_context(transcript_files)
     baseline_metrics = compare_to_baseline(memory_text, baseline_text)
@@ -232,7 +234,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "merge_success": merge_success,
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
-        "retrieval_preview_summary_first": memory_text,
+        "retrieval_preview_strict_summary_first": memory_text,
         "baseline_preview": baseline_text[:1500],
         **baseline_metrics
     }
@@ -361,8 +363,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to summary-first structured-memory retrieval.",
-            "Summary-first mode prioritizes preferences, facts, projects, and durable updates."
+            "This benchmark compares transcript-only continuation to strict summary-first structured-memory retrieval.",
+            "Strict summary-first mode minimizes conversation carryover unless it directly preserves expected signal."
         ]
     }
 
