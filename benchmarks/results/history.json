@@ -165,5 +165,38 @@
       "context_reduction_percent": -73.58,
       "repeated_explanation_items_removed": 4
     }
+  },
+  {
+    "timestamp": "2026-03-24T07:52:37Z",
+    "event": "benchmark_run_recorded",
+    "run_id": "run-20260324T075237Z-d28d7207",
+    "status": "completed",
+    "scenario_count": 2,
+    "merge_success_rate": 1.0,
+    "recall_mode": {
+      "retrieval_hit_rate": 0.875,
+      "context_reduction_percent": -181.01,
+      "repeated_explanation_items_removed": 7
+    },
+    "compression_mode": {
+      "retrieval_hit_rate": 0.5,
+      "context_reduction_percent": 6.4,
+      "repeated_explanation_items_removed": 4
+    },
+    "hybrid_mode": {
+      "retrieval_hit_rate": 0.875,
+      "context_reduction_percent": -20.18,
+      "repeated_explanation_items_removed": 7
+    },
+    "budgeted_rule_informed_mode": {
+      "retrieval_hit_rate": 0.5,
+      "context_reduction_percent": -73.58,
+      "repeated_explanation_items_removed": 4
+    },
+    "phrase_saver_per_byte_mode": {
+      "retrieval_hit_rate": 0.875,
+      "context_reduction_percent": -20.18,
+      "repeated_explanation_items_removed": 7
+    }
   }
 ]

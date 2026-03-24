@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parent
 RESULTS_DIR = ROOT / "results"
 SCENARIOS_DIR = ROOT / "scenarios"
 RULES_DIR = ROOT / "rules"
+ATTR_DIR = ROOT / "attribution"
 REPO_ROOT = ROOT.parent
 
 
@@ -157,12 +158,19 @@ def load_latest_rules():
     return load_json(files[-1], {"decision_hints": [], "ranked_lists": {}})
 
 
+def load_latest_attribution():
+    files = sorted(ATTR_DIR.glob("phrase-saver-attribution-*.json"))
+    if not files:
+        return {"scenario_reports": []}
+    return load_json(files[-1], {"scenario_reports": []})
+
+
 def build_rule_maps(rules):
     decision_map = {}
     keep_priority = {}
+    keep_durable = {}
     phrase_savers = {}
     compress_candidates = {}
-    keep_durable = {}
 
     for item in rules.get("decision_hints", []):
         line = normalize_text(item.get("line", ""))
@@ -190,6 +198,27 @@ def build_rule_maps(rules):
             compress_candidates[line] = item.get("score", 0)
 
     return decision_map, keep_priority, keep_durable, phrase_savers, compress_candidates
+
+
+def build_attribution_maps(attr):
+    by_scenario = {}
+    for scenario in attr.get("scenario_reports", []):
+        line_map = {}
+        for item in scenario.get("added_lines_in_hybrid", []):
+            norm = normalize_text(item.get("line", ""))
+            if norm:
+                restored_count = item.get("restored_phrase_count", 0)
+                line_len = max(1, item.get("length", len(item.get("line", ""))))
+                line_map[norm] = {
+                    "line": item.get("line", ""),
+                    "kind": item.get("kind"),
+                    "restored_phrase_count": restored_count,
+                    "restored_phrases": item.get("restored_phrases", []),
+                    "length": line_len,
+                    "phrases_per_byte": restored_count / line_len,
+                }
+        by_scenario[scenario.get("scenario_id")] = line_map
+    return by_scenario
 
 
 def recall_mode_text(text: str, expected_phrases, max_chars: int = 1400) -> str:
@@ -368,7 +397,6 @@ def budgeted_rule_informed_mode_text(text: str, expected_phrases, rules, max_cha
     chosen = []
     chosen_norms = set()
 
-    # Phase 1: compact durable anchors only
     anchors = []
     for line in raw_lines:
         meta = value_components(line, chosen)
@@ -393,7 +421,6 @@ def budgeted_rule_informed_mode_text(text: str, expected_phrases, rules, max_cha
         chosen.append(line)
         chosen_norms.add(norm)
 
-    # Phase 2: add phrase savers only if they restore missing expected phrases
     while True:
         missing = missing_phrases(chosen)
         if not missing:
@@ -424,7 +451,6 @@ def budgeted_rule_informed_mode_text(text: str, expected_phrases, rules, max_cha
         chosen.append(line)
         chosen_norms.add(normalize_text(line))
 
-    # Phase 3: fill remaining budget with best value-per-byte, but stricter than prior rule mode
     fillers = []
     for line in raw_lines:
         norm = normalize_text(line)
@@ -435,7 +461,6 @@ def budgeted_rule_informed_mode_text(text: str, expected_phrases, rules, max_cha
         if meta["decision"] == "compress_or_drop" and expected_hit_count(line, expected_phrases) == 0:
             continue
 
-        # stricter threshold for admission
         fillers.append((-(meta["ratio"]), len(line), line, meta))
 
     fillers.sort()
@@ -443,6 +468,95 @@ def budgeted_rule_informed_mode_text(text: str, expected_phrases, rules, max_cha
     for _, _, line, meta in fillers:
         if meta["ratio"] < 1.15:
             continue
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            continue
+        chosen.append(line)
+        chosen_norms.add(normalize_text(line))
+
+    return "\n".join(chosen).strip()
+
+
+def phrase_saver_per_byte_mode_text(text: str, expected_phrases, scenario_id: str, attribution_maps, max_chars: int = 880) -> str:
+    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
+    raw_norm_map = {normalize_text(line): line for line in raw_lines}
+    scenario_attr = attribution_maps.get(scenario_id, {})
+
+    # start from compact base
+    base_text = compression_mode_text(text, expected_phrases, max_chars=700)
+    chosen = dedupe_lines([ln for ln in base_text.splitlines() if ln.strip()])
+    chosen_norms = {normalize_text(x) for x in chosen}
+
+    def missing_phrases(current_lines):
+        joined = "\n".join(current_lines)
+        return [p for p in expected_phrases if not contains_phrase(joined, p)]
+
+    # phase 1: add known phrase savers from attribution ranked by phrases-per-byte
+    ranked_savers = []
+    for norm, item in scenario_attr.items():
+        line = raw_norm_map.get(norm)
+        if not line or norm in chosen_norms:
+            continue
+        hits_now = sum(1 for p in missing_phrases(chosen) if contains_phrase(line, p))
+        if hits_now == 0:
+            continue
+        ratio = item.get("phrases_per_byte", 0.0)
+        restored_count = item.get("restored_phrase_count", 0)
+        score = ratio * 1000.0 + restored_count * 20.0 + structure_score(line)
+        ranked_savers.append((-score, len(line), line))
+
+    ranked_savers.sort()
+    for _, _, line in ranked_savers:
+        if not missing_phrases(chosen):
+            break
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            continue
+        if sum(1 for p in missing_phrases(chosen) if contains_phrase(line, p)) > 0:
+            chosen.append(line)
+            chosen_norms.add(normalize_text(line))
+
+    # phase 2: fallback greedy phrase restoration by best hit-per-byte
+    while True:
+        missing = missing_phrases(chosen)
+        if not missing:
+            break
+
+        candidates = []
+        for line in raw_lines:
+            norm = normalize_text(line)
+            if norm in chosen_norms:
+                continue
+            hit_count = sum(1 for p in missing if contains_phrase(line, p))
+            if hit_count == 0:
+                continue
+            score = (hit_count * 100.0 + structure_score(line)) / max(1, len(line))
+            candidates.append((-score, len(line), line))
+
+        if not candidates:
+            break
+
+        candidates.sort()
+        line = candidates[0][2]
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            break
+        chosen.append(line)
+        chosen_norms.add(normalize_text(line))
+
+    # phase 3: add only compact durable anchors if budget remains
+    anchors = []
+    for line in raw_lines:
+        norm = normalize_text(line)
+        if norm in chosen_norms:
+            continue
+        lower = line.lower()
+        if lower.startswith("preference:") or lower.startswith("fact:") or lower.startswith("project:"):
+            score = (structure_score(line) + expected_score(line, expected_phrases)) / max(1, len(line))
+            anchors.append((-score, len(line), line))
+    anchors.sort()
+
+    for _, _, line in anchors:
         tentative = "\n".join(chosen + [line])
         if bytes_len(tentative) > max_chars:
             continue
@@ -485,11 +599,12 @@ def build_mode_result(mode_name: str, transformed_text: str, baseline_text: str,
     }
 
 
-def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, rules: dict):
+def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, rules: dict, attribution_maps: dict):
     query = scenario["query"]
     top_k = int(scenario.get("top_k", 12))
     expected_phrases = scenario.get("expected_phrases", [])
     transcript_files = scenario.get("baseline_transcripts", [])
+    scenario_id = scenario.get("scenario_id", "")
 
     retrieve_body = {
         "agent_id": agent_id,
@@ -504,11 +619,13 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     compression_text = compression_mode_text(raw_memory_text, expected_phrases)
     hybrid_text = hybrid_mode_text(raw_memory_text, expected_phrases)
     budgeted_rule_text = budgeted_rule_informed_mode_text(raw_memory_text, expected_phrases, rules)
+    psb_text = phrase_saver_per_byte_mode_text(raw_memory_text, expected_phrases, scenario_id, attribution_maps)
 
     recall_result = build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases)
     compression_result = build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases)
     hybrid_result = build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases)
     budgeted_rule_result = build_mode_result("budgeted_rule_informed_mode", budgeted_rule_text, baseline_text, expected_phrases)
+    psb_result = build_mode_result("phrase_saver_per_byte_mode", psb_text, baseline_text, expected_phrases)
 
     merge_summary = None
     merge_success = None
@@ -528,7 +645,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
             merge_success = True if conflicts_created == 0 else False
 
     return {
-        "scenario_id": scenario["scenario_id"],
+        "scenario_id": scenario_id,
         "title": scenario["title"],
         "query": query,
         "expected_phrases": expected_phrases,
@@ -536,7 +653,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
         "baseline_preview": baseline_text[:1500],
-        "modes": [recall_result, compression_result, hybrid_result, budgeted_rule_result]
+        "modes": [recall_result, compression_result, hybrid_result, budgeted_rule_result, psb_result]
     }
 
 
@@ -578,6 +695,7 @@ def aggregate_metrics(results):
         "compression_mode": aggregate_mode_metrics(results, "compression_mode"),
         "hybrid_mode": aggregate_mode_metrics(results, "hybrid_mode"),
         "budgeted_rule_informed_mode": aggregate_mode_metrics(results, "budgeted_rule_informed_mode"),
+        "phrase_saver_per_byte_mode": aggregate_mode_metrics(results, "phrase_saver_per_byte_mode"),
     }
 
 
@@ -594,6 +712,7 @@ def update_history(history_path: Path, entry: dict) -> None:
         "compression_mode": entry["metrics"].get("compression_mode"),
         "hybrid_mode": entry["metrics"].get("hybrid_mode"),
         "budgeted_rule_informed_mode": entry["metrics"].get("budgeted_rule_informed_mode"),
+        "phrase_saver_per_byte_mode": entry["metrics"].get("phrase_saver_per_byte_mode"),
     })
     save_json(history_path, history)
 
@@ -612,7 +731,8 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "human_eval_fields_defined": True,
             "dual_mode_present": True,
             "hybrid_mode_present": True,
-            "budgeted_rule_informed_mode_present": True
+            "budgeted_rule_informed_mode_present": True,
+            "phrase_saver_per_byte_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -659,8 +779,9 @@ def main():
         raise RuntimeError("No benchmark scenarios found.")
 
     rules = load_latest_rules()
+    attribution_maps = build_attribution_maps(load_latest_attribution())
     package_ids = parse_package_ids()
-    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, rules) for scenario in scenarios]
+    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, rules, attribution_maps) for scenario in scenarios]
 
     run_id = f"run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
     timestamp = utc_now()
@@ -681,8 +802,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to recall, compression, hybrid, and budgeted rule-informed structured-memory retrieval.",
-            "Budgeted rule-informed mode uses mined rules plus a harder value-per-byte budget."
+            "This benchmark compares transcript-only continuation to recall, compression, hybrid, budgeted rule-informed, and phrase-saver-per-byte retrieval.",
+            "Phrase-saver-per-byte mode uses hybrid attribution to rank selective additions by restored phrases per byte."
         ]
     }
 
@@ -702,6 +823,7 @@ def main():
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
         ("budgeted_rule_informed_mode", "Budgeted rule-informed mode"),
+        ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
     ]:
         m = metrics.get(key, {})
         print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")
