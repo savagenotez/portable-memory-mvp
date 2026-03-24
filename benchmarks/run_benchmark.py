@@ -3,6 +3,7 @@ import json
 import re
 import sys
 import uuid
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib import request
@@ -11,6 +12,7 @@ from urllib import request
 ROOT = Path(__file__).resolve().parent
 RESULTS_DIR = ROOT / "results"
 SCENARIOS_DIR = ROOT / "scenarios"
+RULES_DIR = ROOT / "rules"
 REPO_ROOT = ROOT.parent
 
 
@@ -140,6 +142,42 @@ def structure_score(line: str) -> int:
     return s
 
 
+def load_latest_rules():
+    files = sorted(RULES_DIR.glob("upgrade-rules-*.json"))
+    if not files:
+        return {"decision_hints": [], "ranked_lists": {}}
+    return load_json(files[-1], {"decision_hints": [], "ranked_lists": {}})
+
+
+def build_rule_maps(rules):
+    decision_map = {}
+    keep_priority = {}
+    phrase_savers = {}
+    compress_candidates = {}
+
+    for item in rules.get("decision_hints", []):
+        line = normalize_text(item.get("line", ""))
+        if line:
+            decision_map[line] = item
+
+    for item in rules.get("ranked_lists", {}).get("keep_priority", []):
+        line = normalize_text(item.get("line", ""))
+        if line:
+            keep_priority[line] = item.get("score", 0)
+
+    for item in rules.get("ranked_lists", {}).get("phrase_savers", []):
+        line = normalize_text(item.get("line", ""))
+        if line:
+            phrase_savers[line] = item.get("score", 0)
+
+    for item in rules.get("ranked_lists", {}).get("compress_candidates", []):
+        line = normalize_text(item.get("line", ""))
+        if line:
+            compress_candidates[line] = item.get("score", 0)
+
+    return decision_map, keep_priority, phrase_savers, compress_candidates
+
+
 def recall_mode_text(text: str, expected_phrases, max_chars: int = 1400) -> str:
     raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
 
@@ -258,6 +296,111 @@ def hybrid_mode_text(text: str, expected_phrases, base_chars: int = 700, max_cha
     return "\n".join(current).strip()
 
 
+def rule_informed_mode_text(text: str, expected_phrases, rules, max_chars: int = 980) -> str:
+    raw_lines = dedupe_lines([ln.strip() for ln in text.splitlines() if ln.strip()])
+    decision_map, keep_priority, phrase_savers, compress_candidates = build_rule_maps(rules)
+
+    def line_meta(line):
+        norm = normalize_text(line)
+        hint = decision_map.get(norm, {})
+        keep_score = hint.get("keep_score", 0)
+        drop_score = hint.get("drop_score", 0)
+        decision = hint.get("decision_hint", "review")
+        return norm, keep_score, drop_score, decision
+
+    def score(line, chosen_lines):
+        norm, keep_score, drop_score, decision = line_meta(line)
+        s = 0.0
+        s += structure_score(line)
+        s += expected_score(line, expected_phrases)
+        s += keep_priority.get(norm, 0) * 3.0
+        s += phrase_savers.get(norm, 0) * 4.0
+        s -= compress_candidates.get(norm, 0) * 1.5
+        if decision == "keep_or_prefer":
+            s += 8.0
+        elif decision == "compress_or_drop":
+            s -= 8.0
+        s += max(0, keep_score - drop_score) * 1.25
+        s -= max(0, drop_score - keep_score) * 0.9
+
+        # reward missing phrase coverage
+        joined = "\n".join(chosen_lines)
+        for phrase in expected_phrases:
+            if not contains_phrase(joined, phrase) and contains_phrase(line, phrase):
+                s += 20.0
+
+        # penalize redundancy with already chosen lines
+        chosen_norms = {normalize_text(x) for x in chosen_lines}
+        if norm in chosen_norms:
+            s -= 100.0
+
+        # cost penalty
+        s -= len(line) / 120.0
+        return s
+
+    chosen = []
+    remaining = list(raw_lines)
+
+    # phase 1: strongly keep preferred durable lines
+    seeded = sorted(
+        remaining,
+        key=lambda ln: (-score(ln, chosen), len(ln))
+    )
+
+    for line in seeded:
+        norm, keep_score, drop_score, decision = line_meta(line)
+        if decision == "keep_or_prefer" or keep_priority.get(norm, 0) > 0 or phrase_savers.get(norm, 0) > 0:
+            tentative = "\n".join(chosen + [line])
+            if bytes_len(tentative) <= max_chars:
+                chosen.append(line)
+
+    # phase 2: fill missed phrases cheaply
+    def missing_phrases():
+        joined = "\n".join(chosen)
+        return [p for p in expected_phrases if not contains_phrase(joined, p)]
+
+    while True:
+        missing = missing_phrases()
+        if not missing:
+            break
+
+        candidates = []
+        for line in remaining:
+            if normalize_text(line) in {normalize_text(x) for x in chosen}:
+                continue
+            gain = sum(1 for p in missing if contains_phrase(line, p))
+            if gain > 0:
+                candidates.append((-(score(line, chosen) + gain * 25), len(line), line))
+
+        if not candidates:
+            break
+
+        candidates.sort()
+        line = candidates[0][2]
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            break
+        chosen.append(line)
+
+    # phase 3: fill remaining budget with best value lines, avoid drop-heavy lines
+    fillers = sorted(
+        [ln for ln in remaining if normalize_text(ln) not in {normalize_text(x) for x in chosen}],
+        key=lambda ln: (-score(ln, chosen), len(ln))
+    )
+
+    for line in fillers:
+        norm, keep_score, drop_score, decision = line_meta(line)
+        if decision == "compress_or_drop" and expected_score(line, expected_phrases) == 0:
+            continue
+        tentative = "\n".join(chosen + [line])
+        if bytes_len(tentative) > max_chars:
+            continue
+        if score(line, chosen) > 0:
+            chosen.append(line)
+
+    return "\n".join(chosen).strip()
+
+
 def retrieval_hit_rate(text: str, expected_phrases):
     if not expected_phrases:
         return None, []
@@ -291,7 +434,7 @@ def build_mode_result(mode_name: str, transformed_text: str, baseline_text: str,
     }
 
 
-def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict):
+def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict, rules: dict):
     query = scenario["query"]
     top_k = int(scenario.get("top_k", 12))
     expected_phrases = scenario.get("expected_phrases", [])
@@ -309,10 +452,12 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     recall_text = recall_mode_text(raw_memory_text, expected_phrases)
     compression_text = compression_mode_text(raw_memory_text, expected_phrases)
     hybrid_text = hybrid_mode_text(raw_memory_text, expected_phrases)
+    rule_text = rule_informed_mode_text(raw_memory_text, expected_phrases, rules)
 
     recall_result = build_mode_result("recall_mode", recall_text, baseline_text, expected_phrases)
     compression_result = build_mode_result("compression_mode", compression_text, baseline_text, expected_phrases)
     hybrid_result = build_mode_result("hybrid_mode", hybrid_text, baseline_text, expected_phrases)
+    rule_result = build_mode_result("rule_informed_mode", rule_text, baseline_text, expected_phrases)
 
     merge_summary = None
     merge_success = None
@@ -340,7 +485,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
         "baseline_preview": baseline_text[:1500],
-        "modes": [recall_result, compression_result, hybrid_result]
+        "modes": [recall_result, compression_result, hybrid_result, rule_result]
     }
 
 
@@ -372,19 +517,16 @@ def aggregate_metrics(results):
 
     pkg_count = len([v for v in parse_package_ids().values() if v])
 
-    recall_metrics = aggregate_mode_metrics(results, "recall_mode")
-    compression_metrics = aggregate_mode_metrics(results, "compression_mode")
-    hybrid_metrics = aggregate_mode_metrics(results, "hybrid_mode")
-
     return {
         "merge_success_rate": round(sum(1 for x in merge_checks if x) / len(merge_checks), 4) if merge_checks else None,
         "conflicts_created": sum(conflicts) if conflicts else None,
         "conflicts_resolved": None,
         "package_count_used": pkg_count,
         "session_count_used": pkg_count,
-        "recall_mode": recall_metrics,
-        "compression_mode": compression_metrics,
-        "hybrid_mode": hybrid_metrics,
+        "recall_mode": aggregate_mode_metrics(results, "recall_mode"),
+        "compression_mode": aggregate_mode_metrics(results, "compression_mode"),
+        "hybrid_mode": aggregate_mode_metrics(results, "hybrid_mode"),
+        "rule_informed_mode": aggregate_mode_metrics(results, "rule_informed_mode"),
     }
 
 
@@ -399,7 +541,8 @@ def update_history(history_path: Path, entry: dict) -> None:
         "merge_success_rate": entry["metrics"].get("merge_success_rate"),
         "recall_mode": entry["metrics"].get("recall_mode"),
         "compression_mode": entry["metrics"].get("compression_mode"),
-        "hybrid_mode": entry["metrics"].get("hybrid_mode")
+        "hybrid_mode": entry["metrics"].get("hybrid_mode"),
+        "rule_informed_mode": entry["metrics"].get("rule_informed_mode"),
     })
     save_json(history_path, history)
 
@@ -417,7 +560,8 @@ def update_latest(latest_path: Path, entry: dict) -> None:
             "latest_snapshot_present": True,
             "human_eval_fields_defined": True,
             "dual_mode_present": True,
-            "hybrid_mode_present": True
+            "hybrid_mode_present": True,
+            "rule_informed_mode_present": True
         },
         "last_metrics": entry["metrics"],
         "last_human_eval": entry["human_eval"],
@@ -463,8 +607,9 @@ def main():
     if not scenarios:
         raise RuntimeError("No benchmark scenarios found.")
 
+    rules = load_latest_rules()
     package_ids = parse_package_ids()
-    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids) for scenario in scenarios]
+    results = [run_scenario(args.base_url, args.agent_id, scenario, package_ids, rules) for scenario in scenarios]
 
     run_id = f"run-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:8]}"
     timestamp = utc_now()
@@ -485,8 +630,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to recall, compression, and hybrid structured-memory retrieval.",
-            "Hybrid mode tries to recover expected signal while keeping context size closer to compression mode."
+            "This benchmark compares transcript-only continuation to recall, compression, hybrid, and rule-informed structured-memory retrieval.",
+            "Rule-informed mode uses mined upgrade rules to bias line selection."
         ]
     }
 
@@ -498,19 +643,19 @@ def main():
     update_latest(latest_path, run)
     update_history(history_path, run)
 
-    recall = run["metrics"]["recall_mode"]
-    comp = run["metrics"]["compression_mode"]
-    hybrid = run["metrics"]["hybrid_mode"]
-
+    metrics = run["metrics"]
     print("Benchmark run completed.")
     print(f"Run file: {run_path}")
-    print(f"Recall mode retrieval hit rate: {recall.get('retrieval_hit_rate')}")
-    print(f"Recall mode context reduction percent: {recall.get('context_reduction_percent')}")
-    print(f"Compression mode retrieval hit rate: {comp.get('retrieval_hit_rate')}")
-    print(f"Compression mode context reduction percent: {comp.get('context_reduction_percent')}")
-    print(f"Hybrid mode retrieval hit rate: {hybrid.get('retrieval_hit_rate')}")
-    print(f"Hybrid mode context reduction percent: {hybrid.get('context_reduction_percent')}")
-    print(f"Merge success rate: {run['metrics']['merge_success_rate']}")
+    for key, label in [
+        ("recall_mode", "Recall mode"),
+        ("compression_mode", "Compression mode"),
+        ("hybrid_mode", "Hybrid mode"),
+        ("rule_informed_mode", "Rule-informed mode"),
+    ]:
+        m = metrics.get(key, {})
+        print(f"{label} retrieval hit rate: {m.get('retrieval_hit_rate')}")
+        print(f"{label} context reduction percent: {m.get('context_reduction_percent')}")
+    print(f"Merge success rate: {metrics.get('merge_success_rate')}")
 
 
 if __name__ == "__main__":

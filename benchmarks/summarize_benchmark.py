@@ -37,6 +37,7 @@ def main() -> None:
         ("recall_mode", "Recall mode"),
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
+        ("rule_informed_mode", "Rule-informed mode"),
     ]:
         mode = metrics.get(mode_name, {})
         if mode:
