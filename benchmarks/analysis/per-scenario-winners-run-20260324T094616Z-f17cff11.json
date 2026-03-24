@@ -1,0 +1,795 @@
+{
+  "analysis_version": "0.1.0",
+  "source_run_file": "run-20260324T094616Z-f17cff11.json",
+  "source_run_id": "run-20260324T094616Z-f17cff11",
+  "timestamp": "2026-03-24T09:46:16Z",
+  "win_counts": {
+    "best_overall": {
+      "compression_mode": 7,
+      "phrase_fragment_per_byte_mode": 1,
+      "hybrid_mode": 5
+    },
+    "best_above_threshold": {
+      "phrase_fragment_per_byte_mode": 1,
+      "hybrid_mode": 4,
+      "compression_mode": 3
+    },
+    "safest": {
+      "compression_mode": 7,
+      "phrase_fragment_per_byte_mode": 1,
+      "hybrid_mode": 5
+    },
+    "cheapest": {
+      "compression_mode": 13
+    }
+  },
+  "scenario_reports": [
+    {
+      "scenario_id": "project_and_constraints",
+      "title": "Project and constraints retrieval",
+      "best_overall": "compression_mode",
+      "best_above_threshold": null,
+      "safest": "compression_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "durable_update_retrieval",
+      "title": "Durable update retrieval",
+      "best_overall": "phrase_fragment_per_byte_mode",
+      "best_above_threshold": "phrase_fragment_per_byte_mode",
+      "safest": "phrase_fragment_per_byte_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.25,
+          "context_reduction_percent": 27.91,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -14.78,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "fragment_escalation",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -14.78,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "fragment_escalation",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 10.47
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": -0.75,
+          "context_reduction_delta": 42.69
+        }
+      }
+    },
+    {
+      "scenario_id": "project_constraints_core",
+      "title": "Project and constraints core retrieval",
+      "best_overall": "compression_mode",
+      "best_above_threshold": null,
+      "safest": "compression_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "durable_update_state",
+      "title": "Durable update and current state retrieval",
+      "best_overall": "hybrid_mode",
+      "best_above_threshold": "hybrid_mode",
+      "safest": "hybrid_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.25,
+          "context_reduction_percent": 27.91,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": -0.75,
+          "context_reduction_delta": 53.16
+        }
+      }
+    },
+    {
+      "scenario_id": "workflow_continuity_tools",
+      "title": "Workflow continuity across tools",
+      "best_overall": "hybrid_mode",
+      "best_above_threshold": "hybrid_mode",
+      "safest": "hybrid_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.5,
+          "context_reduction_percent": 27.91,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": -0.5,
+          "context_reduction_delta": 53.16
+        }
+      }
+    },
+    {
+      "scenario_id": "proof_and_scope_boundary",
+      "title": "Proof boundary and non-proven areas",
+      "best_overall": "hybrid_mode",
+      "best_above_threshold": "hybrid_mode",
+      "safest": "hybrid_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.25,
+          "context_reduction_percent": 14.12,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": -0.75,
+          "context_reduction_delta": 53.16
+        }
+      }
+    },
+    {
+      "scenario_id": "memory_identity_summary",
+      "title": "System identity summary retrieval",
+      "best_overall": "compression_mode",
+      "best_above_threshold": "compression_mode",
+      "safest": "compression_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "compression_seed",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -37.14,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "compression_seed",
+          "classifier_label": "medium_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "lightweight_repo_identity",
+      "title": "Low-recall: lightweight repo identity",
+      "best_overall": "compression_mode",
+      "best_above_threshold": null,
+      "safest": "compression_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.5,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 0.5,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 0.5,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 0.5,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 0.5,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": "compression_seed",
+          "classifier_label": "low_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "lightweight_tooling_note",
+      "title": "Low-recall: tooling note",
+      "best_overall": "compression_mode",
+      "best_above_threshold": "compression_mode",
+      "safest": "compression_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": "compression_seed",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -211.86,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": "compression_seed",
+          "classifier_label": "low_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "lightweight_goal_only",
+      "title": "Low-recall: goal only",
+      "best_overall": "compression_mode",
+      "best_above_threshold": "compression_mode",
+      "safest": "compression_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": "compression_seed",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -119.19,
+          "repeated_explanation_items_removed": 1,
+          "controller_choice": "compression_seed",
+          "classifier_label": "low_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "mixed_project_plus_next_step",
+      "title": "Mixed-recall: project plus next step",
+      "best_overall": "hybrid_mode",
+      "best_above_threshold": null,
+      "safest": "hybrid_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.5,
+          "context_reduction_percent": 27.91,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": -25.25,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": -0.25,
+          "context_reduction_delta": 53.16
+        }
+      }
+    },
+    {
+      "scenario_id": "mixed_constraints_plus_identity",
+      "title": "Mixed-recall: constraints plus identity",
+      "best_overall": "compression_mode",
+      "best_above_threshold": null,
+      "safest": "compression_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.6667,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 0.6667,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 0.6667,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 0.6667,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 0.6667,
+          "context_reduction_percent": -15.12,
+          "repeated_explanation_items_removed": 2,
+          "controller_choice": "hybrid_fallback",
+          "classifier_label": "medium_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "mixed_proof_and_workflow",
+      "title": "Mixed-recall: proof and workflow",
+      "best_overall": "hybrid_mode",
+      "best_above_threshold": "hybrid_mode",
+      "safest": "hybrid_mode",
+      "cheapest": "compression_mode",
+      "key_modes": {
+        "compression_mode": {
+          "retrieval_hit_rate": 0.75,
+          "context_reduction_percent": 14.12,
+          "repeated_explanation_items_removed": 3,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "hybrid_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "phrase_saver_per_byte_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": null,
+          "classifier_label": null
+        },
+        "threshold_gated_adaptive_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": null
+        },
+        "scenario_classifier_mode": {
+          "retrieval_hit_rate": 1.0,
+          "context_reduction_percent": -39.04,
+          "repeated_explanation_items_removed": 4,
+          "controller_choice": "phrase_saver_escalation",
+          "classifier_label": "high_recall_need"
+        }
+      },
+      "comparisons": {
+        "threshold_vs_hybrid": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "classifier_vs_threshold": {
+          "hit_rate_delta": 0.0,
+          "context_reduction_delta": 0.0
+        },
+        "compression_vs_threshold": {
+          "hit_rate_delta": -0.25,
+          "context_reduction_delta": 53.16
+        }
+      }
+    }
+  ]
+}
