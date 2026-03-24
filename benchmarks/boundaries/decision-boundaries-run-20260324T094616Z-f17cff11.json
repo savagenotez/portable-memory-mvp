@@ -1,0 +1,87 @@
+{
+  "boundary_version": "0.1.0",
+  "source_analysis_file": "per-scenario-winners-run-20260324T094616Z-f17cff11.json",
+  "source_run_id": "run-20260324T094616Z-f17cff11",
+  "timestamp": "2026-03-24T09:46:16Z",
+  "scenario_count": 13,
+  "rules": [
+    {
+      "rule_name": "low_recall_default",
+      "if_all": [
+        "low_recall"
+      ],
+      "if_any": [],
+      "preferred_mode": "compression_mode",
+      "evidence_count": 3,
+      "notes": "Derived from scenarios marked low-recall."
+    },
+    {
+      "rule_name": "mixed_recall_default",
+      "if_all": [
+        "mixed_recall"
+      ],
+      "if_any": [],
+      "preferred_mode": "hybrid_mode",
+      "evidence_count": 2,
+      "notes": "Derived from scenarios marked mixed-recall."
+    },
+    {
+      "rule_name": "proof_queries",
+      "if_all": [],
+      "if_any": [
+        "proof"
+      ],
+      "preferred_mode": "hybrid_mode",
+      "evidence_count": 2,
+      "notes": "Proof/proven style queries often need stronger preservation."
+    },
+    {
+      "rule_name": "constraint_queries",
+      "if_all": [],
+      "if_any": [
+        "constraints"
+      ],
+      "preferred_mode": "compression_mode",
+      "evidence_count": 3,
+      "notes": "Constraint-heavy queries often benefit from stronger semantic retention."
+    },
+    {
+      "rule_name": "workflow_queries",
+      "if_all": [],
+      "if_any": [
+        "workflow"
+      ],
+      "preferred_mode": "hybrid_mode",
+      "evidence_count": 2,
+      "notes": "Workflow/tooling language may need structured preservation."
+    },
+    {
+      "rule_name": "goal_queries",
+      "if_all": [],
+      "if_any": [
+        "goal"
+      ],
+      "preferred_mode": "compression_mode",
+      "evidence_count": 1,
+      "notes": "Goal-only questions may be more compressible."
+    },
+    {
+      "rule_name": "global_fallback",
+      "if_all": [],
+      "if_any": [],
+      "preferred_mode": "compression_mode",
+      "evidence_count": 7,
+      "notes": "Fallback winner across all analyzed scenarios."
+    }
+  ],
+  "feature_breakdown": {
+    "low_recall": 3,
+    "mixed_recall": 3,
+    "project_identity": 6,
+    "constraints": 3,
+    "proof": 2,
+    "workflow": 3,
+    "next_step": 1,
+    "goal": 1
+  }
+}
