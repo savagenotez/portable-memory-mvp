@@ -38,11 +38,11 @@ def main() -> None:
         ("compression_mode", "Compression mode"),
         ("hybrid_mode", "Hybrid mode"),
         ("phrase_saver_per_byte_mode", "Phrase-saver-per-byte mode"),
+        ("phrase_saver_pruning_mode", "Phrase-saver pruning mode"),
         ("phrase_fragment_per_byte_mode", "Phrase-fragment-per-byte mode"),
         ("title_aware_fragment_bundle_mode", "Title-aware fragment bundle mode"),
         ("threshold_gated_adaptive_mode", "Threshold-gated adaptive mode"),
         ("scenario_classifier_mode", "Scenario-classifier mode"),
-        ("hybrid_to_phrase_saver_reduction_mode", "Hybrid-to-phrase-saver reduction mode"),
     ]:
         mode = metrics.get(mode_name, {})
         if mode:
@@ -53,6 +53,8 @@ def main() -> None:
             print(f"  Repeated explanation items removed: {mode.get('repeated_explanation_items_removed')}")
             if "controller_choices" in mode:
                 print(f"  Controller choices: {mode.get('controller_choices')}")
+            if "total_pruned_lines" in mode:
+                print(f"  Total pruned lines: {mode.get('total_pruned_lines')}")
 
 
 if __name__ == "__main__":
