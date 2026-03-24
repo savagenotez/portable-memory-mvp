@@ -1,0 +1,99 @@
+{
+  "onepager_version": "0.1.0",
+  "source_run_id": "run-20260324T214221Z-429eb2dd",
+  "source_policy_report": "robustness-aware-policy-report-run-20260324T214221Z-429eb2dd.json",
+  "source_validation_report": "robustness-aware-pruning-validation-run-20260324T214221Z-429eb2dd.json",
+  "headline": {
+    "product_name": "Portable Memory MVP",
+    "recommended_policy": "robustness_aware_pruning_mode",
+    "core_claim": "Robustness-aware pruning preserves continuity while shrinking context, and it remained unbeaten across the current adversarial benchmark suite."
+  },
+  "key_metrics": {
+    "retrieval_hit_rate": 0.8782,
+    "soft_hit_rate": 0.8782,
+    "context_reduction_percent": 23.82,
+    "total_pruned_lines": 25,
+    "unbeaten_scenarios": 13,
+    "scenario_count": 13
+  },
+  "why_it_matters": [
+    "Most memory systems either preserve signal but bloat context, or compress context but lose important meaning.",
+    "This policy keeps the high-signal rescue behavior, then prunes only when robustness is preserved.",
+    "The result is lower context cost without losing continuity quality on the tested scenarios."
+  ],
+  "what_we_built": [
+    "A rescue-and-prune memory policy for session continuity.",
+    "A benchmark suite with exact, soft, and adversarial evaluation.",
+    "An interpretable policy that protects exact recall, soft recall, and anchor-token overlap."
+  ],
+  "competitive_positioning": {
+    "robustness_aware_pruning_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": 23.82,
+      "repeated_explanation_items_removed": 39,
+      "controller_choices": {
+        "robust_pruned_phrase_saver": 13
+      },
+      "total_pruned_lines": 25
+    },
+    "threshold_gated_adaptive_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": -53.95,
+      "repeated_explanation_items_removed": 39,
+      "controller_choices": {
+        "hybrid_fallback": 5,
+        "fragment_escalation": 1,
+        "phrase_saver_escalation": 4,
+        "compression_seed": 3
+      }
+    },
+    "hybrid_mode": {
+      "retrieval_hit_rate": 0.8782,
+      "soft_hit_rate": 0.8782,
+      "context_reduction_percent": -54.76,
+      "repeated_explanation_items_removed": 39
+    },
+    "compression_mode": {
+      "retrieval_hit_rate": 0.6282,
+      "soft_hit_rate": 0.6282,
+      "context_reduction_percent": -30.22,
+      "repeated_explanation_items_removed": 26
+    }
+  },
+  "business_value": {
+    "cost_savings": [
+      "reduces context size while preserving meaning",
+      "can lower inference cost compared with bloated rescue modes",
+      "can extend usable context windows"
+    ],
+    "product_value": [
+      "improves continuity across sessions",
+      "makes memory behavior more interpretable",
+      "supports enterprise-grade memory retention policies"
+    ],
+    "research_value": [
+      "demonstrates that rescue-plus-pruning outperforms static summarization",
+      "shows robustness-aware pruning is a better objective than raw compression",
+      "creates a benchmarkable framework for semantic continuity preservation"
+    ]
+  },
+  "founder_talking_points": [
+    "We are not just summarizing context; we are preserving the minimum robust meaning needed for continuity.",
+    "The system is benchmarked against multiple weaker policies and wins on the current suite.",
+    "The policy is interpretable, measurable, and can be productized as a memory controller layer.",
+    "This can support lower inference cost, longer usable sessions, and more trustworthy enterprise memory behavior."
+  ],
+  "proof_points": {
+    "unbeaten_scenarios": "13 / 13",
+    "loss_counts_by_mode": {},
+    "recommended_policy": "robustness_aware_pruning_mode"
+  },
+  "next_steps": [
+    "Expand the adversarial suite and scenario coverage.",
+    "Test the policy against live usage traces and token-cost accounting.",
+    "Package the controller as a reusable module.",
+    "Prepare a technical note and a business-facing pitch deck."
+  ]
+}
