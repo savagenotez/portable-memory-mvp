@@ -1,0 +1,39 @@
+﻿[
+  {
+    "scenario_id": "project_and_constraints",
+    "title": "Project and constraints retrieval",
+    "query": "What is the project and what are the constraints?",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json"
+    ],
+    "expected_phrases": [
+      "fastest_working_prototype",
+      "portable memory package",
+      "mergeable memory container",
+      "Codex CLI and Claude Code"
+    ],
+    "merge_preview": {
+      "left_package_key": "session_1",
+      "right_package_key": "session_2"
+    }
+  },
+  {
+    "scenario_id": "durable_update_retrieval",
+    "title": "Durable update retrieval",
+    "query": "What has now been proven and what should happen next?",
+    "top_k": 12,
+    "baseline_transcripts": [
+      "transcript_1.json",
+      "transcript_2.json",
+      "transcript_3.json"
+    ],
+    "expected_phrases": [
+      "Durable update ingestion",
+      "Codex CLI and Claude Code should share the same memory layer",
+      "working context should be assembled from structured state",
+      "Portable, persistent, mergeable AI memory system"
+    ]
+  }
+]

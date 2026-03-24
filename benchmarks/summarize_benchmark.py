@@ -26,13 +26,13 @@ def main() -> None:
     if latest:
         print(f"Latest run id: {latest.get('latest_run_id')}")
         print(f"Updated at: {latest.get('updated_at')}")
-        scenario = latest.get("last_scenario", {})
-        print(f"Latest scenario: {scenario.get('title')}")
-        print(f"Latest status: {latest.get('status')}")
+        metrics = latest.get("last_metrics", {})
+        print(f"Average retrieval hit rate: {metrics.get('retrieval_hit_rate')}")
+        print(f"Average context reduction percent: {metrics.get('context_reduction_percent')}")
+        print(f"Merge success rate: {metrics.get('merge_success_rate')}")
     else:
         print("No latest benchmark snapshot found.")
 
 
 if __name__ == "__main__":
     main()
-
