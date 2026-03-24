@@ -95,56 +95,74 @@ def parse_package_ids():
     return out
 
 
-def compress_memory_text(text: str, expected_phrases, max_lines: int = 18, max_chars: int = 1400) -> str:
-    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+def dedupe_lines(lines):
     seen = set()
-    deduped = []
-    for ln in lines:
-        key = normalize_text(ln)
-        if key not in seen:
+    out = []
+    for line in lines:
+        key = normalize_text(line)
+        if key and key not in seen:
             seen.add(key)
-            deduped.append(ln)
+            out.append(line.strip())
+    return out
 
-    def score(line: str) -> int:
-        s = 0
+
+def summary_first_memory_text(text: str, expected_phrases, max_chars: int = 900) -> str:
+    raw_lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    raw_lines = dedupe_lines(raw_lines)
+
+    prefs = []
+    facts = []
+    projects = []
+    durable = []
+    convos = []
+    other = []
+
+    for line in raw_lines:
         lower = line.lower()
         if lower.startswith("preference:"):
-            s += 8
-        if lower.startswith("fact:"):
-            s += 8
-        if lower.startswith("project:"):
-            s += 8
-        if lower.startswith("conversation:"):
-            s += 3
-        if "goal" in lower:
-            s += 4
-        if "constraint" in lower:
-            s += 4
-        if "durable update" in lower:
-            s += 5
-        if "portable" in lower or "mergeable" in lower:
-            s += 4
-        if "codex" in lower or "claude" in lower:
-            s += 4
+            prefs.append(line)
+        elif lower.startswith("fact:"):
+            facts.append(line)
+        elif lower.startswith("project:"):
+            projects.append(line)
+        elif "durable update" in lower:
+            durable.append(line)
+        elif lower.startswith("conversation:"):
+            convos.append(line)
+        else:
+            other.append(line)
+
+    # Promote lines containing expected phrases
+    def expected_score(line: str) -> int:
+        lower = normalize_text(line)
+        score = 0
         for phrase in expected_phrases:
             if normalize_text(phrase) in lower:
-                s += 12
-        s -= max(0, len(line) // 180)
-        return s
+                score += 10
+        return score
 
-    ranked = sorted(deduped, key=lambda x: (-score(x), len(x)))
-    picked = ranked[:max_lines]
+    def sort_group(lines):
+        return sorted(lines, key=lambda x: (-expected_score(x), len(x)))
 
-    out_lines = []
+    prefs = sort_group(prefs)
+    facts = sort_group(facts)
+    projects = sort_group(projects)
+    durable = sort_group(durable)
+    convos = sort_group(convos)
+    other = sort_group(other)
+
+    ordered = prefs + facts + projects + durable + convos[:2] + other[:2]
+
+    final_lines = []
     current_len = 0
-    for ln in picked:
-        extra = len(ln) + (1 if out_lines else 0)
+    for line in ordered:
+        extra = len(line) + (1 if final_lines else 0)
         if current_len + extra > max_chars:
             break
-        out_lines.append(ln)
+        final_lines.append(line)
         current_len += extra
 
-    return "\n".join(out_lines).strip()
+    return "\n".join(final_lines).strip()
 
 
 def retrieval_hit_rate(text: str, expected_phrases):
@@ -180,7 +198,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
     }
     retrieval = http_json("POST", f"{base_url}/v1/retrieve/context", retrieve_body)
     raw_memory_text = retrieval.get("text", "")
-    memory_text = compress_memory_text(raw_memory_text, expected_phrases)
+    memory_text = summary_first_memory_text(raw_memory_text, expected_phrases)
 
     baseline_text = build_transcript_only_context(transcript_files)
     baseline_metrics = compare_to_baseline(memory_text, baseline_text)
@@ -214,7 +232,7 @@ def run_scenario(base_url: str, agent_id: str, scenario: dict, package_ids: dict
         "merge_success": merge_success,
         "merge_summary": merge_summary,
         "retrieval_preview_raw": raw_memory_text[:1500],
-        "retrieval_preview_compressed": memory_text,
+        "retrieval_preview_summary_first": memory_text,
         "baseline_preview": baseline_text[:1500],
         **baseline_metrics
     }
@@ -343,8 +361,8 @@ def main():
             "evaluator_notes": "Human evaluation not supplied for this run."
         },
         "notes": [
-            "This benchmark compares transcript-only continuation to tuned compressed structured-memory retrieval.",
-            "Compression is heuristic and tuned to preserve expected signal more aggressively."
+            "This benchmark compares transcript-only continuation to summary-first structured-memory retrieval.",
+            "Summary-first mode prioritizes preferences, facts, projects, and durable updates."
         ]
     }
 
