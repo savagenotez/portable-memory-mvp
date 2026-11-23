@@ -10,3 +10,6 @@ Prediction-markets package (branch claude/prediction-markets-algorithm-9rqoli):
 - Finding: the spec's plug-in goal-attainment probabilities are not calibrated on simulated data (weather and systems overstated; little skill over base rate). Integrating over mu uncertainty did not fix it. Fix needs its own evaluation.
 - Spec deviations (seeded Monte Carlo, Regime 1 target fix, pure step_plan, Regime 2/3 boundary) are listed in prediction_markets/README.md.
 - Tests: python3 -m unittest discover -s prediction_markets/tests -t .  (53 tests)
+- Pull request: draft PR #1 open against main (https://github.com/savagenotez/portable-memory-mvp/pull/1). Branch pushed.
+- Handoff for Codex or another agent: prediction_markets/HANDOFF.md. Calibration diagnostics: prediction_markets/diagnostics/.
+- Open task: plug-in goal-attainment probabilities are not calibrated. Next step is to define a calibration criterion and test fixes behind flags, without tuning config.json to the numbers.
