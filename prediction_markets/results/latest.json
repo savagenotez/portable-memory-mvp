@@ -1,0 +1,204 @@
+{
+  "disclaimer": "SIMULATED DATA ONLY. Probabilities are model outputs on series generated from config.json. Paper-trading uses synthetic prices. Nothing here is evidence of an edge on any real market or sportsbook.",
+  "domains": {
+    "sports_star": {
+      "field": "sports",
+      "unit": "points per game",
+      "description": "Star scorer. Opponent noise and home/away venue effect, AR(1) streak and fatigue.",
+      "goal": 2050.0,
+      "observed_periods": 20,
+      "total_periods": 82,
+      "checkpoint": {
+        "status": "ACTIVE",
+        "regime": "PD_PACING_CONTROL",
+        "variance_policy": "neutral",
+        "shrunk_mean": 23.285693627395617,
+        "bounded_std": 6.638547963371484,
+        "required_pace": 25.345632115776315,
+        "difficulty_z": 2.4433011506407887,
+        "recommended_next_target": 25.079896639405128,
+        "attainment_probability_pct": 1.0,
+        "normal_approx_pct": 0.727679365457945,
+        "realized_goal_hit_in_this_run": false
+      },
+      "calibration": {
+        "replicates": 300,
+        "predicted_mean_pct": 14.206333333333331,
+        "realized_rate_pct": 10.333333333333334,
+        "brier": 0.12320431666666666,
+        "brier_skill_vs_base_rate": -0.3297024223528
+      }
+    },
+    "sports_role_player": {
+      "field": "sports",
+      "unit": "points per game",
+      "description": "Role player. Same structure as the star, with lower talent and higher relative noise.",
+      "goal": 1189.0,
+      "observed_periods": 20,
+      "total_periods": 82,
+      "checkpoint": {
+        "status": "ACTIVE",
+        "regime": "PD_PACING_CONTROL",
+        "variance_policy": "neutral",
+        "shrunk_mean": 12.820611259248036,
+        "bounded_std": 6.338578137479266,
+        "required_pace": 14.90938164875095,
+        "difficulty_z": 2.594745089075975,
+        "recommended_next_target": 14.598940026187625,
+        "attainment_probability_pct": 0.7000000000000001,
+        "normal_approx_pct": 0.47330548192408006,
+        "realized_goal_hit_in_this_run": false
+      },
+      "calibration": {
+        "replicates": 300,
+        "predicted_mean_pct": 15.833666666666664,
+        "realized_rate_pct": 21.0,
+        "brier": 0.15633035,
+        "brier_skill_vs_base_rate": 0.05768324291742
+      }
+    },
+    "weather_precipitation": {
+      "field": "weather",
+      "unit": "mm per day",
+      "description": "Daily rainfall. Seasonal cycle, multi-day AR(1) system persistence, non-negative floor.",
+      "goal": 75.0,
+      "observed_periods": 10,
+      "total_periods": 30,
+      "checkpoint": {
+        "status": "ACTIVE",
+        "regime": "PD_PACING_CONTROL",
+        "variance_policy": "neutral",
+        "shrunk_mean": 1.7220037750065826,
+        "bounded_std": 1.9117120396654823,
+        "required_pace": 2.958497168745063,
+        "difficulty_z": 2.8925729657615835,
+        "recommended_next_target": 2.7794336474814227,
+        "attainment_probability_pct": 0.3,
+        "normal_approx_pct": 0.19105020887371094,
+        "realized_goal_hit_in_this_run": false
+      },
+      "calibration": {
+        "replicates": 300,
+        "predicted_mean_pct": 49.858666666666664,
+        "realized_rate_pct": 36.0,
+        "brier": 0.24453838666666664,
+        "brier_skill_vs_base_rate": -0.06136452546296289
+      }
+    },
+    "politics_poll_share": {
+      "field": "politics",
+      "unit": "candidate share (0 to 1)",
+      "description": "Tracking poll share. Slow drift, post-event momentum, pollster house noise, sampling error.",
+      "goal": 28.799999999999997,
+      "observed_periods": 20,
+      "total_periods": 60,
+      "checkpoint": {
+        "status": "ACTIVE",
+        "regime": "PD_PACING_CONTROL",
+        "variance_policy": "neutral",
+        "shrunk_mean": 0.4735896344554923,
+        "bounded_std": 0.01720279297393948,
+        "required_pace": 0.4844872558811553,
+        "difficulty_z": 4.006477882463849,
+        "recommended_next_target": 0.48303789088906346,
+        "attainment_probability_pct": 0.0,
+        "normal_approx_pct": 0.0030815446746101927,
+        "realized_goal_hit_in_this_run": false
+      },
+      "calibration": {
+        "replicates": 300,
+        "predicted_mean_pct": 9.734000000000002,
+        "realized_rate_pct": 9.0,
+        "brier": 0.09870516,
+        "brier_skill_vs_base_rate": -0.2051912087912089
+      }
+    },
+    "systems_throughput": {
+      "field": "systems",
+      "unit": "requests per hour",
+      "description": "Service throughput. Daily load cycle, AR(1) load persistence, rare outage shocks that drop output to zero.",
+      "goal": 147840,
+      "observed_periods": 48,
+      "total_periods": 168,
+      "checkpoint": {
+        "status": "ACTIVE",
+        "regime": "PD_PACING_CONTROL",
+        "variance_policy": "neutral",
+        "shrunk_mean": 852.4758106050298,
+        "bounded_std": 135.9259343879367,
+        "required_pace": 892.9898503161118,
+        "difficulty_z": 3.265080140201575,
+        "recommended_next_target": 890.1914974771611,
+        "attainment_probability_pct": 0.0,
+        "normal_approx_pct": 0.05471655491005034,
+        "realized_goal_hit_in_this_run": false
+      },
+      "calibration": {
+        "replicates": 300,
+        "predicted_mean_pct": 32.001666666666665,
+        "realized_rate_pct": 16.0,
+        "brier": 0.21374214333333333,
+        "brier_skill_vs_base_rate": -0.590343328373016
+      }
+    }
+  },
+  "forecast": {
+    "shrunk_baseline": 23.285693627395617,
+    "bounded_std": 6.638547963371484,
+    "action_multiplier": 1.1361269771988887,
+    "fatigue_drag_applied": 1.5,
+    "expected": 24.955504712872408,
+    "likely_range_p10": 16.293265283978954,
+    "likely_range_p90": 33.53488350922822,
+    "milestone": 30,
+    "milestone_probability": 0.22366336314212554,
+    "milestone_probability_mc": 0.225,
+    "simulated_next_game_for_reference_only": 22.30947721327095
+  },
+  "paper_trading": {
+    "fair_market": {
+      "events": 5760,
+      "bets": 4849,
+      "wins": 2577,
+      "win_rate": 0.5314497834605073,
+      "win_rate_ci95": [
+        0.517384862102843,
+        0.545464912346832
+      ],
+      "mean_price_paid": 0.5274547553502462,
+      "staked": 97038.66063417037,
+      "pnl": -842.405358471179,
+      "roi": -0.00868113134461938,
+      "start_bankroll": 1000.0,
+      "final_bankroll": 157.59464152882052,
+      "max_drawdown": 0.9225544274179354,
+      "brier_model": 0.2040354275684405,
+      "brier_market": 0.19928337522073464,
+      "brier_skill_vs_market": -0.023845703849818323,
+      "events_source": "synthetic",
+      "market_noise_sd": 0.0
+    },
+    "noisy_market": {
+      "events": 5760,
+      "bets": 4946,
+      "wins": 2592,
+      "win_rate": 0.5240598463404772,
+      "win_rate_ci95": [
+        0.5101279605566127,
+        0.5379543861592904
+      ],
+      "mean_price_paid": 0.49404198535533156,
+      "staked": 90062463095.83229,
+      "pnl": 4269091965.4208984,
+      "roi": 0.04740145692971231,
+      "start_bankroll": 1000.0,
+      "final_bankroll": 4269092965.4208984,
+      "max_drawdown": 0.674207748528581,
+      "brier_model": 0.2040354275684405,
+      "brier_market": 0.20298623720007364,
+      "brier_skill_vs_market": -0.005168775887661514,
+      "events_source": "synthetic",
+      "market_noise_sd": 0.05
+    }
+  }
+}
