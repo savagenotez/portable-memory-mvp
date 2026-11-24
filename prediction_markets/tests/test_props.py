@@ -33,6 +33,12 @@ class TeamTests(unittest.TestCase):
         self.assertEqual(sf["kicker"], "K1")
         self.assertEqual(a[("g1", "MIN")]["points"][1:], [0, 7, 0, 3, 0])
 
+    def test_a_scoreless_team_still_has_every_count(self):
+        b = dict(BOUNDARY, game_id="g2", home="NE", away="NYJ")
+        a = T.team_actuals(data(), [BOUNDARY, b])
+        self.assertEqual(a[("g2", "NE")]["sd"], [0] * 6)
+        self.assertEqual(a[("g1", "SF")]["sd"][1:5], [1, 1, 1, 0])
+
     def test_weather_only_counts_outdoors(self):
         self.assertEqual(T.weather_x({"roof": "dome", "wind": 20, "temp": 10}), (0.0, 0.0))
         self.assertEqual(T.weather_x({"roof": "outdoors", "wind": 20, "temp": 30}), (2.0, 1.0))

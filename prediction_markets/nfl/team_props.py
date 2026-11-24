@@ -90,7 +90,6 @@ def team_actuals(data: dict, boundaries: Sequence[dict]) -> Dict[Tuple[str, str]
     for gid, team, q, ok in data["two"]:
         out[(gid, team)]["two"] += ok
     for a in out.values():
-        a["sd"] = [t + f for t, f in zip(a["td"], a["fgm"])]          # scoring drives: touchdowns + field goals made
         ks = [k for _, _, k in a["kicks"] if k]
         a["kicker"] = max(set(ks), key=ks.count) if ks else None
     for b in boundaries:
@@ -99,6 +98,8 @@ def team_actuals(data: dict, boundaries: Sequence[dict]) -> Dict[Tuple[str, str]
         for side, team, key in (("home", b["home"], "hs"), ("away", b["away"], "as")):
             cum = [0, b["q1"][key], b["q2"][key], b["q3"][key], b["q4"][key], b["final"][key]]
             out[(b["game_id"], team)]["points"] = [None] + [int(cum[i] - cum[i - 1]) for i in range(1, 6)]
+    for a in out.values():                       # after every record exists, including scoreless teams
+        a["sd"] = [t + f for t, f in zip(a["td"], a["fgm"])]          # scoring drives: touchdowns + field goals made
     return out
 
 
