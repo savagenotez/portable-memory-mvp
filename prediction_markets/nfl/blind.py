@@ -155,14 +155,31 @@ def judge(log_path: str, games: Sequence[Game], path: Optional[str] = None) -> d
     by_game = {g.game_id: g for g in games}
     rows = []
     for r in res["rows"]:
+        if r.get("model_v3") is None:                     # judge only games where the frozen v3 has a forecast
+            continue
         g = by_game[r["game_id"]]
         side = r["side"]                                  # the team the YES market is about
         rest = (g.rest_home - g.rest_away) if side == "home" else (g.rest_away - g.rest_home)
-        rows.append({"model": r["model"], "market": r["market"], "outcome": r["outcome"], "side": side,
+        rows.append({"model": r["model_v3"], "model_base": r["model"], "market": r["market"],
+                     "outcome": r["outcome"], "side": side,
                      "div": g.div_game, "rest": rest, "indoor": 1 if g.roof in ("dome", "closed") else 0,
                      "week": g.week})
-    out = {"status": "judged", "scored_games": len(rows), "overall": res.get("model_minus_market_brier"),
-           "overall_ci95": res.get("ci95"), "blind": blind_spots(rows)}
+    if len(rows) < MIN_JUDGED:
+        return {"status": "not yet", "scored_games": len(rows), "needed": MIN_JUDGED,
+                "note": "games with both a price and a v3 forecast"}
+    d_v3 = [(r["model"] - r["outcome"]) ** 2 - (r["market"] - r["outcome"]) ** 2 for r in rows]
+    d_base = [(r["model_base"] - r["outcome"]) ** 2 - (r["market"] - r["outcome"]) ** 2 for r in rows]
+    d_vs = [(r["model"] - r["outcome"]) ** 2 - (r["model_base"] - r["outcome"]) ** 2 for r in rows]
+    rng = random.Random(41)
+    def ci(xs):
+        boots = sorted(st.mean(rng.choice(xs) for _ in xs) for _ in range(2000))
+        return [boots[49], boots[1949]]
+    out = {"status": "judged", "scored_games": len(rows),
+           "v3_minus_market_brier": {"mean": st.mean(d_v3), "ci95": ci(d_v3)},
+           "base_minus_market_brier": {"mean": st.mean(d_base), "ci95": ci(d_base)},
+           "v3_minus_base_brier": {"mean": st.mean(d_vs), "ci95": ci(d_vs)},
+           "v3_ahead_of_market": ci(d_v3)[1] < 0,
+           "blind": blind_spots(rows)}
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=2)
     return out

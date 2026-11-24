@@ -32,7 +32,7 @@ def _cached(url: str, name: str, refresh: bool = False) -> Optional[str]:
     return text
 
 
-def load_team_games(seasons=range(2000, 2026), refresh: bool = False) -> Tuple[List[TeamGame], List[int]]:
+def load_team_games(seasons=range(2000, 2027), refresh: bool = False) -> Tuple[List[TeamGame], List[int]]:
     games: List[TeamGame] = []
     missing: List[int] = []
     for y in seasons:
@@ -44,7 +44,7 @@ def load_team_games(seasons=range(2000, 2026), refresh: bool = False) -> Tuple[L
     return games, missing
 
 
-def load_injury_counts(seasons=range(2009, 2026), refresh: bool = False) -> Tuple[Dict, List[int]]:
+def load_injury_counts(seasons=range(2009, 2027), refresh: bool = False) -> Tuple[Dict, List[int]]:
     counts: Dict = {}
     missing: List[int] = []
     for y in seasons:

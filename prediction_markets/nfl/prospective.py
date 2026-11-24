@@ -78,8 +78,12 @@ def _quote(m: dict):
     return bid, ask, mid
 
 
-def snapshot_rows(markets: List[dict], games: List[Game], now: dt.datetime) -> List[dict]:
-    """One row per open market that matches a game. The model probability is for the team the market is about."""
+def snapshot_rows(markets: List[dict], games: List[Game], now: dt.datetime, team_games=None,
+                  injuries=None) -> List[dict]:
+    """One row per open market that matches a game. Each model's probability is for the team the market is about.
+
+    'model' is the base model (K 30, rest, division). 'model_v3' is the frozen v3 (adds efficiency and injuries),
+    recorded only when the team stats and injury counts are supplied."""
     placeholder = lambda m: Observation("kalshi", m["ticker"], m["event_ticker"], m.get("title", ""), 0.0,
                                         HORIZON_HOURS, 0.5, 0)
     matched = []
@@ -91,6 +95,10 @@ def snapshot_rows(markets: List[dict], games: List[Game], now: dt.datetime) -> L
         return []
     targets = {g.game_id for _, g, _ in matched}
     p_home = walk_forward_home_prob(games, targets, dict(ADOPTED_SETTINGS))
+    p_v3 = {}
+    if team_games is not None and injuries is not None:
+        from .model_v3 import v3_home_probs
+        p_v3 = v3_home_probs(games, team_games, injuries, targets)
     rows = []
     for m, g, side in matched:
         close = parse_utc(m["close_time"])
@@ -104,14 +112,27 @@ def snapshot_rows(markets: List[dict], games: List[Game], now: dt.datetime) -> L
             "game_id": g.game_id, "gameday": g.gameday, "side": side,
             "hours_to_close": round(hours, 3), "bid": bid, "ask": ask, "mid": mid,
             "model": ph if side == "home" else 1.0 - ph, "model_version": MODEL_VERSION,
+            "model_v3": (p_v3[g.game_id] if side == "home" else 1.0 - p_v3[g.game_id]) if g.game_id in p_v3 else None,
         })
     return rows
+
+
+def _season_files():
+    """Team stats and injuries: cached history, with the current season always re-downloaded."""
+    from .sources import load_injury_counts, load_team_games
+    tg_old, _ = load_team_games(range(2000, 2026))
+    tg_now, _ = load_team_games([2026], refresh=True)
+    inj_old, _ = load_injury_counts(range(2009, 2026))
+    inj_now, _ = load_injury_counts([2026], refresh=True)
+    inj_old.update(inj_now)
+    return tg_old + tg_now, inj_old
 
 
 def run_snapshot(path: str = LOG, fetch: Callable = http.get_json) -> int:
     now = dt.datetime.now(dt.timezone.utc)
     games = load_games(refresh=True)
-    rows = snapshot_rows(open_nfl_markets(fetch), games, now)
+    team_games, injuries = _season_files()
+    rows = snapshot_rows(open_nfl_markets(fetch), games, now, team_games, injuries)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "a", encoding="utf-8") as fh:
         for r in rows:
@@ -152,7 +173,8 @@ def score(log: List[dict], games: List[Game]) -> dict:
         if ev in per_event:       # one market per event: keep the first sorted ticker
             continue
         per_event[ev] = {"market_id": market_id, "game_id": g.game_id, "gameday": g.gameday, "side": snap["side"],
-                         "model": snap["model"], "market": snap["mid"], "outcome": int(team_won),
+                         "model": snap["model"], "model_v3": snap.get("model_v3"),
+                         "market": snap["mid"], "outcome": int(team_won),
                          "hours_before_close": snap["hours_to_close"]}
     rows = list(per_event.values())
     n = len(rows)

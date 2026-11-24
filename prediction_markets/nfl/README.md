@@ -68,6 +68,21 @@ Enforcement: tuning and selection code calls `assert_not_sealed()` on the games 
 
 Realistic timing: the regular season may not supply 100 priced, settled sealed games. If it does not, the judgement waits, and the sealed block is not reopened or re-sealed.
 
+## Model v3 (frozen): efficiency and injuries
+
+v3 adds two features that each passed the pre-registered history test: EPA per play over a 10-game half-life (from the nflverse weekly team stats), and key-position injuries (Out or Doubtful, from the weekly report). The definition is frozen in `model_v3.py`, before any sealed 2026 outcome exists.
+
+Development result on history (2020-2025 holdout, which was already used to choose K = 30, so this is not blind):
+
+- v3 against the base model with the same 2010 training window (the fair comparison): **-0.0061** log loss per game, 95% interval -0.0119 to -0.0007, over 1,688 games.
+- v3 against the base model trained from 2005: -0.0070 (-0.0129 to -0.0016). The difference between the two comparisons is the training window, so the fair line is the one to quote.
+
+The blind judgement compares v3 with the market and with the base model, on the sealed 2026 games that have a price and a v3 forecast (`blind.judge`). It has not run yet.
+
+## Blind test status
+
+The prospective logger records both models for each open market. A daily scheduled run was requested but was refused by the automatic permission check, so it is not running. Until it is set up, snapshots must be taken by hand: `python3 -m prediction_markets.nfl.prospective snapshot`, then `score`.
+
 ## Where the model falls behind (post hoc, read with caution)
 
 - **Concentrated in 11 games.** These are the games where the model and the price disagreed by 20 points or more. They account for the whole shortfall: 2.16 of the 0.72 total squared-error difference. The other 135 games favour the model slightly (-0.011 Brier, 95% interval -0.024 to +0.002).
