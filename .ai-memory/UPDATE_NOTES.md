@@ -12,4 +12,7 @@ Prediction-markets package (branch claude/prediction-markets-algorithm-9rqoli):
 - Tests: python3 -m unittest discover -s prediction_markets/tests -t .  (53 tests)
 - Pull request: draft PR #1 open against main (https://github.com/savagenotez/portable-memory-mvp/pull/1). Branch pushed.
 - Handoff for Codex or another agent: prediction_markets/HANDOFF.md. Calibration diagnostics: prediction_markets/diagnostics/.
-- Open task: plug-in goal-attainment probabilities are not calibrated. Next step is to define a calibration criterion and test fixes behind flags, without tuning config.json to the numbers.
+- Calibration study (pre-registered: each domain's predicted rate within 2 SE of realized): no variant passes all five domains on seed blocks 912000000 or 913000000. Spec plug-in is not calibrated.
+- Calibration variants added as flags, off by default: AR(1) dependence, mu uncertainty, known drift. Known drift fixes weather on block 913000000 but was found post-hoc and needs a new seed block.
+- Attribution: outage shocks explain about half of the systems gap. Role-player overprediction is a shrinkage/prior-strength effect, not a wrong mean or spread (diagnostic, not verified).
+- Never evaluate on a used seed block. Next steps are in prediction_markets/HANDOFF.md.

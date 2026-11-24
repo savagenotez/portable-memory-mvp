@@ -66,6 +66,18 @@ class DomainSpec:
         m += self.venue_effect if t % 2 == 0 else -self.venue_effect
         return m
 
+    def known_drift(self, t: int) -> float:
+        """Calendar-known part of S(t): the seasonal cycle and venue alternation.
+
+        Trend is excluded, because a trend is not known in advance. The controller's
+        drift option uses this function, so it can be supplied from a schedule.
+        """
+        d = 0.0
+        if self.seasonal_amp and self.seasonal_period > 0:
+            d += self.seasonal_amp * math.sin(2.0 * math.pi * t / self.seasonal_period)
+        d += self.venue_effect if t % 2 == 0 else -self.venue_effect
+        return d
+
 
 def load_config(path: Optional[str] = None) -> dict:
     with open(path or DEFAULT_CONFIG_PATH, encoding="utf-8") as fh:

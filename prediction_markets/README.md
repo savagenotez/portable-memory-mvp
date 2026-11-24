@@ -1,6 +1,6 @@
 # prediction_markets
 
-A simulation and forecasting toolkit for prediction-market style questions. It implements the four-component stat model, the VB-GPC goal-pacing controller, a next-period forecast, and a paper-trading harness that reports win rate, ROI and Brier skill.
+A simulation and forecasting toolkit for prediction-market style questions. It implements the four-component stat model, the VB-GPC goal-pacing controller, a next-period forecast, a calibration study for the controller's probabilities, and a paper-trading harness that reports win rate, ROI and Brier skill.
 
 ## What this does not do
 
@@ -14,9 +14,11 @@ Nothing here is evidence of an edge on any real market or sportsbook. Win rate o
 
 ```bash
 # from the repository root; standard library only (tested on Python 3.13)
-python3 -m unittest discover -s prediction_markets/tests -t .   # 53 tests
+python3 -m unittest discover -s prediction_markets/tests -t .   # 59 tests
 python3 -m prediction_markets.run_demo                          # full run, about 25 s, writes results/latest.json
 python3 -m prediction_markets.run_demo --quick                  # smoke test, a few seconds, writes nothing
+python3 -m prediction_markets.calibration --seed-base 913000000 \
+    --out prediction_markets/results/calibration_seedblock_913000000.json   # about 35 s
 ```
 
 ## Layout
@@ -25,14 +27,16 @@ python3 -m prediction_markets.run_demo --quick                  # smoke test, a 
 |---|---|
 | `config.json` | Every editable variable: priors, dynamics, goals, controller gains, betting policy |
 | `statmodel.py` | Shared estimators: EB shrinkage, Popoviciu bound, AR(1) helpers |
-| `simulate.py` | Domain simulator: `Y_t = clip(mu + trend + seasonal + venue + S_t + X_t + eps_t)` |
-| `vbgpc.py` | Goal-attainment controller: feasibility, regimes, PD pacing, Monte Carlo probability |
+| `simulate.py` | Domain simulator: `Y_t = clip(mu + trend + seasonal + venue + S_t + X_t + eps_t)`. `known_drift(t)` gives the calendar-known part of S(t) |
+| `vbgpc.py` | Goal-attainment controller: feasibility, regimes, PD pacing, Monte Carlo probability. Optional variants: AR(1) dependence, mu uncertainty, known drift. All off by default |
 | `forecast.py` | Next-period expected value, p10–p90 range, milestone odds |
 | `markets.py` | Paper trading: EV, fractional Kelly, stake caps, Wilson win-rate interval, Brier scores, CSV loader |
 | `backtest.py` | Builds synthetic market events (for tests and the demo only) |
 | `run_demo.py` | Runs everything and prints the tables |
-| `tests/` | Unit tests for the math, reproducibility, and a demo smoke test |
-| `results/latest.json` | Output of the last full run |
+| `calibration.py` | Pre-registered calibration study across the controller variants |
+| `diagnostics/` | Scripts behind the calibration findings. Not evaluations, and not used by the package |
+| `tests/` | Unit tests for the math, reproducibility, variants, and smoke tests |
+| `results/` | `latest.json` (demo), `calibration_seedblock_*.json` (study, one file per seed block) |
 
 ## The percentages, and how far to trust them
 
@@ -41,7 +45,7 @@ python3 -m prediction_markets.run_demo --quick                  # smoke test, a 
 - **P(goal) this run**: the controller's probability at the checkpoint, for one simulated season.
 - **pred avg vs realized**: over 300 simulated seasons per domain, the average predicted probability against the fraction of seasons that actually hit the goal. This is the calibration check, and it is the number to trust least.
 
-Latest full run (`results/latest.json`):
+Latest full demo run (`results/latest.json`, spec-faithful defaults):
 
 | Domain | Regime at checkpoint | Pred avg | Realized | Brier skill vs base rate |
 |---|---|---|---|---|
@@ -51,15 +55,74 @@ Latest full run (`results/latest.json`):
 | politics_poll_share (60 days, goal 0.48 avg) | PD pacing | 9.7% | 9.0% | -0.205 |
 | systems_throughput (168 hours, goal 880/h) | PD pacing | 32.0% | 16.0% | -0.590 |
 
-**Read this as a failed calibration, not a result.** Probabilities are overstated for weather and systems, and the controller adds no skill over the base rate in four of five domains. Likely causes, each of which the spec's Part 4 warns about:
-
-- The steps are treated as Gaussian. Rainfall is skewed and bounded below, and outage shocks give throughput a thin upper tail.
-- The plug-in probability uses the shrunk mean as if it were known. With 20 observations, that estimate is uncertain by about 1 point per game, and over a 62-game remainder that uncertainty is as large as the season's own noise.
-- Priors are set by hand in `config.json`, and a misspecified prior moves the probability directly.
-
-I tried integrating over the posterior of μ in a scratch experiment. It did not fix calibration (sports_star moved to 19.0% against 11.3% realized, with mixed results elsewhere), so it is not in the package. Fixing calibration is the next real task, and it needs its own evaluation.
-
 Next-game forecast (sports_star, 18 planned shots against a reference of 15): expected 25.0 points, likely range 16.3 to 33.5, P(≥30 points) = 22.4%.
+
+## Calibration study
+
+### Pre-registered criterion
+
+Fixed before any variant was run, and not changed afterwards:
+
+> A variant passes if, for every domain, the average predicted probability over R held-out simulated seasons is within two standard errors of the realized hit rate: `|mean(pred) − realized| ≤ 2·SE`, where `SE = sqrt(p(1−p)/R)` and `p` is the realized rate.
+
+Evaluation uses R = 500 seasons per domain, with the MC trial count set to 200 per prediction. Averaging over seasons cancels most of the MC noise, so the MC count does not bias the average. Brier skill against the base rate is reported but is not part of the pass rule.
+
+### Seed blocks
+
+- **912000000**: the first study. It covered the four structural variants.
+- **913000000**: the second study. It covered all five variants. The drift variant was added after the first block's results, so its first evaluation is this block. That makes the drift result post-hoc, and it should be confirmed on a new block before anyone relies on it.
+
+Neither block was used to choose `config.json` values.
+
+### Results (predicted % / realized %)
+
+Block 912000000:
+
+| Variant | sports star | role player | weather | politics | systems | domains passing |
+|---|---|---|---|---|---|---|
+| spec_plug_in | 13.1 / 10.6 ok | 18.7 / 18.8 ok | 51.4 / 43.8 FAIL | 9.1 / 8.6 ok | 32.7 / 12.4 FAIL | 3/5 |
+| mu_uncertainty | 17.6 / 10.6 FAIL | 23.0 / 18.8 FAIL | 51.5 / 43.8 FAIL | 12.0 / 8.6 FAIL | 33.7 / 12.4 FAIL | 0/5 |
+| ar1_momentum | 13.6 / 10.6 FAIL | 19.1 / 18.8 ok | 51.1 / 43.8 FAIL | 9.7 / 8.6 ok | 32.2 / 12.4 FAIL | 2/5 |
+| ar1 + mu_uncertainty | 18.0 / 10.6 FAIL | 23.3 / 18.8 FAIL | 51.2 / 43.8 FAIL | 12.5 / 8.6 FAIL | 33.3 / 12.4 FAIL | 0/5 |
+
+Block 913000000:
+
+| Variant | sports star | role player | weather | politics | systems | domains passing |
+|---|---|---|---|---|---|---|
+| spec_plug_in | 14.3 / 11.6 ok | 19.0 / 24.4 FAIL | 51.5 / 41.0 FAIL | 8.7 / 8.8 ok | 34.4 / 15.2 FAIL | 2/5 |
+| mu_uncertainty | 18.8 / 11.6 FAIL | 23.1 / 24.4 ok | 51.4 / 41.0 FAIL | 11.7 / 8.8 FAIL | 35.7 / 15.2 FAIL | 1/5 |
+| ar1_momentum | 14.8 / 11.6 FAIL | 19.3 / 24.4 FAIL | 51.2 / 41.0 FAIL | 9.3 / 8.8 ok | 34.6 / 15.2 FAIL | 1/5 |
+| ar1 + mu_uncertainty | 19.1 / 11.6 FAIL | 23.4 / 24.4 ok | 51.2 / 41.0 FAIL | 12.2 / 8.8 FAIL | 35.6 / 15.2 FAIL | 1/5 |
+| drift_adjusted | 14.3 / 11.6 ok | 19.0 / 24.4 FAIL | 41.6 / 41.0 ok | 8.7 / 8.8 ok | 34.6 / 15.2 FAIL | 3/5 |
+
+Mean Brier skill against base rate, block 913000000: spec −0.233, mu_uncertainty −0.134, ar1 −0.183, ar1 + mu −0.110, drift −0.238.
+
+**No variant passes all five domains on either block.** The criterion is not met.
+
+### Attribution diagnostics
+
+`prediction_markets/diagnostics/attribution.py` changes one property of a domain and reruns the spec plug-in on block 913000000. These are diagnostics, not fixes.
+
+| Check | Predicted | Realized | Gap |
+|---|---|---|---|
+| systems, as configured | 34.4% | 15.2% | +19.2 pts |
+| systems, outage shocks removed | 53.7% | 45.0% | +8.7 pts |
+| role player, as configured | 19.0% | 24.4% | −5.4 pts |
+| role player, prior set to the true mean | 32.6% | 24.4% | +8.2 pts |
+
+- **Systems.** Outage shocks explain about half the gap, not all of it. The rest is still unexplained. The shock rate (1% per hour) is also not observable in 48 hours, so no controller that sees only observed history can learn the outage tail. It would need a reference-class prior on the shock rate.
+- **Role player.** Moving the prior to the true mean makes the overprediction larger, not smaller. The controller's implied mean and spread match the simulation: remaining mean 868.4 predicted against 867.6 realized, and spread 43 predicted against 46 realized. My reading, not yet verified, is that the plug-in uses the shrunk mean as if it were known, and the shrinkage weight n/(n+n₀) makes the forecast move with sampling noise in the observed history. In this simulation the true mean is fixed, so that movement is noise. The fix is about how the prior's strength relates to between-subject spread, which this simulation does not vary.
+
+### What the study supports
+
+- **Weather.** A calendar-known drift term fixes the overprediction on block 913000000, bringing the prediction to 41.6% against 41.0% realized. The cause is that the flat baseline ignored the seasonal timing. Over the 20 remaining days, the seasonal mean is about 0.5 mm/day lower than over the 10 observed days. This is post-hoc and needs a new seed block to confirm. It also needs the seasonal schedule to be known in advance, so it stays off by default.
+- **Mean uncertainty** helps the role player on block 913000000 but overpredicts the other domains, so it is not a general fix.
+- **Brier skill** does not improve for any variant. Mean skill is −0.11 at best, against −0.23 for the spec default.
+- **Systems** is the hardest domain. Outage tails are not identifiable from 48 observed hours.
+
+The controller's probabilities should not be treated as calibrated. Four things would move this forward: a between-subject prior that varies in the simulation, a reference-class prior on shock rates, a confirmation of the drift result on a new block, and a decision on whether the criterion itself is right for these domains.
+
+Next-game forecast and paper trading below are unaffected, because they use the default settings.
 
 ## Paper trading, with the caveats
 
@@ -93,8 +156,9 @@ Set `--fee-rate` to the fee schedule you verify on the venue. The default of 0 i
 ## Editing the formula and variables
 
 - **Variables**: `config.json`. Change priors, `phi`, `sigma_eta`, `sigma_eps`, goals, `kp`, `kd`, `lock_in_buffer`, betting limits. Every domain key is validated, and an unknown key is an error.
-- **Formula**: `vbgpc.py` (`step_plan` for regimes, `simulate_attainment_prob` for the Monte Carlo), `forecast.py` (action elasticity, fatigue), `markets.py` (EV, Kelly). The domain process itself is in `simulate.simulate_series`.
-- After any change, run the tests and then `run_demo`. The calibration table is the check that matters.
+- **Formula**: `vbgpc.py` (`step_plan` for regimes, `attainment_probability` for the Monte Carlo, `estimate_phi` for AR(1)), `forecast.py` (action elasticity, fatigue), `markets.py` (EV, Kelly). The domain process itself is in `simulate.simulate_series`.
+- **Calibration variants**: `calibration.VARIANTS`. A new variant is a dictionary of controller flags, so it can be added without touching the default path.
+- After any change, run the tests, then `run_demo`, then the calibration study on a **new** seed block. The calibration table is the check that matters.
 
 ## Deviations from the design spec
 
@@ -104,10 +168,11 @@ Set `--fee-rate` to the fee schedule you verify on the venue. The default of 0 i
 4. **Regime 2/3 boundary.** The spec's text puts any `r_req` between μ̂ and μ̂ + 0.75(s_max − μ̂) in both Regime 2 and Regime 3. The reference resolves this by using Regime 3 only above the high-stretch threshold. That is kept.
 5. **Regime 1 variance target.** The spec says to drive σ toward σ_min. The passive domains here have no lever for that, so `variance_policy` is reported as a label only.
 6. **Normal-approximation cross-check.** Added beside the Monte Carlo estimate.
+7. **Calibration variants, off by default.** `dependence="ar1"`, `mu_uncertainty=True`, and `drift=` change the controller. None is the default, so `run_demo` and the spec-faithful controller are unchanged. The drift variant needs the seasonal schedule to be known in advance.
 
 ## Limits
 
-- All outcomes are simulated. Calibration is poor (see above).
+- All outcomes are simulated. Calibration is not passing on the pre-registered criterion (see above).
 - The stationarity assumption fails for trends, seasonal effects, and shocks, and the Gaussian step assumption fails for skewed and bounded stats.
 - Goodhart's law applies. Pushing a person toward a numeric target can degrade the behaviour that produces the stat. The controller only reports probabilities. It does not decide what to do about them.
 - Active control levers apply only where the subject has agency. For weather and similar passive systems, this is a monitor, not a controller.

@@ -112,5 +112,72 @@ class StateTests(unittest.TestCase):
         self.assertEqual(c.prev_shrunk_mean, before)
 
 
+class DependenceAndDriftTests(unittest.TestCase):
+    def test_estimate_phi_bounds(self):
+        from prediction_markets.vbgpc import estimate_phi
+        self.assertEqual(estimate_phi([1.0, 2.0]), 0.0)                       # too short
+        alternating = [0.0, 10.0] * 20                                         # negative lag-1 corr
+        self.assertEqual(estimate_phi(alternating), 0.0)
+        ramp = [float(i) for i in range(30)]                                   # strong positive corr
+        self.assertGreater(estimate_phi(ramp), 0.5)
+        self.assertLessEqual(estimate_phi(ramp, cap=0.95), 0.95)
+
+    def test_constant_drift_equals_shifted_prior(self):
+        # Shifting history, prior and drift by the same constant leaves the forecast unchanged.
+        history = [22.0, 25.0, 19.0, 27.0, 24.0, 23.0]
+        c = 3.0
+        flat = GoalAttainmentController(
+            SubjectProfile(prior_mean=20.0 + c, prior_strength=4.0, stat_min=0.0, stat_max=100.0),
+            goal=150.0, total_steps=12, trials=3000, seed=21)
+        drifted = GoalAttainmentController(
+            SubjectProfile(prior_mean=20.0, prior_strength=4.0, stat_min=0.0, stat_max=100.0),
+            goal=150.0, total_steps=12, trials=3000, seed=21, drift=lambda t: c)
+        for y in history:
+            flat.record_observation(y)
+            drifted.record_observation(y)
+        # The drift controller's baseline is on de-drifted data, so add the constant back.
+        self.assertAlmostEqual(flat.estimate_parameters()[0], drifted.estimate_parameters()[0] + c, places=9)
+        self.assertAlmostEqual(flat.attainment_probability(), drifted.attainment_probability(), places=12)
+
+    def test_negative_future_drift_lowers_attainment(self):
+        history = [10.0] * 6
+        plain = GoalAttainmentController(
+            SubjectProfile(prior_mean=10.0, prior_strength=0.0, stat_min=0.0, stat_max=20.0),
+            goal=110.0, total_steps=12, trials=3000, seed=5)
+        falling = GoalAttainmentController(
+            SubjectProfile(prior_mean=10.0, prior_strength=0.0, stat_min=0.0, stat_max=20.0),
+            goal=110.0, total_steps=12, trials=3000, seed=5,
+            drift=lambda t: -2.0 if t >= 6 else 0.0)
+        for y in history:
+            plain.record_observation(y)
+            falling.record_observation(y)
+        self.assertLess(falling.attainment_probability(), plain.attainment_probability())
+
+    def test_unknown_dependence_rejected(self):
+        with self.assertRaises(ValueError):
+            GoalAttainmentController(SubjectProfile(5.0, 1.0, 0.0, 10.0), goal=10.0, total_steps=5, dependence="garch")
+
+    def test_mu_uncertainty_is_reproducible(self):
+        def run():
+            c = GoalAttainmentController(SubjectProfile(5.0, 2.0, 0.0, 10.0), goal=40.0, total_steps=10,
+                                         trials=2000, seed=8, mu_uncertainty=True)
+            for y in (4.0, 6.0, 5.0, 7.0):
+                c.record_observation(y)
+            return c.attainment_probability()
+        self.assertEqual(run(), run())
+
+
+class CalibrationStudyTests(unittest.TestCase):
+    def test_small_study_has_every_variant_and_domain(self):
+        from prediction_markets.calibration import VARIANTS, run_study
+        study = run_study(replicates=4, trials=20, seed_base=123_000)
+        self.assertEqual(set(study["variants"]), set(VARIANTS))
+        for name, v in study["variants"].items():
+            with self.subTest(variant=name):
+                self.assertEqual(len(v["domains"]), 5)
+                self.assertIn("passes_all_domains", v)
+
+
+
 if __name__ == "__main__":
     unittest.main()

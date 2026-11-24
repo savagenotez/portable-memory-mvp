@@ -1,0 +1,50 @@
+{
+  "seed_block": 913000000,
+  "replicates": 500,
+  "results": {
+    "systems_throughput_without_outage_shocks": {
+      "replicates": 500,
+      "predicted_mean": 0.53718,
+      "realized_rate": 0.45,
+      "gap": 0.08717999999999998,
+      "standard_error": 0.022248595461286987,
+      "gap_in_se": 3.9184496006363623,
+      "passes": false,
+      "brier": 0.2430132,
+      "brier_skill_vs_base_rate": 0.01812848484848495
+    },
+    "systems_throughput_as_configured": {
+      "replicates": 500,
+      "predicted_mean": 0.34373000000000004,
+      "realized_rate": 0.152,
+      "gap": 0.19173000000000004,
+      "standard_error": 0.016055902341506688,
+      "gap_in_se": 11.941402975798622,
+      "passes": false,
+      "brier": 0.23681745,
+      "brier_skill_vs_base_rate": -0.8372754003227412
+    },
+    "sports_role_player_prior_at_true_mean": {
+      "replicates": 500,
+      "predicted_mean": 0.32577,
+      "realized_rate": 0.244,
+      "gap": 0.08177000000000001,
+      "standard_error": 0.019207498535728174,
+      "gap_in_se": 4.257191525897989,
+      "passes": false,
+      "brier": 0.20397004999999999,
+      "brier_skill_vs_base_rate": -0.10574448130800596
+    },
+    "sports_role_player_as_configured": {
+      "replicates": 500,
+      "predicted_mean": 0.18959,
+      "realized_rate": 0.244,
+      "gap": -0.054409999999999986,
+      "standard_error": 0.019207498535728174,
+      "gap_in_se": -2.832747840578568,
+      "passes": false,
+      "brier": 0.18693854999999998,
+      "brier_skill_vs_base_rate": -0.013414812646370011
+    }
+  }
+}
