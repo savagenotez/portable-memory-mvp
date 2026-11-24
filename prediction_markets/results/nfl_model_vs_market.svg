@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="590" viewBox="0 0 920 590" font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+<rect width="920" height="590" fill="#fcfcfb"/>
+<text x="30" y="40" font-size="22" font-weight="600" fill="#0b0b0b">Where the NFL model falls behind the market</text>
+<text x="30" y="66" font-size="14" fill="#52514e">Model minus market Brier score, by how far the two disagreed on each game. Left of zero: model better. Right: market better.</text>
+<text x="30" y="86" font-size="14" fill="#52514e">146 Kalshi NFL games, 2026 season to date, prices 24 hours before kickoff. Lines are 95% intervals.</text>
+<line x1="400.0" y1="130" x2="400.0" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="400.0" y="490" font-size="12" fill="#52514e" text-anchor="middle">−0.10</text>
+<line x1="457.5" y1="130" x2="457.5" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="457.5" y="490" font-size="12" fill="#52514e" text-anchor="middle">−0.05</text>
+<line x1="515.0" y1="130" x2="515.0" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="515.0" y="490" font-size="12" fill="#52514e" text-anchor="middle">0.00</text>
+<line x1="572.5" y1="130" x2="572.5" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="572.5" y="490" font-size="12" fill="#52514e" text-anchor="middle">+0.05</text>
+<line x1="630.0" y1="130" x2="630.0" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="630.0" y="490" font-size="12" fill="#52514e" text-anchor="middle">+0.10</text>
+<line x1="687.5" y1="130" x2="687.5" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="687.5" y="490" font-size="12" fill="#52514e" text-anchor="middle">+0.15</text>
+<line x1="745.0" y1="130" x2="745.0" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="745.0" y="490" font-size="12" fill="#52514e" text-anchor="middle">+0.20</text>
+<line x1="802.5" y1="130" x2="802.5" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="802.5" y="490" font-size="12" fill="#52514e" text-anchor="middle">+0.25</text>
+<line x1="860.0" y1="130" x2="860.0" y2="470" stroke="#d9d8d3" stroke-width="1"/>
+<text x="860.0" y="490" font-size="12" fill="#52514e" text-anchor="middle">+0.30</text>
+<line x1="515.0" y1="130" x2="515.0" y2="470" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="505.0" y="124" font-size="13" fill="#52514e" text-anchor="end">← model better</text>
+<text x="525.0" y="124" font-size="13" fill="#52514e">market better →</text>
+<text x="30" y="175" font-size="15" fill="#0b0b0b">All games (n=146)</text>
+<line x1="501.1" y1="170" x2="540.2" y2="170" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="501.1" y1="164" x2="501.1" y2="176" stroke="#2a78d6" stroke-width="2"/>
+<line x1="540.2" y1="164" x2="540.2" y2="176" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="520.7" cy="170" r="6.5" fill="#2a78d6"/>
+<text x="552.2" y="175" font-size="13" fill="#0b0b0b">+0.005</text>
+<text x="30" y="237" font-size="15" fill="#0b0b0b">0-5 points apart (n=55)</text>
+<line x1="509.4" y1="232" x2="523.9" y2="232" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="509.4" y1="226" x2="509.4" y2="238" stroke="#2a78d6" stroke-width="2"/>
+<line x1="523.9" y1="226" x2="523.9" y2="238" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="516.7" cy="232" r="6.5" fill="#2a78d6"/>
+<text x="535.9" y="237" font-size="13" fill="#0b0b0b">+0.001</text>
+<text x="30" y="299" font-size="15" fill="#0b0b0b">5-10 points apart (n=45)</text>
+<line x1="482.2" y1="294" x2="528.6" y2="294" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="482.2" y1="288" x2="482.2" y2="300" stroke="#2a78d6" stroke-width="2"/>
+<line x1="528.6" y1="288" x2="528.6" y2="300" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="505.4" cy="294" r="6.5" fill="#2a78d6"/>
+<text x="540.6" y="299" font-size="13" fill="#0b0b0b">−0.008</text>
+<text x="30" y="361" font-size="15" fill="#0b0b0b">10-20 points apart (n=35)</text>
+<line x1="426.2" y1="356" x2="528.6" y2="356" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="426.2" y1="350" x2="426.2" y2="362" stroke="#2a78d6" stroke-width="2"/>
+<line x1="528.6" y1="350" x2="528.6" y2="362" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="477.4" cy="356" r="6.5" fill="#2a78d6"/>
+<text x="540.6" y="361" font-size="13" fill="#0b0b0b">−0.033</text>
+<text x="30" y="423" font-size="15" fill="#0b0b0b">20+ points apart (n=11)</text>
+<line x1="637.6" y1="418" x2="844.0" y2="418" stroke="#e0701a" stroke-width="2.5"/>
+<line x1="637.6" y1="412" x2="637.6" y2="424" stroke="#e0701a" stroke-width="2"/>
+<line x1="844.0" y1="412" x2="844.0" y2="424" stroke="#e0701a" stroke-width="2"/>
+<circle cx="740.8" cy="418" r="6.5" fill="#e0701a"/>
+<text x="856.0" y="423" font-size="13" fill="#0b0b0b">+0.196</text>
+<line x1="400" y1="470" x2="860" y2="470" stroke="#52514e" stroke-width="1"/>
+<text x="630.0" y="514" font-size="13" fill="#52514e" text-anchor="middle">Brier difference (model minus market)</text>
+<text x="30" y="570" font-size="13" fill="#52514e">Overall, the gap is not separable from zero. The large-disagreement row is where the shortfall sits (11 games, post hoc).</text>
+</svg>
