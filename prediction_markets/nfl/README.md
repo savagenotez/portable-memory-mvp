@@ -57,6 +57,17 @@ Rules, fixed before any prospective game was logged: one market per event; books
 
 Status: the log has started (`results/prospective_snapshots.jsonl`, first snapshot 2026-11-24). Nothing is scored yet.
 
+## Blind test (`blind.py`)
+
+Which games are blind:
+
+- **Not blind:** 1999 to 2025 outcomes (used to pick K = 30), the 146 Kalshi games (used for the diagnosis), and the 2026 games already played (also in the diagnosis set). These can still be used for development, but they cannot judge a new change.
+- **Blind:** the 109 2026 games not yet played when the block was sealed (`results/blind_manifest.json`, SHA-256 hash committed). No score for them exists in the data yet, so no model has seen their results.
+
+Enforcement: tuning and selection code calls `assert_not_sealed()` on the games it scores, so a sealed game cannot enter a tuning set. `judge()` refuses to run until 100 sealed games with usable prices have settled, and it only uses the pre-registered slices in `blind.py`. Each slice's result is adjusted with Holm across all slices, so the slices cannot be searched for a lucky one.
+
+Realistic timing: the regular season may not supply 100 priced, settled sealed games. If it does not, the judgement waits, and the sealed block is not reopened or re-sealed.
+
 ## Where the model falls behind (post hoc, read with caution)
 
 - **Concentrated in 11 games.** These are the games where the model and the price disagreed by 20 points or more. They account for the whole shortfall: 2.16 of the 0.72 total squared-error difference. The other 135 games favour the model slightly (-0.011 Brier, 95% interval -0.024 to +0.002).

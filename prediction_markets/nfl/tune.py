@@ -77,6 +77,8 @@ def features(g: Game, elo_diff: float, flags: Sequence[str]) -> List[float]:
 
 def walk_forward(games: Sequence[Game], variant: dict) -> Dict[str, float]:
     """Pre-game home-win probability for every completed game in DEV or HOLDOUT seasons."""
+    from .blind import assert_not_sealed
+    assert_not_sealed([g.game_id for g in games if g.season in DEV or g.season in HOLDOUT], "tuning")
     snap = replay_elo(games, variant["k"], variant["home_adv"], 1.0 / 3.0)
     flags = variant["flags"]
     by_season: Dict[int, List[Game]] = defaultdict(list)

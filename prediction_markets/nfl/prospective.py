@@ -151,7 +151,7 @@ def score(log: List[dict], games: List[Game]) -> dict:
         ev = snap["event_id"]
         if ev in per_event:       # one market per event: keep the first sorted ticker
             continue
-        per_event[ev] = {"market_id": market_id, "game_id": g.game_id, "gameday": g.gameday,
+        per_event[ev] = {"market_id": market_id, "game_id": g.game_id, "gameday": g.gameday, "side": snap["side"],
                          "model": snap["model"], "market": snap["mid"], "outcome": int(team_won),
                          "hours_before_close": snap["hours_to_close"]}
     rows = list(per_event.values())

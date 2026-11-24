@@ -85,6 +85,8 @@ def _gain(a: Dict[str, float], b: Dict[str, float], n: int = 2000, seed: int = 2
 
 
 def run(games: Sequence[Game], team_games: Sequence[TeamGame], injury_counts: dict) -> dict:
+    from .blind import assert_not_sealed
+    assert_not_sealed([g.game_id for g in games if g.season in set(DEV) | set(HOLDOUT)], "efficiency tuning")
     eff10 = efficiency_diffs(games, team_games, halflife=10)
     eff20 = efficiency_diffs(games, team_games, halflife=20)
     all_seasons = set(DEV) | set(HOLDOUT)
