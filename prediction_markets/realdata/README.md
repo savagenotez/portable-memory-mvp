@@ -57,6 +57,22 @@ How to read it:
 - **Realized sits about 5 points above price on both.** The tracked side is the first one listed, which is arbitrary, so this may be a listing artifact and not a market bias. It is not statistically significant on Kalshi (1.6 standard errors).
 - **Nothing here is a statement about the league learner.** It shows how informative real prices are, so how high the bar is, in a different setting from the simulation.
 
+## Sports-stats sources (checked 2026-11-24)
+
+The platforms supply prices and outcomes, not the player and team stats a model needs. These are the free candidates checked so far.
+
+| Source | Access | Terms, as found | Verdict |
+|---|---|---|---|
+| **nflverse** game data (`nfldata` repository, `data/games.csv`) | Free bulk download, no key | Packages are MIT-licensed. The underlying NFL data belongs to its owners. FTN charting data is CC-BY-SA 4.0. Terms for the schedule files are unresolved | **Recommended.** Verified: 7,548 games from 1999 to 2026, final scores, rest days, temperature, wind, roof, surface, closing spread and moneyline |
+| MLB Stats API (`statsapi.mlb.com`) | Keyless | Responses carry an MLB Advanced Media copyright notice. Secondary sources describe personal, non-commercial use. Not checked against the notice itself | **Not used.** MLB publishes no documentation for these endpoints, so they belong with the private endpoints this package excludes |
+| balldontlie | API key, free account | The free tier is 5 requests per minute. Sources disagree on whether it includes stats. Terms not checked | **Unresolved.** Check the plans endpoint with a free key before deciding |
+
+Points to remember with the nflverse choice:
+
+- **Closing lines are bookmaker prices.** Using them as the benchmark is analysis of published data. It is not betting, and it is not a source of stats.
+- **Redistribution is not cleared.** Personal research use looks fine. Anything published or commercial needs its own check of the NFL and FTN terms.
+- **Adding it means a new host.** The reader would need `raw.githubusercontent.com` on the allowlist in `http.py`. That is a deliberate expansion of the boundary, so it should be approved first.
+
 ## Rate limits
 
 Kalshi's candlestick endpoint costs 50 units of a 600-unit budget per call, and the budget looked shared across callers. The client reads the `x-ratelimit-*` headers, waits for the reset when the budget is low, and waits and retries on a 429. It never retries blindly. In practice that is about 3 to 5 seconds per Kalshi event. The 236-event run above took 12 minutes. A persistent 429 stops the run with an error.
