@@ -16,6 +16,27 @@ Feature outline and the rule every input must follow: [FEATURES.md](FEATURES.md)
 
 The first 60 games alone looked clearly worse for the model (+0.028, interval +0.005 to +0.051). That gap shrank on the larger set, which is the reason not to read small samples. The earlier result is kept in the record.
 
+## Tuning on historical outcomes (`tune.py`)
+
+The 146 market games were used to diagnose the model, so they cannot also test changes to it. Model choices were made on completed games from 2005 to 2025 instead (about 6,800 games), with rules written first (see the module docstring).
+
+| Variant | Dev log loss (2005-2019) | Holdout log loss (2020-2025) |
+|---|---|---|
+| V0 baseline (K 20, home advantage 65) | 0.6347 | 0.6455 |
+| V1 K 12 | 0.6369 | 0.6492 |
+| V2 K 30 | **0.6331** (selected) | **0.6430** |
+| V3 home advantage 48 | 0.6347 | 0.6450 |
+| V4 + short rest, bye week | 0.6349 | 0.6454 |
+| V5 + indoor venue | 0.6348 | 0.6454 |
+| V6 + all three flags | 0.6350 | 0.6453 |
+
+- **Adopted: K = 30.** Holdout gain against V0 is -0.0025 log loss per game, 95% interval -0.0042 to -0.0009, over 1,688 games. The rule was met, but the gain is small.
+- **The flags add nothing.** Short rest, bye weeks and the indoor venue each move the log loss by under 0.001.
+- **K = 30 is the top of the grid.** A larger K may do better, but that has not been tested, and testing it needs a new holdout.
+- **Re-check on the 146 market games (a re-check, not validation):** the K = 30 model's gap to the market is +0.0039 (interval -0.0126 to +0.0203), against +0.0049 for K = 20. Still not separable from the market. The saved file is `results/nfl_recheck_k30.json`.
+
+Run: `python3 -m prediction_markets.nfl.tune` (about 10 seconds; writes `results/nfl_tune.json`).
+
 ## Where the model falls behind (post hoc, read with caution)
 
 - **Concentrated in 11 games.** These are the games where the model and the price disagreed by 20 points or more. They account for the whole shortfall: 2.16 of the 0.72 total squared-error difference. The other 135 games favour the model slightly (-0.011 Brier, 95% interval -0.024 to +0.002).

@@ -10,12 +10,12 @@ This is what the model's inputs must be, and why. It is built from public sports
 
 | # | Feature | Definition | Known before kickoff? | Status |
 |---|---|---|---|---|
-| 1 | **Team strength (Elo)** | Each team's rating from earlier games only: start 1500, K = 20, home advantage 65 points at non-neutral sites, a third of the gap to 1500 closed each season | Yes | **Built** (`features.py`) |
+| 1 | **Team strength (Elo)** | Each team's rating from earlier games only: start 1500, home advantage 65 points at non-neutral sites, a third of the gap to 1500 closed each season. K = 20 in the diagnosis model; **K = 30 adopted** from historical tuning | Yes | **Built** (`features.py`, `tune.py`) |
 | 2 | **Rest difference** | Home rest days minus away rest days, capped at +/-7 | Yes | **Built** |
 | 3 | **Division game** | 1 if the two teams are in the same division | Yes | **Built** |
-| 4 | **Short week** | 1 if a team has 4 days of rest or less, per side | Yes | Not built. Needs a test before use |
-| 5 | **Bye week** | 1 if a team's previous game was 14 or more days earlier | Yes | Not built |
-| 6 | **Roof** | Dome or retractable, versus outdoor | Yes (fixed by venue) | Not built. Worth testing against the wind effect |
+| 4 | **Short week** | 1 if a team has 4 days of rest or less, per side | Yes | Tested on history: no gain (under 0.001 log loss) |
+| 5 | **Bye week** | 1 if a team's previous game was 13 or more days earlier | Yes | Tested on history: no gain |
+| 6 | **Roof** | Indoor venue (dome or closed roof) | Yes (fixed by venue) | Tested on history: no gain |
 | 7 | **Starting quarterback** | Each side's starter, from the announced depth chart | Yes, usually by Wednesday before a Sunday game. **Not reliably known 24 hours out** | Not built. Needs the injury and depth-chart history first |
 | 8 | **Efficiency (EPA per play)** | Rolling expected points added per play, from play-by-play data | Yes, from earlier games | Not built. Needs the play-by-play file |
 | 9 | **Weather** | Temperature and wind | **Not as recorded.** The game file holds game-time values. Only forecasts are knowable in advance | **Excluded.** Use only with an archived forecast |

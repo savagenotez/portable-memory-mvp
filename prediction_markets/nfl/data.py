@@ -29,6 +29,7 @@ class Game:
     rest_away: int
     div_game: int
     neutral: bool
+    roof: str = ""            # outdoors, open, dome or closed; empty if unknown
 
     @property
     def completed(self) -> bool:
@@ -57,6 +58,7 @@ def parse_games(text: str) -> List[Game]:
             home_score=_int(r.get("home_score")), away_score=_int(r.get("away_score")),
             rest_home=_int(r.get("home_rest"), 7), rest_away=_int(r.get("away_rest"), 7),
             div_game=_int(r.get("div_game"), 0), neutral=(r.get("location", "") == "Neutral"),
+            roof=(r.get("roof") or ""),
         ))
     return sorted(out, key=lambda g: (g.gameday, g.game_id))
 
