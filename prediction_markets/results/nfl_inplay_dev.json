@@ -1,0 +1,140 @@
+{
+  "label": "IN-GAME, DEVELOPMENT. Fitted on 2012-2019, scored on 2020-2025. The pre-game prior and the nflverse in-game model are the references; the market is not part of this test.",
+  "fitted": {
+    "s_strength": 0.0,
+    "s_noise": 14
+  },
+  "game_boundaries": {
+    "Q1": {
+      "n": 1684,
+      "brier_model": 0.20534470311042133,
+      "brier_pregame_prior": 0.22754606799904903,
+      "n_nflverse": 1684,
+      "brier_nflverse_same_games": 0.2144693243542714,
+      "brier_model_vs_nflverse_games": 0.20534470311042133,
+      "model_minus_nflverse": {
+        "mean": -0.009124621243850098,
+        "ci95": [
+          -0.01425413712098271,
+          -0.004184075058421753
+        ],
+        "n": 1684
+      },
+      "n_spread_based": 1684,
+      "brier_spread_based_same_games": 0.18938009277804166,
+      "brier_model_vs_spread_based_games": 0.20534470311042133,
+      "model_minus_spread_based": {
+        "mean": 0.015964610332379656,
+        "ci95": [
+          0.010524320991103276,
+          0.02146731657319217
+        ],
+        "n": 1684
+      },
+      "model_minus_prior": {
+        "mean": -0.022201364888627707,
+        "ci95": [
+          -0.02979625607670697,
+          -0.01489695863122011
+        ],
+        "n": 1684
+      }
+    },
+    "H1": {
+      "n": 1684,
+      "brier_model": 0.16052597335803637,
+      "brier_pregame_prior": 0.22754606799904903,
+      "n_nflverse": 1684,
+      "brier_nflverse_same_games": 0.1649617985566579,
+      "brier_model_vs_nflverse_games": 0.16052597335803637,
+      "model_minus_nflverse": {
+        "mean": -0.004435825198621516,
+        "ci95": [
+          -0.00723560669999535,
+          -0.001744135001305311
+        ],
+        "n": 1684
+      },
+      "n_spread_based": 1684,
+      "brier_spread_based_same_games": 0.15062943713024024,
+      "brier_model_vs_spread_based_games": 0.16052597335803637,
+      "model_minus_spread_based": {
+        "mean": 0.00989653622779616,
+        "ci95": [
+          0.006198433669142197,
+          0.013575737797926403
+        ],
+        "n": 1684
+      },
+      "model_minus_prior": {
+        "mean": -0.06702009464101263,
+        "ci95": [
+          -0.07685015878406865,
+          -0.05781249380278212
+        ],
+        "n": 1684
+      }
+    },
+    "Q3": {
+      "n": 1684,
+      "brier_model": 0.12925275781362694,
+      "brier_pregame_prior": 0.22754606799904903,
+      "n_nflverse": 1684,
+      "brier_nflverse_same_games": 0.12680789110814591,
+      "brier_model_vs_nflverse_games": 0.12925275781362694,
+      "model_minus_nflverse": {
+        "mean": 0.002444866705481029,
+        "ci95": [
+          -0.00134599477972931,
+          0.006025483228598243
+        ],
+        "n": 1684
+      },
+      "n_spread_based": 1684,
+      "brier_spread_based_same_games": 0.11940740199403409,
+      "brier_model_vs_spread_based_games": 0.12925275781362694,
+      "model_minus_spread_based": {
+        "mean": 0.009845355819592854,
+        "ci95": [
+          0.005574412839860606,
+          0.013835087102580126
+        ],
+        "n": 1684
+      },
+      "model_minus_prior": {
+        "mean": -0.09829331018542208,
+        "ci95": [
+          -0.1094750994796923,
+          -0.08769725942863617
+        ],
+        "n": 1684
+      }
+    }
+  },
+  "period_winners": {
+    "Q1": {
+      "n": 1336,
+      "brier_model": 0.2436233660809723
+    },
+    "Q2": {
+      "n": 1452,
+      "brier_model": 0.23979332147617521
+    },
+    "Q3": {
+      "n": 1369,
+      "brier_model": 0.24636708668736582
+    },
+    "Q4": {
+      "n": 1431,
+      "brier_model": 0.24595894251079303
+    },
+    "H1": {
+      "n": 1566,
+      "brier_model": 0.2369584593055201
+    },
+    "H2": {
+      "n": 1547,
+      "brier_model": 0.2422835179930134
+    }
+  }
+}

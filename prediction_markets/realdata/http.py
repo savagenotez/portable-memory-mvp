@@ -45,6 +45,27 @@ class _ReleaseRedirects(urllib.request.HTTPRedirectHandler):
 _release_opener = urllib.request.build_opener(_ReleaseRedirects)
 
 
+def get_release_bytes(url: str, *, timeout: float = 300.0, retries: int = 3) -> bytes:
+    """GET an nflverse release asset as bytes (for compressed files). Same guard and retries as get_release_text."""
+    check_release_url(url)
+    delay = 1.0
+    for attempt in range(retries + 1):
+        wait = 0.5 - (time.time() - _last_call[0])
+        if wait > 0:
+            time.sleep(wait)
+        _last_call[0] = time.time()
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/octet-stream"})
+        try:
+            with _release_opener.open(req, timeout=timeout) as resp:
+                return resp.read()
+        except (urllib.error.HTTPError, urllib.error.URLError, OSError, http.client.HTTPException):
+            if attempt < retries:
+                time.sleep(delay)
+                delay = min(30.0, delay * 2)
+                continue
+            raise
+
+
 def get_release_text(url: str, *, timeout: float = 120.0, retries: int = 3) -> str:
     """GET an nflverse release asset (a CSV). Same retry rules; only the approved release path is reachable."""
     check_release_url(url)

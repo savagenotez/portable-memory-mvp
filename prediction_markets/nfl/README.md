@@ -83,6 +83,28 @@ The blind judgement compares v3 with the market and with the base model, on the 
 
 The prospective logger records both models for each open market. A daily scheduled run was requested but was refused by the automatic permission check, so it is not running. Until it is set up, snapshots must be taken by hand: `python3 -m prediction_markets.nfl.prospective snapshot`, then `score`.
 
+## In-game predictions (quarters and halves)
+
+`inplay.py` predicts the win probability at the end of Q1, at halftime and at the end of Q3, and the winner of each quarter and half. It uses the pre-game Elo gap (points, /25) and the score so far. Two uncertainty terms are fitted on 2012-2019; the results below are on 2020-2025, the same seasons as the earlier holdout, so they are development results, not blind. Pre-registered in the module docstring.
+
+Win probability at each boundary (1,684 games, Brier, lower is better; "model minus" is negative when the model is better, with a 95% interval on the paired difference):
+
+| Boundary | Model | Pre-game prior | nflverse in-game (no team strength) | Model minus nflverse | Spread-based (closing line) | Model minus spread-based |
+|---|---|---|---|---|---|---|
+| End of Q1 | 0.2053 | 0.2275 | 0.2145 | **-0.0091** [-0.0143, -0.0042] | 0.1894 | **+0.0160** [+0.0105, +0.0215] |
+| Halftime | 0.1605 | 0.2275 | 0.1650 | **-0.0044** [-0.0072, -0.0017] | 0.1506 | **+0.0099** [+0.0062, +0.0136] |
+| End of Q3 | 0.1293 | 0.2275 | 0.1268 | +0.0024 [-0.0013, +0.0060] | 0.1194 | **+0.0098** [+0.0056, +0.0138] |
+
+How to read it:
+
+- **Against the pre-game prior, the in-game information helps a lot** at every boundary.
+- **Against nflverse's in-game model, which does not know team strength, the model is better early** (end of Q1 and halftime), and level by the end of Q3. The early advantage comes from knowing the teams.
+- **Against the spread-based probability (built from the closing line), the model is clearly worse at every boundary.** The closing line includes injuries, news and quarterback information that this model does not have. That fits the earlier market results. The spread-based probability is published closing-line data, not a price this system trades against.
+- **The period-winner predictions are only slightly better than a coin flip** (Brier 0.237 to 0.246, against 0.250).
+- **Fitted parameters:** the strength uncertainty fits at zero, the lower edge of its grid, so the data give the pre-game prior no extra uncertainty beyond game noise. That is a finding to check, not a setting to trust.
+
+Quarter and half markets on Kalshi: the first-quarter winner series had no settled history. First-half team-total markets do have history, but they are points markets, so they need a points model before they can be compared. Polymarket has no quarter or half markets open.
+
 ## Where the model falls behind (post hoc, read with caution)
 
 - **Concentrated in 11 games.** These are the games where the model and the price disagreed by 20 points or more. They account for the whole shortfall: 2.16 of the 0.72 total squared-error difference. The other 135 games favour the model slightly (-0.011 Brier, 95% interval -0.024 to +0.002).
