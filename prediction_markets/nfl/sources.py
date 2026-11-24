@@ -54,3 +54,53 @@ def load_injury_counts(seasons=range(2009, 2027), refresh: bool = False) -> Tupl
             continue
         counts.update(parse_injury_counts(text))
     return counts, missing
+
+
+SNAPS_URL = "https://github.com/nflverse/nflverse-data/releases/download/snap_counts/snap_counts_{y}.csv"
+PLAYERS_URL = "https://github.com/nflverse/nflverse-data/releases/download/players/players.csv"
+
+
+def load_players(refresh: bool = False) -> Dict[str, dict]:
+    """gsis id -> {pfr id, position, birth date}. Positions and ids only; nothing about a game result."""
+    import csv
+    import io
+    text = _cached(PLAYERS_URL, "players.csv", refresh)
+    out: Dict[str, dict] = {}
+    if text is None:
+        return out
+    for r in csv.DictReader(io.StringIO(text)):
+        if r.get("gsis_id"):
+            out[r["gsis_id"]] = {"pfr_id": r.get("pfr_id") or "", "position": r.get("position") or "",
+                                 "birth_date": r.get("birth_date") or ""}
+    return out
+
+
+def load_snaps(seasons, refresh_last: bool = False) -> Tuple[Dict, Dict, List[int]]:
+    """Offensive snaps. Returns ({(game, team): {pfr id: (snaps, share)}}, {(game, team): team snaps}, missing)."""
+    import csv
+    import io
+    player: Dict = {}
+    team: Dict = {}
+    missing: List[int] = []
+    seasons = list(seasons)
+    for y in seasons:
+        text = _cached(SNAPS_URL.format(y=y), f"snap_counts_{y}.csv", refresh_last and y == seasons[-1])
+        if text is None:
+            missing.append(y)
+            continue
+        est: Dict = {}
+        for r in csv.DictReader(io.StringIO(text)):
+            try:
+                snaps, pct = float(r["offense_snaps"]), float(r["offense_pct"])
+            except (KeyError, ValueError):
+                continue
+            if snaps <= 0:
+                continue
+            key = (r["game_id"], r["team"])
+            player.setdefault(key, {})[r["pfr_player_id"]] = (snaps, pct)
+            if pct >= 0.5:
+                est.setdefault(key, []).append(snaps / pct)
+        for key, v in est.items():
+            v.sort()
+            team[key] = v[len(v) // 2]
+    return player, team, missing

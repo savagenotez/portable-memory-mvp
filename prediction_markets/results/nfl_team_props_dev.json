@@ -1,0 +1,502 @@
+{
+  "label": "DEVELOPMENT, NOT BLIND. Chosen on 2013-2019, scored on 2020-2025, seasons already looked at for other models. Lower is better for every score.",
+  "chosen": {
+    "halflife_games": 8,
+    "k0": 8,
+    "size_td": 1000000000.0,
+    "size_fga": 1000000000.0,
+    "size_sd": 1000000000.0
+  },
+  "grid": {
+    "mse": {
+      "h4_k2": 12741.331297409879,
+      "h4_k4": 12418.053778173798,
+      "h4_k8": 12217.792067286024,
+      "h8_k2": 12494.990509989972,
+      "h8_k4": 12334.415429307503,
+      "h8_k8": 12197.242279764841,
+      "h16_k2": 12420.617567427464,
+      "h16_k4": 12330.17327512138,
+      "h16_k8": 12233.447373916844
+    }
+  },
+  "kick_model": {
+    "weather": [
+      7.745580290134183,
+      -1.8265895811515027,
+      0.09051593323587853,
+      -0.14721638587402203,
+      -0.19488569496975128
+    ],
+    "distance_only": [
+      7.702953315742094,
+      -1.8686132704070142,
+      0.0965107607232157
+    ],
+    "n_dev_kicks": 7767
+  },
+  "vs_league_only_baseline": {
+    "team points, game log score": {
+      "model_minus_baseline": -0.030857515795260252,
+      "ci95": [
+        -0.03800138163875429,
+        -0.02398136404025361
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "team points, game over 17.5 (Brier)": {
+      "model_minus_baseline": -0.0104483418387836,
+      "ci95": [
+        -0.013059581710070446,
+        -0.007956721568145059
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "team points, game over 20.5 (Brier)": {
+      "model_minus_baseline": -0.01239542077049528,
+      "ci95": [
+        -0.015249539271513745,
+        -0.009516024578050373
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "team points, game over 23.5 (Brier)": {
+      "model_minus_baseline": -0.014430251448372865,
+      "ci95": [
+        -0.01718234085735362,
+        -0.011730828056505556
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "team points, game over 27.5 (Brier)": {
+      "model_minus_baseline": -0.012238596672636584,
+      "ci95": [
+        -0.014850374796979001,
+        -0.009541819549213423
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "team points, half log score": {
+      "model_minus_baseline": -0.014663332769663747,
+      "ci95": [
+        -0.0185997564524282,
+        -0.01067305310692142
+      ],
+      "n": 6772,
+      "model_better": true
+    },
+    "team points, half over 3.5 (Brier)": {
+      "model_minus_baseline": -0.002090890405739411,
+      "ci95": [
+        -0.0029247934842103374,
+        -0.0012791453941081545
+      ],
+      "n": 6772,
+      "model_better": true
+    },
+    "team points, half over 7.5 (Brier)": {
+      "model_minus_baseline": -0.004961677966891022,
+      "ci95": [
+        -0.006292591558376705,
+        -0.003649938237511523
+      ],
+      "n": 6772,
+      "model_better": true
+    },
+    "team points, half over 10.5 (Brier)": {
+      "model_minus_baseline": -0.006896636761042994,
+      "ci95": [
+        -0.008425425141130179,
+        -0.00545595078835693
+      ],
+      "n": 6772,
+      "model_better": true
+    },
+    "team points, half over 13.5 (Brier)": {
+      "model_minus_baseline": -0.006657179972896832,
+      "ci95": [
+        -0.008120079257136798,
+        -0.005197416746430664
+      ],
+      "n": 6772,
+      "model_better": true
+    },
+    "team points, half over 17.5 (Brier)": {
+      "model_minus_baseline": -0.0032236270626484057,
+      "ci95": [
+        -0.004184695104834388,
+        -0.0023056273569594383
+      ],
+      "n": 6772,
+      "model_better": true
+    },
+    "team points, quarter log score": {
+      "model_minus_baseline": -0.007681769426138534,
+      "ci95": [
+        -0.009733309837359493,
+        -0.005525288388917631
+      ],
+      "n": 13544,
+      "model_better": true
+    },
+    "team points, quarter over 0.5 (Brier)": {
+      "model_minus_baseline": -0.0017519217130628599,
+      "ci95": [
+        -0.002293716319310258,
+        -0.0011978483717320506
+      ],
+      "n": 13544,
+      "model_better": true
+    },
+    "team points, quarter over 3.5 (Brier)": {
+      "model_minus_baseline": -0.0032171454511415376,
+      "ci95": [
+        -0.0040071361463496,
+        -0.0024396489507822632
+      ],
+      "n": 13544,
+      "model_better": true
+    },
+    "team points, quarter over 6.5 (Brier)": {
+      "model_minus_baseline": -0.003713707651071642,
+      "ci95": [
+        -0.004533388517155207,
+        -0.002882108961114216
+      ],
+      "n": 13544,
+      "model_better": true
+    },
+    "team points, quarter over 7.5 (Brier)": {
+      "model_minus_baseline": -0.002108044675408369,
+      "ci95": [
+        -0.002706977346468049,
+        -0.0015115800513373166
+      ],
+      "n": 13544,
+      "model_better": true
+    },
+    "team points, quarter over 10.5 (Brier)": {
+      "model_minus_baseline": -0.0013617130326896345,
+      "ci95": [
+        -0.0018297853389160291,
+        -0.0009216400048936175
+      ],
+      "n": 13544,
+      "model_better": true
+    },
+    "touchdowns, game log score": {
+      "model_minus_baseline": -0.0346490801091517,
+      "ci95": [
+        -0.04194892365414498,
+        -0.02773338647476204
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "touchdowns, game over 1.5 (Brier)": {
+      "model_minus_baseline": -0.006096114489237403,
+      "ci95": [
+        -0.008306150799627585,
+        -0.003911256485504124
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "touchdowns, game over 2.5 (Brier)": {
+      "model_minus_baseline": -0.014034950441921247,
+      "ci95": [
+        -0.017036087350570543,
+        -0.011065082892410549
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "touchdowns, game over 3.5 (Brier)": {
+      "model_minus_baseline": -0.011553557922068025,
+      "ci95": [
+        -0.014097257157467869,
+        -0.009112869286128455
+      ],
+      "n": 3386,
+      "model_better": true
+    },
+    "field-goal attempts, game log score": {
+      "model_minus_baseline": 0.007170479708104047,
+      "ci95": [
+        0.0018582766705496744,
+        0.012912832943534198
+      ],
+      "n": 3386,
+      "model_better": false
+    },
+    "field-goal attempts, game over 1.5 (Brier)": {
+      "model_minus_baseline": 0.002482421872723129,
+      "ci95": [
+        0.00034438396585742884,
+        0.004725000054810284
+      ],
+      "n": 3386,
+      "model_better": false
+    },
+    "field-goal attempts, game over 2.5 (Brier)": {
+      "model_minus_baseline": 0.0019871753883699966,
+      "ci95": [
+        -3.93224791378454e-05,
+        0.004123133511002903
+      ],
+      "n": 3386,
+      "model_better": false
+    },
+    "field goals made, game log score": {
+      "model_minus_baseline": 0.004856212870753637,
+      "ci95": [
+        -0.0007381139525137634,
+        0.01034386738173521
+      ],
+      "n": 3386,
+      "model_better": false
+    },
+    "field goals made, game over 1.5 (Brier)": {
+      "model_minus_baseline": 0.0008582377058081597,
+      "ci95": [
+        -0.001392370177102737,
+        0.0030213327181930916
+      ],
+      "n": 3386,
+      "model_better": false
+    },
+    "field-goal attempts, quarter log score": {
+      "model_minus_baseline": 0.0017324921017468798,
+      "ci95": [
+        0.00045029372460796916,
+        0.0030359469991932363
+      ],
+      "n": 13544,
+      "model_better": false
+    },
+    "field-goal attempts, quarter over 0.5 (Brier)": {
+      "model_minus_baseline": 0.00043589113411566594,
+      "ci95": [
+        -0.00016387791604459894,
+        0.0010041409608107742
+      ],
+      "n": 13544,
+      "model_better": false
+    },
+    "game total log score": {
+      "model_minus_baseline": -0.015156961685440132,
+      "ci95": [
+        -0.023715683945841896,
+        -0.005880447422930768
+      ],
+      "n": 1693,
+      "model_better": true
+    },
+    "game margin log score": {
+      "model_minus_baseline": -0.04683629919306568,
+      "ci95": [
+        -0.05778468804109357,
+        -0.03651389097922076
+      ],
+      "n": 1693,
+      "model_better": true
+    }
+  },
+  "calibration_at_lines": {
+    "team points, game over 17.5": {
+      "predicted": 0.614882175257164,
+      "observed": 0.6807442409923213,
+      "n": 3386
+    },
+    "team points, game over 20.5": {
+      "predicted": 0.5281725845282933,
+      "observed": 0.5670407560543415,
+      "n": 3386
+    },
+    "team points, game over 23.5": {
+      "predicted": 0.4390420517187202,
+      "observed": 0.4678086237448317,
+      "n": 3386
+    },
+    "team points, game over 27.5": {
+      "predicted": 0.31416251506351733,
+      "observed": 0.3062610750147667,
+      "n": 3386
+    },
+    "team points, half over 3.5": {
+      "predicted": 0.7726132440645882,
+      "observed": 0.8340224453632605,
+      "n": 6772
+    },
+    "team points, half over 7.5": {
+      "predicted": 0.5797788079971558,
+      "observed": 0.6472238629651507,
+      "n": 6772
+    },
+    "team points, half over 10.5": {
+      "predicted": 0.44255996266427006,
+      "observed": 0.4698759598346131,
+      "n": 6772
+    },
+    "team points, half over 13.5": {
+      "predicted": 0.3683872510634073,
+      "observed": 0.37389249852333134,
+      "n": 6772
+    },
+    "team points, half over 17.5": {
+      "predicted": 0.19496003120742075,
+      "observed": 0.15918487891317187,
+      "n": 6772
+    },
+    "team points, quarter over 0.5": {
+      "predicted": 0.6371238209076995,
+      "observed": 0.7277023036030714,
+      "n": 13544
+    },
+    "team points, quarter over 3.5": {
+      "predicted": 0.5013514338249454,
+      "observed": 0.5474748966331955,
+      "n": 13544
+    },
+    "team points, quarter over 6.5": {
+      "predicted": 0.4512038072150479,
+      "observed": 0.4830183106910809,
+      "n": 13544
+    },
+    "team points, quarter over 7.5": {
+      "predicted": 0.26098449235279686,
+      "observed": 0.24830183106910808,
+      "n": 13544
+    },
+    "team points, quarter over 10.5": {
+      "predicted": 0.16466678712586658,
+      "observed": 0.13592734790313055,
+      "n": 13544
+    },
+    "touchdowns, game over 1.5": {
+      "predicted": 0.719099298091224,
+      "observed": 0.7655050206733609,
+      "n": 3386
+    },
+    "touchdowns, game over 2.5": {
+      "predicted": 0.4723712836021578,
+      "observed": 0.4917306556408742,
+      "n": 3386
+    },
+    "touchdowns, game over 3.5": {
+      "predicted": 0.2630910768040547,
+      "observed": 0.25014766686355583,
+      "n": 3386
+    },
+    "field-goal attempts, game over 1.5": {
+      "predicted": 0.5746533659163312,
+      "observed": 0.6042528056704075,
+      "n": 3386
+    },
+    "field-goal attempts, game over 2.5": {
+      "predicted": 0.3084769626640539,
+      "observed": 0.3071470761961016,
+      "n": 3386
+    },
+    "field goals made, game over 1.5": {
+      "predicted": 0.4800373254971176,
+      "observed": 0.5044300059066745,
+      "n": 3386
+    },
+    "field-goal attempts, quarter over 0.5": {
+      "predicted": 0.37389081131560825,
+      "observed": 0.4071175428233904,
+      "n": 13544
+    }
+  },
+  "vs_closing_lines": {
+    "total": {
+      "n": 1675,
+      "brier_model_over_line": 0.25513005406605493,
+      "brier_line_as_coin_flip": 0.25,
+      "model_minus_line": {
+        "model_minus_baseline": 0.005130054066054939,
+        "ci95": [
+          0.0018928592450059376,
+          0.008550593754853758
+        ],
+        "n": 1675,
+        "model_better": false
+      },
+      "mae_model_mean": 10.731609507148614,
+      "mae_closing_line": 10.422089552238806,
+      "mae_model_minus_line": {
+        "model_minus_baseline": 0.30951995490980677,
+        "ci95": [
+          0.1793016209464285,
+          0.44336408178272513
+        ],
+        "n": 1675,
+        "model_better": false
+      }
+    },
+    "margin": {
+      "n": 1660,
+      "brier_model_over_line": 0.25505367443114635,
+      "brier_line_as_coin_flip": 0.25,
+      "model_minus_line": {
+        "model_minus_baseline": 0.005053674431146366,
+        "ci95": [
+          0.0009847868505200024,
+          0.009322665424021827
+        ],
+        "n": 1660,
+        "model_better": false
+      },
+      "mae_model_mean": 10.350662732948866,
+      "mae_closing_line": 9.960843373493976,
+      "mae_model_minus_line": {
+        "model_minus_baseline": 0.3898193594548888,
+        "ci95": [
+          0.22712457490815038,
+          0.5466548283251107
+        ],
+        "n": 1660,
+        "model_better": false
+      }
+    }
+  },
+  "per_kick_brier": {
+    "distance_only": {
+      "brier": 0.11331910012876562,
+      "n": 6609,
+      "minus_distance_only": null
+    },
+    "weather": {
+      "brier": 0.11273925319396409,
+      "n": 6609,
+      "minus_distance_only": {
+        "model_minus_baseline": -0.000579846934801517,
+        "ci95": [
+          -0.0009171841403710255,
+          -0.0002494481350621729
+        ],
+        "n": 6609,
+        "model_better": true
+      }
+    },
+    "weather_kicker": {
+      "brier": 0.1122469595214236,
+      "n": 6609,
+      "minus_distance_only": {
+        "model_minus_baseline": -0.0010721406073420105,
+        "ci95": [
+          -0.0017254388142419837,
+          -0.00042653135119926586
+        ],
+        "n": 6609,
+        "model_better": true
+      }
+    }
+  }
+}

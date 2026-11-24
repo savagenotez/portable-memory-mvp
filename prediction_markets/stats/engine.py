@@ -81,6 +81,27 @@ class Dist:
         a = (1.0 - level) / 2.0
         return self.quantile(a), self.quantile(1.0 - a)
 
+    def mode(self) -> Tuple[int, float]:
+        i = max(range(len(self.pmf)), key=lambda j: self.pmf[j])
+        return self.offset + i, self.pmf[i]
+
+    def narrowest(self, level: float) -> Tuple[int, int, float]:
+        """The narrowest range of whole numbers holding at least `level` probability: (low, high, its probability).
+        Grown from the most likely value, one step at a time toward the likelier side."""
+        i, _ = self.mode()
+        lo = hi = i - self.offset
+        mass = self.pmf[lo]
+        while mass < level - 1e-12 and (lo > 0 or hi < len(self.pmf) - 1):
+            left = self.pmf[lo - 1] if lo > 0 else -1.0
+            right = self.pmf[hi + 1] if hi < len(self.pmf) - 1 else -1.0
+            if right >= left:
+                hi += 1
+                mass += right
+            else:
+                lo -= 1
+                mass += left
+        return self.offset + lo, self.offset + hi, mass
+
     def summary(self, lines: Sequence[float] = ()) -> dict:
         lo, hi = self.interval(0.8)
         out = {"mean": round(self.mean, 3), "median": self.quantile(0.5), "interval_80": [lo, hi]}
