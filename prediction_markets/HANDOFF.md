@@ -109,6 +109,13 @@ Built after the user asked to "reverse engineer the apps". That was declined, be
 - **A settled market's last price is the answer.** Always sample a price a fixed time before close.
 - **Do not add anything that logs in, uses private endpoints, or scrapes pages.** The host allowlist is there on purpose, and a test checks it.
 
+### NFL model against market (`prediction_markets/nfl/`)
+
+- **Result, 146 Kalshi NFL games, 2026 to date, 24 hours before kickoff:** model Brier 0.2157, market 0.2108, difference +0.0049, 95% interval -0.012 to +0.022. Not separable. The 60-game result (model clearly worse) did not hold on the larger set.
+- **Model:** Elo from earlier games only (K 20, home advantage 65, season regression 1/3), plus rest and division, in a logistic refit before each game day. Excludes weather, spreads and totals by design. Feature outline and build order: `nfl/FEATURES.md`.
+- **Next features, one at a time, each tested on fresh games:** short week and bye week, roof, efficiency (needs the play-by-play file), starting quarterback (needs an archive of what was known at the time).
+- **Do not** add a feature because it improves these 146 games. Each addition needs a new set of games.
+
 ### Next task (real data)
 
 1. **A sports-stats source.** The league learner needs player, team and weather inputs. The platforms supply prices and outcomes, not stats. Pick a source that is free to use, check its terms, and build a feature builder from it.
