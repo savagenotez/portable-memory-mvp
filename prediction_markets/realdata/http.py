@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import http.client
 import json
 import time
 import urllib.error
@@ -65,7 +66,8 @@ def get_json(url: str, params: Optional[dict] = None, *, min_interval: float = 1
                 delay = min(30.0, delay * 2)
                 continue
             raise
-        except urllib.error.URLError:
+        except (urllib.error.URLError, OSError, http.client.HTTPException):
+            # a dropped or reset connection, a timeout, or a malformed reply: wait and retry a few times
             if attempt < retries:
                 time.sleep(delay)
                 delay = min(30.0, delay * 2)

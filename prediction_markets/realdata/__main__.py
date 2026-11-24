@@ -22,14 +22,21 @@ from .observation import read_csv, write_csv
 def _fetch(args) -> int:
     t0 = time.time()
     say = lambda msg: print(msg, flush=True)
-    if args.source == "kalshi":
-        series = tuple(s.strip() for s in args.series.split(",") if s.strip())
-        obs = kalshi.collect(series, args.per_series, args.horizon_hours, args.max_spread, progress=say)
-    else:
-        obs = polymarket.collect(args.limit, args.min_volume, args.horizon_hours, progress=say)
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
-    write_csv(args.out, obs)
-    print(f"wrote {len(obs)} observations to {args.out} in {time.time() - t0:.0f}s")
+    obs = []
+    try:
+        if args.source == "kalshi":
+            series = tuple(s.strip() for s in args.series.split(",") if s.strip())
+            stream = kalshi.iter_collect(series, args.per_series, args.horizon_hours, args.max_spread, progress=say)
+        else:
+            stream = polymarket.iter_collect(args.limit, args.min_volume, args.horizon_hours, progress=say)
+        for o in stream:
+            obs.append(o)
+            if len(obs) % 10 == 0:
+                write_csv(args.out, obs)   # checkpoint, so an interruption loses little
+    finally:
+        write_csv(args.out, obs)
+        print(f"wrote {len(obs)} observations to {args.out} in {time.time() - t0:.0f}s", flush=True)
     return 0
 
 

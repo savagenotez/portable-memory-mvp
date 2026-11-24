@@ -76,11 +76,11 @@ def price_before_close(series: str, market: dict, horizon_hours: float, max_spre
     return (bid + ask) / 2.0, spread
 
 
-def collect(series_list=SPORTS_SERIES, per_series: int = 150, horizon_hours: float = 24.0,
-            max_spread: float = 0.10, fetch: Callable = get_json, progress: Callable = lambda msg: None
-            ) -> List[Observation]:
-    """One market per event, so the two sides of the same game are not counted twice."""
-    out: List[Observation] = []
+def iter_collect(series_list=SPORTS_SERIES, per_series: int = 150, horizon_hours: float = 24.0,
+                 max_spread: float = 0.10, fetch: Callable = get_json, progress: Callable = lambda msg: None):
+    """Yield observations one at a time, so a caller can save partial progress if a run is interrupted.
+
+    One market per event, so the two sides of the same game are not counted twice."""
     for series in series_list:
         markets = [m for m in settled_markets(series, per_series * 2, fetch) if is_usable(m)]
         seen_events: Dict[str, bool] = {}
@@ -99,12 +99,15 @@ def collect(series_list=SPORTS_SERIES, per_series: int = 150, horizon_hours: flo
             if quote is None:
                 continue
             mid, spread = quote
-            out.append(Observation(
+            yield Observation(
                 source="kalshi", market_id=m["ticker"], event_id=ev, title=m.get("title", ""),
                 close_ts=_ts(m["close_time"]), horizon_hours=horizon_hours, price=clip_price(mid),
                 outcome=1 if m["result"] == "yes" else 0, spread=spread,
                 volume=_dollars(m.get("volume_fp")),
-            ))
+            )
             taken += 1
         progress(f"kalshi {series}: {taken} usable events from {len(markets)} settled markets")
-    return out
+
+
+def collect(*args, **kwargs) -> List[Observation]:
+    return list(iter_collect(*args, **kwargs))

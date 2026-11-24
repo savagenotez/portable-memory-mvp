@@ -83,13 +83,14 @@ def price_before_close(m: dict, horizon_hours: float, fetch: Callable = get_json
     return float(last["p"])
 
 
-def collect(limit: int = 200, min_volume: float = 20000.0, horizon_hours: float = 24.0,
-            fetch: Callable = get_json, progress: Callable = lambda msg: None) -> List[Observation]:
-    out: List[Observation] = []
+def iter_collect(limit: int = 200, min_volume: float = 20000.0, horizon_hours: float = 24.0,
+                 fetch: Callable = get_json, progress: Callable = lambda msg: None):
+    """Yield observations one at a time, so a caller can save partial progress if a run is interrupted."""
+    kept = 0
     markets = closed_markets(limit * 3, min_volume, fetch)
     considered = 0
     for m in markets:
-        if len(out) >= limit:
+        if kept >= limit:
             break
         outcome = resolved_first_outcome(m)
         if outcome is None:
@@ -105,10 +106,14 @@ def collect(limit: int = 200, min_volume: float = 20000.0, horizon_hours: float 
             continue
         events = m.get("events") or []
         ev = str(events[0].get("id")) if events and isinstance(events[0], dict) and events[0].get("id") else str(m.get("id"))
-        out.append(Observation(
+        kept += 1
+        yield Observation(
             source="polymarket", market_id=str(m.get("conditionId") or m.get("id")), event_id=ev,
             title=m.get("question", ""), close_ts=_ts(m["endDate"]), horizon_hours=horizon_hours,
             price=clip_price(price), outcome=outcome, spread=None, volume=m.get("volumeNum"),
-        ))
-    progress(f"polymarket: {len(out)} usable markets from {considered} cleanly resolved two-outcome markets")
-    return out
+        )
+    progress(f"polymarket: {kept} usable markets from {considered} cleanly resolved two-outcome markets")
+
+
+def collect(*args, **kwargs) -> List[Observation]:
+    return list(iter_collect(*args, **kwargs))

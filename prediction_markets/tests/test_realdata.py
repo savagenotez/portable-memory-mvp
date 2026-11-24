@@ -79,6 +79,19 @@ class RateLimitTests(unittest.TestCase):
             http.get_json(self.URL, min_interval=0.0)
         self.assertTrue(any(s >= 3.5 for s in sleeps))
 
+    def test_retries_a_dropped_connection(self):
+        import http.client as httpclient
+        from unittest import mock
+        seq = [httpclient.RemoteDisconnected("Remote end closed connection without response"),
+               ConnectionResetError("reset"), self._Resp({"ok": 1})]
+        def fake_open(req, timeout=0):
+            r = seq.pop(0)
+            if isinstance(r, Exception):
+                raise r
+            return r
+        with mock.patch("urllib.request.urlopen", fake_open), mock.patch("time.sleep", lambda s: None):
+            self.assertEqual(http.get_json(self.URL, min_interval=0.0), {"ok": 1})
+
     def test_gives_up_after_the_retry_limit(self):
         import urllib.error
         from unittest import mock
@@ -220,6 +233,32 @@ def synthetic(n, seed, noise=0.0, shrink=1.0):
         price = clip_price(0.5 + (true_p - 0.5) / shrink + rng.gauss(0.0, noise))
         out.append(Observation("kalshi", f"m{i}", f"e{i}", "t", 0.0, 24.0, price, 1 if rng.random() < true_p else 0))
     return out
+
+
+class StreamingTests(unittest.TestCase):
+    def test_iter_collect_yields_progress_before_a_failure(self):
+        target = CLOSE_TS - 24 * 3600
+        markets = [kalshi_market("G1-A", "G1", "yes"), kalshi_market("G2-A", "G2", "no")]
+        state = {"n": 0}
+        def fake(url, params=None):
+            if url.endswith("/markets"):
+                return {"markets": markets, "cursor": ""}
+            state["n"] += 1
+            if state["n"] == 2:
+                raise ConnectionResetError("boom")
+            return {"candlesticks": [candle(target - 300, "0.60", "0.64")]}
+        got = []
+        with self.assertRaises(ConnectionResetError):
+            for o in kalshi.iter_collect(("S",), per_series=5, horizon_hours=24, fetch=fake):
+                got.append(o)
+        self.assertEqual([o.event_id for o in got], ["G1"])   # the first event survived the failure
+
+    def test_collect_and_iter_collect_agree(self):
+        target = CLOSE_TS - 24 * 3600
+        markets = [kalshi_market("G1-A", "G1", "yes")]
+        fake = lambda url, params=None: ({"markets": markets, "cursor": ""} if url.endswith("/markets")
+                                         else {"candlesticks": [candle(target - 300, "0.60", "0.64")]})
+        self.assertEqual(kalshi.collect(("S",), 5, 24, fetch=fake), list(kalshi.iter_collect(("S",), 5, 24, fetch=fake)))
 
 
 class CalibrationTests(unittest.TestCase):
