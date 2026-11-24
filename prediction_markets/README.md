@@ -14,7 +14,7 @@ Nothing here is evidence of an edge on any real market or sportsbook. Win rate o
 
 ```bash
 # from the repository root; standard library only (tested on Python 3.13)
-python3 -m unittest discover -s prediction_markets/tests -t .   # 59 tests
+python3 -m unittest discover -s prediction_markets/tests -t .   # 87 tests
 python3 -m prediction_markets.run_demo                          # full run, about 25 s, writes results/latest.json
 python3 -m prediction_markets.run_demo --quick                  # smoke test, a few seconds, writes nothing
 python3 -m prediction_markets.calibration --seed-base 913000000 \
@@ -35,8 +35,13 @@ python3 -m prediction_markets.calibration --seed-base 913000000 \
 | `run_demo.py` | Runs everything and prints the tables |
 | `calibration.py` | Pre-registered calibration study across the controller variants |
 | `diagnostics/` | Scripts behind the calibration findings. Not evaluations, and not used by the package |
+| `league/` | A learning algorithm: hierarchical league simulator, branch ensemble with decision scores, tripwires, and a pre-registered study. See `league/README.md` |
 | `tests/` | Unit tests for the math, reproducibility, variants, and smoke tests |
 | `results/` | `latest.json` (demo), `calibration_seedblock_*.json` (study, one file per seed block) |
+
+## The branch ensemble
+
+The goal-attainment controller below is one tool. `league/` is a separate learning algorithm that combines families of variables (players, teams, conferences, streaks, weather, and crossed effects), scores each family, and is tested against hard conditions. On fresh simulated leagues it captures 48% of the achievable accuracy, against 39% for a single flat model, and 7 of 8 pre-registered criteria pass. Its calibration has one real defect. Details are in `league/README.md`.
 
 ## The percentages, and how far to trust them
 

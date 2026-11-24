@@ -31,12 +31,15 @@ Read this first. It is the state of the work when Claude usage stopped, and it i
 
 ```bash
 cd /home/user/portable-memory-mvp
-python3 -m unittest discover -s prediction_markets/tests -t .   # expect: Ran 59 tests ... OK
+python3 -m unittest discover -s prediction_markets/tests -t .   # expect: Ran 87 tests ... OK
 python3 -m prediction_markets.run_demo                          # about 25 s, rewrites results/latest.json
 python3 -m prediction_markets.calibration --seed-base 913000000 \
     --out prediction_markets/results/calibration_seedblock_913000000.json   # about 35 s
 PYTHONPATH=. python3 prediction_markets/diagnostics/attribution.py          # about 8 s, diagnostics only
+python3 -m prediction_markets.league.study --quick                              # branch ensemble, 4 dev leagues, about 15 s
 ```
+
+The final league study (`python3 -m prediction_markets.league.study`) has been run once on seeds 7000-7029. Those seeds are spent. To evaluate a change, set `study.final_seed_base` in `league/config.json` to a fresh block, such as 8000.
 
 The simulations are seeded, so the full runs should reproduce the numbers below exactly. If they don't, something changed.
 
@@ -60,6 +63,34 @@ Paper trading, synthetic only:
 
 - **fair_market** (price = true probability): 4,849 bets, win rate 53.1% (CI 51.7–54.5), ROI -0.9%, bankroll 1000 → 157.59, max drawdown 92.3%, Brier skill vs market -0.024.
 - **noisy_market** (price = true probability + noise sd 0.05): 4,946 bets, win rate 52.4%, ROI +4.7%, Brier skill vs market -0.005. The edge exists only because the noise was built into the synthetic prices.
+
+## Branch ensemble: the learning algorithm (`prediction_markets/league/`)
+
+Built on request: an algorithm that learns and corrects, with families of variables ("branches") scored for effectiveness, correlations between variables, and hard conditions that can trip it up. Full detail is in `league/README.md`.
+
+- **Files:** `sim.py` (hierarchical league: regions, conferences, teams, players, weather, injuries, form), `features.py` (walk-forward features, proven free of future information), `model.py` (online branch ensemble, decision scores, gates, tripwires), `evaluate.py`, `study.py` (pre-registered criteria C1-C8), `config.json`.
+- **Final study** (seeds 7000-7029, 30 leagues x 6 seasons, run once on frozen code): capture of the achievable accuracy 0.483, against 0.387 for one flat model. Brier skill +5.7% (oracle 11.7%). Capture rises over seasons: 0.39, 0.45, 0.52, 0.54, 0.52.
+- **Criteria:** 7 of 8 pass. **C1 (calibration) fails:** games predicted at 40-60% are over-predicted by 1.2 points (4.0 SE). Overall calibration is fine (1.5 SE).
+- **Tripwires:** only the plausibility cap proved necessary. Without it, a leaking feature "captures" 8x the achievable accuracy. Gates, early shrink, and Platt scaling cost 0.7, 0.2, and 1.6 points of capture. The drift boost fired about once in 30 leagues and changed nothing. The spurious-feature and regime-shift scenarios did not trip the learner: with every tripwire off it did as well.
+- **Decision scores (clean):** team +2.7, player +1.7, streak +1.4, geo +0.65, interaction +0.28, weather -0.20, schedule -0.66, noise -0.63. Rest and style x wind effects exist in the simulation but are too small to detect in about 1,000 games.
+- **C1 was revised once** before the final run (from 90% of slices within 2 SE to every slice within 3 SE), because the first rule fails a perfectly calibrated model about 10% of the time. This is recorded in `study.py`.
+- **Dev optimism:** 0.528 capture on the dev seeds it was tuned on, against 0.483 on fresh seeds.
+
+### Next task (league)
+
+1. **Fix the mid-range calibration defect.** Candidate: an online binned calibrator after Platt. Evaluate on a NEW seed block, with the rule written down first.
+2. **Make the hard conditions harder.** Today only leakage breaks the learner. Try faster and larger regime shifts, decoys correlated across several branches, drift in the style x weather effect, and label noise. Write the pass rule before running.
+3. **Re-test the tripwires under the harder conditions** before removing any. Gates, shrink, and the drift boost have not earned their cost yet.
+4. **Real data.** The learner takes plain feature dictionaries. For real prices, build a feature builder from user-supplied CSV. There is no oracle, so use Brier skill against the base rate and against the closing price. The plausibility cap would then come from a market-price bound.
+5. **Per-player outcomes.** The simulator already produces per-player efficiency. Extend the targets to player props.
+
+### League seed ledger
+
+| Seeds | Use |
+|---|---|
+| 1000-1015 | Dev: tuning and debugging. Not evidence. |
+| 5000-5003 | One 4-league smoke test. Retired. |
+| 7000-7029 | Final study. Run once. Spent. |
 
 ## Calibration: where it stands
 
@@ -104,7 +135,7 @@ Earlier evidence, from the first round and still valid: the integrated-mu scratc
 - **No reverse engineering, scraping, or connecting to any betting or prediction-market app or website.** The user explicitly rejected this. Market prices come in only as CSV that the user supplies.
 - **Label every output as simulated.** Never present a synthetic win rate as evidence of an edge on a real market.
 - **Win rate is reported only with ROI and Brier skill.** Keep the fair-market scenario as the primary one.
-- **Never evaluate on a used seed block.** Blocks 912000000 and 913000000 are spent. Use a fresh one and record it.
+- **Never evaluate on a used seed block.** Blocks 912000000 and 913000000 (goal-attainment study) and league seeds 7000-7029 are spent. Use a fresh one and record it.
 - **Don't tune `config.json` to hit a number.** Priors are assumptions. If you change one, say why and record the before and after.
 - **Keep the spec-faithful default.** Calibration variants are flags, off by default.
 - **Commits and PR text must not name a model.** Use the `Claude-Session:` trailer in commits, and end PR bodies with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`. Do not add a `Co-Authored-By` line that names a model.
