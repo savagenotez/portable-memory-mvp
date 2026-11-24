@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="780" viewBox="0 0 980 780" font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+<rect width="980" height="780" fill="#fcfcfb"/>
+<text x="30" y="40" font-size="24" font-weight="600" fill="#0b0b0b">NFL model: current status</text>
+<text x="30" y="64" font-size="13" fill="#52514e">Nothing here is a profit claim. Only the blind test can show whether the model beats the market, and it has not reached its sample size.</text>
+<rect x="30" y="84" width="212" height="78" rx="6" fill="#f1f0ec"/>
+<text x="44" y="122" font-size="26" font-weight="600" fill="#0b0b0b">109</text>
+<text x="44" y="144" font-size="12" fill="#52514e">games sealed, unplayed at sealing</text>
+<rect x="260" y="84" width="212" height="78" rx="6" fill="#f1f0ec"/>
+<text x="274" y="122" font-size="26" font-weight="600" fill="#0b0b0b">1</text>
+<text x="274" y="144" font-size="12" fill="#52514e">sealed events with a price so far</text>
+<rect x="490" y="84" width="212" height="78" rx="6" fill="#f1f0ec"/>
+<text x="504" y="122" font-size="26" font-weight="600" fill="#0b0b0b">0 / 100</text>
+<text x="504" y="144" font-size="12" fill="#52514e">scored games needed for a verdict</text>
+<rect x="720" y="84" width="212" height="78" rx="6" fill="#f1f0ec"/>
+<text x="734" y="122" font-size="26" font-weight="600" fill="#0b0b0b">v3</text>
+<text x="734" y="144" font-size="12" fill="#52514e">frozen, judged on sealed games only</text>
+<text x="30" y="210" font-size="18" font-weight="600" fill="#0b0b0b">History: change in log loss vs the base model</text>
+<text x="30" y="232" font-size="13" fill="#52514e">Development on 2005-2025 games. Not blind: the 2020-2025 seasons were used earlier to choose K = 30. Negative = better.</text>
+<line x1="361.1" y1="242" x2="361.1" y2="458" stroke="#d9d8d3" stroke-width="1"/>
+<text x="361.1" y="476" font-size="12" fill="#52514e" text-anchor="middle">−0.012</text>
+<line x1="483.3" y1="242" x2="483.3" y2="458" stroke="#d9d8d3" stroke-width="1"/>
+<text x="483.3" y="476" font-size="12" fill="#52514e" text-anchor="middle">−0.008</text>
+<line x1="605.6" y1="242" x2="605.6" y2="458" stroke="#d9d8d3" stroke-width="1"/>
+<text x="605.6" y="476" font-size="12" fill="#52514e" text-anchor="middle">−0.004</text>
+<line x1="727.8" y1="242" x2="727.8" y2="458" stroke="#d9d8d3" stroke-width="1"/>
+<text x="727.8" y="476" font-size="12" fill="#52514e" text-anchor="middle">+0.000</text>
+<line x1="727.8" y1="242" x2="727.8" y2="458" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="719.8" y="498" font-size="12" fill="#52514e" text-anchor="end">better</text>
+<text x="735.8" y="498" font-size="12" fill="#52514e">worse</text>
+<text x="30" y="281" font-size="14" fill="#0b0b0b">Efficiency, 10-game half-life</text>
+<line x1="527.9" y1="276" x2="719.2" y2="276" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="527.9" y1="270" x2="527.9" y2="282" stroke="#2a78d6" stroke-width="2"/>
+<line x1="719.2" y1="270" x2="719.2" y2="282" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="623.8" cy="276" r="6" fill="#2a78d6"/>
+<text x="872" y="281" font-size="13" fill="#0b0b0b">−0.0034</text>
+<text x="30" y="333" font-size="14" fill="#0b0b0b">Injuries, key positions</text>
+<line x1="584.5" y1="328" x2="717.6" y2="328" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="584.5" y1="322" x2="584.5" y2="334" stroke="#2a78d6" stroke-width="2"/>
+<line x1="717.6" y1="322" x2="717.6" y2="334" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="649.4" cy="328" r="6" fill="#2a78d6"/>
+<text x="872" y="333" font-size="13" fill="#0b0b0b">−0.0026</text>
+<text x="30" y="385" font-size="14" fill="#0b0b0b">K = 30 Elo (tuning)</text>
+<line x1="599.4" y1="380" x2="700.2" y2="380" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="599.4" y1="374" x2="599.4" y2="386" stroke="#2a78d6" stroke-width="2"/>
+<line x1="700.2" y1="374" x2="700.2" y2="386" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="652.1" cy="380" r="6" fill="#2a78d6"/>
+<text x="872" y="385" font-size="13" fill="#0b0b0b">−0.0025</text>
+<text x="30" y="437" font-size="14" fill="#0b0b0b">v3 combined, same window (fair)</text>
+<line x1="363.0" y1="432" x2="706.3" y2="432" stroke="#2a78d6" stroke-width="2.5"/>
+<line x1="363.0" y1="426" x2="363.0" y2="438" stroke="#2a78d6" stroke-width="2"/>
+<line x1="706.3" y1="426" x2="706.3" y2="438" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="540.1" cy="432" r="6" fill="#2a78d6"/>
+<text x="872" y="437" font-size="13" fill="#0b0b0b">−0.0061</text>
+<text x="30" y="542" font-size="18" font-weight="600" fill="#0b0b0b">Against the market: Brier score on the same 146 games</text>
+<text x="30" y="564" font-size="13" fill="#52514e">Diagnosis games, not blind. Negative = the model did better than the Kalshi price.</text>
+<line x1="300.0" y1="574" x2="300.0" y2="686" stroke="#d9d8d3" stroke-width="1"/>
+<text x="300.0" y="704" font-size="12" fill="#52514e" text-anchor="middle">−0.020</text>
+<line x1="520.0" y1="574" x2="520.0" y2="686" stroke="#d9d8d3" stroke-width="1"/>
+<text x="520.0" y="704" font-size="12" fill="#52514e" text-anchor="middle">+0.000</text>
+<line x1="740.0" y1="574" x2="740.0" y2="686" stroke="#d9d8d3" stroke-width="1"/>
+<text x="740.0" y="704" font-size="12" fill="#52514e" text-anchor="middle">+0.020</text>
+<line x1="520.0" y1="574" x2="520.0" y2="686" stroke="#52514e" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="512.0" y="726" font-size="12" fill="#52514e" text-anchor="end">model better</text>
+<text x="528.0" y="726" font-size="12" fill="#52514e">market better</text>
+<text x="30" y="613" font-size="14" fill="#0b0b0b">Base model, diagnosis run</text>
+<line x1="386.9" y1="608" x2="761.2" y2="608" stroke="#e0701a" stroke-width="2.5"/>
+<line x1="386.9" y1="602" x2="386.9" y2="614" stroke="#e0701a" stroke-width="2"/>
+<line x1="761.2" y1="602" x2="761.2" y2="614" stroke="#e0701a" stroke-width="2"/>
+<circle cx="574.2" cy="608" r="6" fill="#e0701a"/>
+<text x="872" y="613" font-size="13" fill="#0b0b0b">+0.0049</text>
+<text x="30" y="665" font-size="14" fill="#0b0b0b">K = 30 re-check</text>
+<line x1="381.6" y1="660" x2="743.8" y2="660" stroke="#e0701a" stroke-width="2.5"/>
+<line x1="381.6" y1="654" x2="381.6" y2="666" stroke="#e0701a" stroke-width="2"/>
+<line x1="743.8" y1="654" x2="743.8" y2="666" stroke="#e0701a" stroke-width="2"/>
+<circle cx="563.0" cy="660" r="6" fill="#e0701a"/>
+<text x="872" y="665" font-size="13" fill="#0b0b0b">+0.0039</text>
+<text x="30" y="756" font-size="12" fill="#52514e">Sources: prediction_markets/results/*.json, prospective_snapshots.jsonl, blind_manifest.json. The 166-test suite passes.</text>
+</svg>
