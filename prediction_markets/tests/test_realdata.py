@@ -34,9 +34,15 @@ class HostGuardTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             http.get_json("http://api.elections.kalshi.com/trade-api/v2/markets")
 
-    def test_allowlist_is_only_the_three_documented_hosts(self):
+    def test_allowlist_is_the_documented_hosts_only(self):
         self.assertEqual(http.ALLOWED_HOSTS, {"api.elections.kalshi.com", "gamma-api.polymarket.com",
-                                               "clob.polymarket.com"})
+                                               "clob.polymarket.com", "raw.githubusercontent.com"})
+
+    def test_text_fetch_is_guarded_too(self):
+        with self.assertRaises(ValueError):
+            http.get_text("https://example.com/file.csv")
+        with self.assertRaises(ValueError):
+            http.get_text("http://raw.githubusercontent.com/x.csv")
 
 
 class RateLimitTests(unittest.TestCase):

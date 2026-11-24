@@ -14,6 +14,7 @@ ALLOWED_HOSTS = {
     "api.elections.kalshi.com",   # Kalshi official API, public market data
     "gamma-api.polymarket.com",   # Polymarket Gamma API, market discovery
     "clob.polymarket.com",        # Polymarket CLOB API, public prices
+    "raw.githubusercontent.com",  # nflverse open game data (approved 2026-11-24), read-only raw files
 }
 USER_AGENT = "prediction-markets-research-client"
 _last_call = [0.0]
@@ -29,6 +30,29 @@ def _pause_for_budget(headers) -> None:
         return
     if remaining < 3 * cost:
         time.sleep(min(30.0, reset + 0.5))
+
+
+def get_text(url: str, *, min_interval: float = 0.5, timeout: float = 60.0, retries: int = 3) -> str:
+    """GET a public text file (for example a CSV). Same allowlist, https-only and retry rules as get_json."""
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != "https" or parsed.hostname not in ALLOWED_HOSTS:
+        raise ValueError("only https URLs on the allowlist are allowed")
+    delay = 1.0
+    for attempt in range(retries + 1):
+        wait = min_interval - (time.time() - _last_call[0])
+        if wait > 0:
+            time.sleep(wait)
+        _last_call[0] = time.time()
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/csv,text/plain"})
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.read().decode("utf-8")
+        except (urllib.error.HTTPError, urllib.error.URLError, OSError, http.client.HTTPException):
+            if attempt < retries:
+                time.sleep(delay)
+                delay = min(30.0, delay * 2)
+                continue
+            raise
 
 
 def get_json(url: str, params: Optional[dict] = None, *, min_interval: float = 1.0,
