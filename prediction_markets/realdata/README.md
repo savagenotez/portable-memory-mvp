@@ -39,14 +39,33 @@ python3 -m prediction_markets.realdata report \
     --out prediction_markets/results/market_calibration.json
 ```
 
+## First results (fetched 2026-11-24, prices 24 hours before close)
+
+Kalshi: 236 sports games (NBA, NFL, NHL and MLB game-winner series, one market per game, books no wider than 10 cents). Polymarket: 150 closed two-outcome markets with volume of at least $20,000. Full tables are in `prediction_markets/results/market_calibration.json`.
+
+| Source | Markets (events) | Mean price | Realized | Brier skill vs base rate | Calibration slope (1.00 = perfect) |
+|---|---|---|---|---|---|
+| Both | 386 (305) | 45.7% | 50.8% | +10.3% | 0.74 +/- 0.25 |
+| Kalshi | 236 (236) | 49.0% | 54.2% | +9.8% | 0.98 +/- 0.41 |
+| Polymarket | 150 (69) | 40.5% | 45.3% | +9.5% | 0.57 +/- 0.30 |
+
+How to read it:
+
+- **Prices carry real information.** About 10% better than guessing the base rate, on both platforms.
+- **Kalshi looks calibrated, within wide bounds.** The slope of 0.98 is consistent with 1.0, but the interval spans roughly 0.6 to 1.4.
+- **Polymarket looks too extreme, tentatively.** A slope of 0.57 means the high and low prices were more extreme than outcomes justified. The 0-10% bin is the clearest case: 5 of 15 happened, against a mean price of 4.7%. But those 150 markets come from only 69 events, and markets within one event are correlated, so the real uncertainty is larger than the printed interval.
+- **Realized sits about 5 points above price on both.** The tracked side is the first one listed, which is arbitrary, so this may be a listing artifact and not a market bias. It is not statistically significant on Kalshi (1.6 standard errors).
+- **Nothing here is a statement about the league learner.** It shows how informative real prices are, so how high the bar is, in a different setting from the simulation.
+
 ## Rate limits
 
-Kalshi's candlestick endpoint costs 50 units of a 600-unit budget per call, and the budget looked shared across callers. The client reads the `x-ratelimit-*` headers, waits for the reset when the budget is low, and waits and retries on a 429. It never retries blindly. In practice that is about 5 seconds per Kalshi event, so 240 events take about 20 minutes. A persistent 429 stops the run with an error.
+Kalshi's candlestick endpoint costs 50 units of a 600-unit budget per call, and the budget looked shared across callers. The client reads the `x-ratelimit-*` headers, waits for the reset when the budget is low, and waits and retries on a 429. It never retries blindly. In practice that is about 3 to 5 seconds per Kalshi event. The 236-event run above took 12 minutes. A persistent 429 stops the run with an error.
 
 ## Limits of the report
 
 - **One time point.** Prices are taken at one horizon before close (24 hours by default). It says nothing about earlier or later prices.
-- **Sample size.** Each probability bin holds a few dozen markets at these sample sizes, so the intervals are wide. Read it as a rough benchmark.
+- **Sample size.** Each probability bin holds a few dozen markets at most, and some hold under ten, so the intervals are wide. Read it as a rough benchmark, not a verdict.
+- **Dependence.** Polymarket markets from the same event (moneyline, spread, total) are correlated. The report prints the event count, and the effective sample is closer to that.
 - **Selection.** Only liquid Kalshi books and cleanly resolved Polymarket markets are kept. Voided and multi-outcome markets are dropped.
 - **Arbitrary side.** For two-team Polymarket markets, the tracked outcome is whichever team is listed first.
 - **In-sample baseline.** The base-rate comparison is fitted on the same data, which flatters the baseline slightly.

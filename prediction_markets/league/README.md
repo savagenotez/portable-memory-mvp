@@ -74,7 +74,7 @@ All of these can be switched off in `ModelConfig`, so their value can be measure
 ## Run it
 
 ```bash
-python3 -m unittest discover -s prediction_markets/tests -t .   # 101 tests
+python3 -m unittest discover -s prediction_markets/tests -t .   # 129 tests
 python3 -m prediction_markets.league.study --quick --scenarios all   # 4 dev leagues, about 45 s, writes nothing
 python3 -m prediction_markets.league.study --scenarios all --seed-base 10000   # about 6 minutes, writes results/
 ```

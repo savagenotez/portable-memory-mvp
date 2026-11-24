@@ -14,7 +14,7 @@ Nothing here is evidence of an edge on any real market or sportsbook. Win rate o
 
 ```bash
 # from the repository root; standard library only (tested on Python 3.13)
-python3 -m unittest discover -s prediction_markets/tests -t .   # 101 tests
+python3 -m unittest discover -s prediction_markets/tests -t .   # 129 tests
 python3 -m prediction_markets.run_demo                          # full run, about 25 s, writes results/latest.json
 python3 -m prediction_markets.run_demo --quick                  # smoke test, a few seconds, writes nothing
 python3 -m prediction_markets.calibration --seed-base 913000000 \
@@ -35,6 +35,7 @@ python3 -m prediction_markets.calibration --seed-base 913000000 \
 | `run_demo.py` | Runs everything and prints the tables |
 | `calibration.py` | Pre-registered calibration study across the controller variants |
 | `diagnostics/` | Scripts behind the calibration findings. Not evaluations, and not used by the package |
+| `realdata/` | Read-only adapter for the public market-data endpoints Kalshi and Polymarket document officially, plus a calibration report on real prices. See `realdata/README.md` |
 | `league/` | A learning algorithm: hierarchical league simulator, branch ensemble with decision scores, tripwires, and a pre-registered study. See `league/README.md` |
 | `tests/` | Unit tests for the math, reproducibility, variants, and smoke tests |
 | `results/` | `latest.json` (demo), `calibration_seedblock_*.json` (study, one file per seed block) |
@@ -141,6 +142,8 @@ Next-game forecast and paper trading below are unaffected, because they use the 
 The fair-market row is the useful one. The model wins 53% of its bets and still loses money, because it pays an average price of 0.527 for those wins. The noisy-market row is positive only because the mispricing is built into the synthetic prices. Real markets are priced by many participants, so mispricing like that tends to be competed away. The large bankroll figure is what compounding about 5,000 correlated bets looks like on paper. It is not a forecast.
 
 ## Real market data
+
+To pull resolved-market prices from Kalshi and Polymarket's **official public APIs** (read-only, no reverse engineering), see `realdata/README.md`. A first run on 386 real markets found prices about 10% better than the base rate, with Kalshi consistent with calibrated and Polymarket tentatively too extreme.
 
 To evaluate a model on real prices, export your own data into CSV with these columns. Copy it from sources you are allowed to use.
 

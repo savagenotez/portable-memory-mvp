@@ -31,7 +31,7 @@ Read this first. It is the state of the work when Claude usage stopped, and it i
 
 ```bash
 cd /home/user/portable-memory-mvp
-python3 -m unittest discover -s prediction_markets/tests -t .   # expect: Ran 101 tests ... OK
+python3 -m unittest discover -s prediction_markets/tests -t .   # expect: Ran 129 tests ... OK
 python3 -m prediction_markets.run_demo                          # about 25 s, rewrites results/latest.json
 python3 -m prediction_markets.calibration --seed-base 913000000 \
     --out prediction_markets/results/calibration_seedblock_913000000.json   # about 35 s
@@ -98,6 +98,24 @@ Built on request: an algorithm that learns and corrects, with families of variab
 | 9000-9029 | Round-2 final, all scenarios. Spent. |
 | 10000 and up | Fresh. Use `--seed-base 10000`. |
 
+## Real-data adapter (`prediction_markets/realdata/`)
+
+Built after the user asked to "reverse engineer the apps". That was declined, because it would breach the platforms' terms and is not needed. This is the lawful route: only the public market-data endpoints that Kalshi and Polymarket document officially.
+
+- **What exists:** `http.py` (GET-only, https-only, a three-host allowlist, rate-limit-header handling, retries for dropped connections), `kalshi.py`, `polymarket.py`, `calibration.py` (how well calibrated real prices were), a CLI (`python3 -m prediction_markets.realdata fetch|report`), and 28 offline tests.
+- **First result** (fetched 2026-11-24, price 24 hours before close, 386 markets from 305 events): prices are about 10% better than the base rate. Kalshi (236 games) looks calibrated, slope 0.98 +/- 0.41. Polymarket (150 markets from only 69 events) looks too extreme, slope 0.57 +/- 0.30, tentatively. Details and caveats are in `realdata/README.md` and `results/market_calibration.json`.
+- **Fetched data is git-ignored.** Only the summary report is committed. Do not commit fetched CSVs.
+- **Be polite with the APIs.** Kalshi's candlestick endpoint costs 50 units of a shared 600-unit budget, so a run of 236 events takes about 12 minutes. The client reads the `x-ratelimit-*` headers. Do not remove that.
+- **A settled market's last price is the answer.** Always sample a price a fixed time before close.
+- **Do not add anything that logs in, uses private endpoints, or scrapes pages.** The host allowlist is there on purpose, and a test checks it.
+
+### Next task (real data)
+
+1. **A sports-stats source.** The league learner needs player, team and weather inputs. The platforms supply prices and outcomes, not stats. Pick a source that is free to use, check its terms, and build a feature builder from it.
+2. **Model against market.** Once stats are in, compare the learner's probability with the market price 24 hours before close on resolved games, scored by Brier skill against both the base rate and the price. There is no oracle on real data.
+3. **A larger and cleaner sample.** One market per event for Polymarket too, more series and more history, several horizons (for example 1, 6 and 24 hours). Then re-read the Polymarket slope.
+4. **The listing artifact.** Check whether the first-listed side is systematically the home or away team. If so, flip to a consistent side before reading any bias into the realized-minus-price gap.
+
 ## Calibration: where it stands
 
 **Pre-registered criterion** (in `calibration.py`'s docstring, fixed before any variant ran): for every domain, `|mean(pred) − realized| ≤ 2·SE`, with `SE = sqrt(p(1−p)/R)` and R = 500 held-out seasons per domain.
@@ -138,7 +156,7 @@ Earlier evidence, from the first round and still valid: the integrated-mu scratc
 
 ## Rules to keep
 
-- **No reverse engineering, scraping, or connecting to any betting or prediction-market app or website.** The user explicitly rejected this. Market prices come in only as CSV that the user supplies.
+- **No reverse engineering, scraping, or connecting to any betting or prediction-market app or website.** Market prices come in only as CSV that the user supplies, or from the official public endpoints in `realdata/` (read-only, allowlisted hosts, no credentials). When asked to reverse engineer an app, decline and point to those.
 - **Label every output as simulated.** Never present a synthetic win rate as evidence of an edge on a real market.
 - **Win rate is reported only with ROI and Brier skill.** Keep the fair-market scenario as the primary one.
 - **Never evaluate on a used seed block.** Blocks 912000000 and 913000000 (goal-attainment study) and league seeds 7000-7029, 8000-8029 and 9000-9029 are spent. Use a fresh one and record it.
