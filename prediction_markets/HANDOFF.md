@@ -31,7 +31,7 @@ Read this first. It is the state of the work when Claude usage stopped, and it i
 
 ```bash
 cd /home/user/portable-memory-mvp
-python3 -m unittest discover -s prediction_markets/tests -t .   # expect: Ran 87 tests ... OK
+python3 -m unittest discover -s prediction_markets/tests -t .   # expect: Ran 101 tests ... OK
 python3 -m prediction_markets.run_demo                          # about 25 s, rewrites results/latest.json
 python3 -m prediction_markets.calibration --seed-base 913000000 \
     --out prediction_markets/results/calibration_seedblock_913000000.json   # about 35 s
@@ -39,7 +39,7 @@ PYTHONPATH=. python3 prediction_markets/diagnostics/attribution.py          # ab
 python3 -m prediction_markets.league.study --quick                              # branch ensemble, 4 dev leagues, about 15 s
 ```
 
-The final league study (`python3 -m prediction_markets.league.study`) has been run once on seeds 7000-7029. Those seeds are spent. To evaluate a change, set `study.final_seed_base` in `league/config.json` to a fresh block, such as 8000.
+Every league seed block through 9029 is spent (see the ledger below). To evaluate a change, run `python3 -m prediction_markets.league.study --scenarios all --seed-base 10000` (about 6 minutes), and add the block to the ledger.
 
 The simulations are seeded, so the full runs should reproduce the numbers below exactly. If they don't, something changed.
 
@@ -66,31 +66,37 @@ Paper trading, synthetic only:
 
 ## Branch ensemble: the learning algorithm (`prediction_markets/league/`)
 
-Built on request: an algorithm that learns and corrects, with families of variables ("branches") scored for effectiveness, correlations between variables, and hard conditions that can trip it up. Full detail is in `league/README.md`.
+Built on request: an algorithm that learns and corrects, with families of variables ("branches") scored for effectiveness, correlations between variables, and hard conditions that can trip it up. Full detail is in `league/README.md`. Two rounds so far.
 
-- **Files:** `sim.py` (hierarchical league: regions, conferences, teams, players, weather, injuries, form), `features.py` (walk-forward features, proven free of future information), `model.py` (online branch ensemble, decision scores, gates, tripwires), `evaluate.py`, `study.py` (pre-registered criteria C1-C8), `config.json`.
-- **Final study** (seeds 7000-7029, 30 leagues x 6 seasons, run once on frozen code): capture of the achievable accuracy 0.483, against 0.387 for one flat model. Brier skill +5.7% (oracle 11.7%). Capture rises over seasons: 0.39, 0.45, 0.52, 0.54, 0.52.
-- **Criteria:** 7 of 8 pass. **C1 (calibration) fails:** games predicted at 40-60% are over-predicted by 1.2 points (4.0 SE). Overall calibration is fine (1.5 SE).
-- **Tripwires:** only the plausibility cap proved necessary. Without it, a leaking feature "captures" 8x the achievable accuracy. Gates, early shrink, and Platt scaling cost 0.7, 0.2, and 1.6 points of capture. The drift boost fired about once in 30 leagues and changed nothing. The spurious-feature and regime-shift scenarios did not trip the learner: with every tripwire off it did as well.
-- **Decision scores (clean):** team +2.7, player +1.7, streak +1.4, geo +0.65, interaction +0.28, weather -0.20, schedule -0.66, noise -0.63. Rest and style x wind effects exist in the simulation but are too small to detect in about 1,000 games.
-- **C1 was revised once** before the final run (from 90% of slices within 2 SE to every slice within 3 SE), because the first rule fails a perfectly calibrated model about 10% of the time. This is recorded in `study.py`.
-- **Dev optimism:** 0.528 capture on the dev seeds it was tuned on, against 0.483 on fresh seeds.
+- **Files:** `sim.py` (hierarchical league and nine scenarios), `features.py` (walk-forward features, proven free of future information), `model.py` (online branch ensemble, decision scores, gates, tripwires, binned calibrator, drift reset), `evaluate.py`, `study.py` (pre-registered criteria C1-C8 and H1-H4), `config.json`.
+- **Round-2 final** (seeds 9000-9029, 30 leagues x 6 seasons, nine scenarios, run once on frozen code): capture of the achievable accuracy 0.489, against 0.395 for one flat model. Brier skill +5.9% (oracle 12.1%). **11 of 12 criteria pass, including C1 calibration.** Capture by season: 0.36, 0.49, 0.52, 0.56, 0.52.
+- **The one failure is H4, the weather flip** (a strong effect reverses sign): capture 0.520 before, 0.375 after (ratio 0.72, needs 0.85). This is a genuine limit. More sensitive drift alarms cost more accuracy than they recover (tested on dev).
+- **Round 2 changed two things, both behind switches:** a binned online calibrator (fixes C1, costs 0.9 points of capture) and an earlier drift alarm that resets branch weights to 20% and boosts the learning rate x6 (helps the flip by 1.2 points, costs 0.3 in clean runs). Net cost in clean runs: 1.1 points. The round-1 model is exactly reproducible with the switches off, and a test locks this.
+- **Fast/slow learners were tried and rejected** on dev seeds (`use_fast_slow`, off): about 2.5 points of capture lost in every scenario.
+- **Safeguards, honestly:** only the plausibility cap is proven necessary (without it a leaking feature "captures" 7.7x the achievable accuracy). Gates, early shrink and Platt scaling have no demonstrated benefit. Platt now costs 2.3 points of capture because the binned calibrator is also on.
+- **The plausibility cap misfires under a changed environment.** It is 2x the oracle's gain on clean dev leagues. In severe_shift the achievable skill is far higher, so the cap quarantined the legitimate team branch in 17% of leagues and streak in 10%, costing about 2 points. It needs to come from a live benchmark.
+- **Rules revised:** C1 (before the first final run) and H1 (before any fresh-seed run of the hard scenarios). Reasons are in `study.py` and `league/README.md`. No rule was changed after seeing results on a fresh block.
+- **Dev optimism:** 0.519 on the dev leagues the model was tuned on, 0.489 on fresh ones.
 
 ### Next task (league)
 
-1. **Fix the mid-range calibration defect.** Candidate: an online binned calibrator after Platt. Evaluate on a NEW seed block, with the rule written down first.
-2. **Make the hard conditions harder.** Today only leakage breaks the learner. Try faster and larger regime shifts, decoys correlated across several branches, drift in the style x weather effect, and label noise. Write the pass rule before running.
-3. **Re-test the tripwires under the harder conditions** before removing any. Gates, shrink, and the drift boost have not earned their cost yet.
-4. **Real data.** The learner takes plain feature dictionaries. For real prices, build a feature builder from user-supplied CSV. There is no oracle, so use Brier skill against the base rate and against the closing price. The plausibility cap would then come from a market-price bound.
-5. **Per-player outcomes.** The simulator already produces per-player efficiency. Extend the targets to player props.
+1. **Make the plausibility cap adaptive.** Take it from a live benchmark instead of a fixed number. In the simulator, a strong reference model's running gain is a stand-in for a market price. Then re-check severe_shift, where the fixed cap currently misfires.
+2. **Test dropping Platt now that the binned calibrator is on.** Removing Platt raised capture by 2.3 points. Evaluate calibration (C1) with Platt off, on dev seeds first.
+3. **The weather flip (H4).** Ideas: a detector that watches the branch's gradient or weight sign, not just its gain; a per-branch restart of the learning-rate schedule; a hierarchical prior that favours small weights on weak interaction branches. Test each on dev seeds, then a fresh block.
+4. **Retire safeguards that do not earn their cost.** Gates and early shrink have shown no benefit in any scenario. Re-test once the cap is adaptive, then decide.
+5. **Real data.** The learner takes plain feature dictionaries. For real prices, build a feature builder from user-supplied CSV. There is no oracle, so use Brier skill against the base rate and against the closing price.
+6. **Per-player outcomes.** The simulator already produces per-player efficiency. Extend the targets to player props.
 
 ### League seed ledger
 
 | Seeds | Use |
 |---|---|
-| 1000-1015 | Dev: tuning and debugging. Not evidence. |
+| 1000-1039 | Dev: tuning and debugging. Not evidence. |
 | 5000-5003 | One 4-league smoke test. Retired. |
-| 7000-7029 | Final study. Run once. Spent. |
+| 7000-7029 | Round-1 final, core scenarios. Spent. |
+| 8000-8029 | Round-1 model on the hard scenarios. Spent. |
+| 9000-9029 | Round-2 final, all scenarios. Spent. |
+| 10000 and up | Fresh. Use `--seed-base 10000`. |
 
 ## Calibration: where it stands
 
@@ -135,7 +141,7 @@ Earlier evidence, from the first round and still valid: the integrated-mu scratc
 - **No reverse engineering, scraping, or connecting to any betting or prediction-market app or website.** The user explicitly rejected this. Market prices come in only as CSV that the user supplies.
 - **Label every output as simulated.** Never present a synthetic win rate as evidence of an edge on a real market.
 - **Win rate is reported only with ROI and Brier skill.** Keep the fair-market scenario as the primary one.
-- **Never evaluate on a used seed block.** Blocks 912000000 and 913000000 (goal-attainment study) and league seeds 7000-7029 are spent. Use a fresh one and record it.
+- **Never evaluate on a used seed block.** Blocks 912000000 and 913000000 (goal-attainment study) and league seeds 7000-7029, 8000-8029 and 9000-9029 are spent. Use a fresh one and record it.
 - **Don't tune `config.json` to hit a number.** Priors are assumptions. If you change one, say why and record the before and after.
 - **Keep the spec-faithful default.** Calibration variants are flags, off by default.
 - **Commits and PR text must not name a model.** Use the `Claude-Session:` trailer in commits, and end PR bodies with `🤖 Generated with [Claude Code](https://claude.com/claude-code)`. Do not add a `Co-Authored-By` line that names a model.

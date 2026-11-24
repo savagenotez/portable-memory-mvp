@@ -21,3 +21,8 @@ Prediction-markets package (branch claude/prediction-markets-algorithm-9rqoli):
 - Finding: only the plausibility cap is proven necessary (stops leaked-feature fake skill). Gates, shrink and Platt cost accuracy; the drift boost never mattered. The hard conditions were not hard enough to trip the learner except leakage.
 - League seed ledger: 1000-1015 dev (tuning), 5000-5003 retired smoke test, 7000-7029 final (spent). Use a fresh block for any new evaluation.
 - 87 tests. Next steps for the league learner are in prediction_markets/HANDOFF.md.
+- Round 2 of the branch ensemble: four harder traps added (alternating decoy, 36-column haystack, two severe shocks, weather-effect flip). Round-1 model on seeds 8000-8029 passed three of four; the weather flip failed (0.48 to 0.30).
+- Round-2 changes (behind switches, round-1 exactly reproducible): binned online calibrator, and a drift alarm at z=2.0 that resets weights to 20% with a x6 learning-rate boost. Fast/slow learners tried and rejected.
+- Round-2 final (seeds 9000-9029, all nine scenarios): 11 of 12 criteria pass, including calibration (C1). Capture 0.489 vs 0.395 for one flat model. The weather flip (H4) still fails: 0.520 before, 0.375 after. Round 2 cost 1.1 points of clean accuracy.
+- Finding: the plausibility cap, set from clean-league conditions, falsely quarantined the legitimate team branch in 17% of severe-shift leagues (cost about 2 points). It should come from a live benchmark. Gates, early shrink, and now Platt show no benefit.
+- Seed ledger: league seeds 1000-1039 dev, 5000-5003 retired, 7000-7029, 8000-8029 and 9000-9029 spent. Next fresh block is 10000. 101 tests.

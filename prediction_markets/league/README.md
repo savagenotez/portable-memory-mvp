@@ -15,7 +15,7 @@ After every game the system does the same loop:
 3. **Learn.** Each specialist adjusts, and the manager adjusts how much to trust each one.
 4. **Score** each specialist on two questions: does it help on its own, and does the panel get worse without it? A specialist who stops helping gets quieter but keeps learning, so it can come back.
 
-Several safeguards watch for the ways this can go wrong: a specialist who has secretly seen the answer, one whose usefulness vanishes, early-season games with little data, and a panel that is too sure of itself.
+Safeguards watch for the ways this can go wrong: a specialist who has secretly seen the answer, one whose usefulness vanishes, early-season games with little data, a relationship that reverses, and a panel that is too sure of itself.
 
 ## The simulated league
 
@@ -41,99 +41,145 @@ The model sees only scores, noisy per-player efficiency readings, availability, 
 | interaction | crossed effects: team style x weather, rest x strength |
 | decoy_noise | four pure-noise columns. Their score should stay near zero |
 
-Scenario extras: `news` (a feature that tracks true strength early and then turns to noise), `leak` (contains the game outcome), `team_dup` (a near-copy of the team branch).
+Scenario extras: `news` (a decoy feature), `leak` (contains the game outcome), `team_dup` (a near-copy of the team branch), and `haystack_0`-`haystack_8` (36 pure-noise columns).
 
-## Tripwires, and what each one did
+## The hard conditions
 
-All five can be switched off in `ModelConfig`, so their value can be measured.
+| Scenario | The trap |
+|---|---|
+| spurious_decoy | A feature tracks true strength for two seasons, then turns to noise |
+| leakage_trap | A feature contains the game outcome |
+| duplicate_branch | A branch is a near-copy of the team branch |
+| regime_shift | Hidden team strengths jump once mid-season |
+| reversal_decoy | A feature tracks true strength, then flips its sign every season |
+| haystack | 36 extra noise columns, so false signals have many places to appear |
+| severe_shift | Two large shocks to 70% of teams, with part of the player talent redrawn |
+| weather_flip | A strong style x wind effect reverses sign partway through |
 
-| Tripwire | What it does | What it bought in the final study |
+## Safeguards, and what each one did (round-2 model, seeds 9000-9029)
+
+All of these can be switched off in `ModelConfig`, so their value can be measured. Change in capture when the safeguard is removed, clean runs:
+
+| Safeguard | What it does | Result |
 |---|---|---|
-| plausibility cap | quarantines a branch whose solo gain is implausibly large | **Essential.** Without it, the leak "captures" 8.0x the achievable accuracy. With it, 0.49 |
-| calibration scaling (Platt) | online correction of the final logit | Buys calibration. Costs about 1.6 points of accuracy |
-| gates | fade branches with low decision scores | No measurable benefit. Costs about 0.7 points |
-| early-season shrink | pulls toward the base rate when little has been seen | No measurable effect. Costs about 0.2 points |
-| drift boost | raises learning rate if a branch's recent gain collapses | **Effectively inert.** It fired about once in 30 leagues and moved capture by at most 0.0003 |
+| plausibility cap | quarantines a branch whose solo gain is implausibly large | **Essential against leakage.** Without it, the leak "captures" 7.7x the achievable accuracy. **But it misfires** (see below) |
+| binned calibrator | online correction by predicted-probability bin | Fixes the calibration defect (C1). Costs about 0.9 points of capture |
+| drift alarm, reset and boost | on a collapse in a branch's recent gain, shrink its weights to 20% and raise its learning rate x6 | Helps the weather flip by 1.2 points. Fires about once per league across all branches in clean runs (mostly player and interaction), costing about 0.3 points |
+| calibration scaling (Platt) | online correction of the final logit | Costs 2.3 points of capture now that the binned calibrator is also on |
+| gates | fade branches with low decision scores | No demonstrated benefit anywhere. Costs about 0.3 points in clean runs and 0.6 points in the weather flip |
+| early-season shrink | pulls toward the base rate when little has been seen | No measurable effect |
+
+**The plausibility cap misfires when the environment changes.** The cap is 2x the oracle's gain on clean dev leagues (0.136 nats per game). In the severe-shift scenario, the achievable skill is much higher (oracle skill 20.9% against 12.1%), so the cap quarantined the legitimate team branch in 17% of leagues and the streak branch in 10%. That cost about 2 points. A fixed cap needs to be replaced by one taken from a live benchmark, which in real use would be a market price.
 
 ## Run it
 
 ```bash
-python3 -m unittest discover -s prediction_markets/tests -t .   # 87 tests
-python3 -m prediction_markets.league.study --quick              # 4 dev leagues, about 15 s, writes nothing
-python3 -m prediction_markets.league.study --dev                # 16 dev leagues, about 1 minute, writes nothing
-python3 -m prediction_markets.league.study                      # FINAL seeds, about 2 minutes, writes results/league_study_seeds7000_core.json
+python3 -m unittest discover -s prediction_markets/tests -t .   # 101 tests
+python3 -m prediction_markets.league.study --quick --scenarios all   # 4 dev leagues, about 45 s, writes nothing
+python3 -m prediction_markets.league.study --scenarios all --seed-base 10000   # about 6 minutes, writes results/
 ```
 
-Do not run the final study repeatedly while changing the code. Seeds 7000-7029 have been used once (see the seed ledger).
+`--scenarios` accepts `core` (the original five), `hard` (clean plus the four new ones), `all`, or a comma-separated list. **Seed block 10000 is the next fresh one.** Every block in the ledger below is spent. Do not run a final study repeatedly while changing the code.
 
-## Results (final, seeds 7000-7029, 30 leagues x 6 seasons, scored from season 1)
+## Results
 
-**Accuracy.** "Capture" is the share of the achievable accuracy gain over the base rate. 1.0 would match the oracle. Capture needs an oracle, so it is a simulation-only measure.
+"Capture" is the share of the achievable accuracy gain over the base rate. 1.0 would match the oracle. Capture needs an oracle, so it is a simulation-only measure.
 
-| Model | Capture (clean) |
-|---|---|
-| Branch ensemble (all tripwires on) | 0.483 |
-| Branch ensemble (tripwires off) | 0.509 |
-| One flat model over every variable | 0.387 |
+### Round 2 final: seeds 9000-9029, 30 leagues x 6 seasons, all nine scenarios, scored from season 1
 
-Brier skill against the base rate is +5.7% (95% interval 4.7% to 6.6%). The oracle's is 11.7%. The ensemble beats the flat model by 0.0028 Brier (95% interval 0.0022 to 0.0033).
+Capture by scenario, with the round-1 model run on the same leagues:
 
-**It learns.** Capture by season: 0.39, 0.45, 0.52, 0.54, 0.52. It improves for about four seasons and then flattens.
+| Scenario | Round 2 (v2) | Round 1 (v1) | All safeguards off | One flat model |
+|---|---|---|---|---|
+| clean | 0.489 | 0.500 | 0.522 | 0.395 |
+| spurious_decoy | 0.491 | 0.502 | 0.520 | 0.380 |
+| leakage_trap | 0.493 | 0.502 | 7.690 | 7.172 |
+| duplicate_branch | 0.514 | 0.525 | 0.547 | 0.374 |
+| regime_shift | 0.493 | 0.505 | 0.523 | 0.413 |
+| reversal_decoy | 0.495 | 0.500 | 0.518 | 0.381 |
+| haystack | 0.466 | 0.475 | 0.495 | 0.018 |
+| severe_shift | 0.568 | 0.573 | 0.601 | 0.537 |
+| weather_flip | 0.438 | 0.435 | 0.449 | 0.354 |
+
+Brier skill against the base rate is +5.9% (95% interval 5.1% to 6.7%). The oracle's is 12.1%. The ensemble beats the flat model by 0.0028 Brier (95% interval 0.0022 to 0.0034).
+
+**It learns.** Capture by season: 0.36, 0.49, 0.52, 0.56, 0.52.
+
+**The branch structure is what protects it.** On the 70-column haystack the flat model captures 1.8% of the achievable accuracy, against 46.6% for the branch ensemble. After the weather flip the flat model captures 4.5%, against 37.5%.
+
+**Pre-registered criteria: 11 of 12 pass.**
+
+| | Criterion | Result |
+|---|---|---|
+| C1 | clean calibration: overall within 2 SE, every slice within 3 SE | **PASS.** Overall +0.98 SE. Worst slice (predicted 40-60%) +2.65 SE |
+| C2 | clean skill positive, and not worse than the flat model | PASS |
+| C3 | capture in the last two seasons at least the first two | PASS (0.42 to 0.54) |
+| C4 | spurious feature: capture after it breaks at least 0.95x clean | PASS (0.510 vs 0.521) |
+| C5 | leakage: no fake skill, leak branch quarantined | PASS (quarantined in 100% of leagues) |
+| C6 | duplicate branch: capture at least 0.95x clean, calibration holds | PASS |
+| C7 | regime shift: capture recovers | PASS (0.45 before, 0.40 right after, 0.47 later) |
+| C8 | team branch score above 2, noise branch below 1 | PASS (+2.89 and -0.87) |
+| H1 | alternating decoy: capture at least 0.90x clean | PASS (0.514 vs 0.521) |
+| H2 | haystack: capture at least 0.90x clean, no false discovery | PASS (0.466 vs 0.489). Worst noise-branch score -0.56 |
+| H3 | severe shifts: capture recovers after each shock | PASS (shock 1: 0.45, 0.34, 0.53. Shock 2: 0.68, 0.51, 0.68) |
+| H4 | weather flip: capture in the 300 games after at least 0.85x the 300 before | **FAIL.** 0.520 before, 0.375 after (ratio 0.72) |
+
+**Calibration, same clean games, round 1 against round 2.** Round 1 fails C1 on these games: overall +1.99 SE, and the predicted 40-60% slice at +3.82 SE. Round 2 passes: +0.98 SE overall, and the same slice at +2.65 SE. The defect is reduced, not gone. Games predicted at 40-60% are still over-predicted for the home team by 0.8 points.
+
+**What round 2 cost.** Clean-run capture fell from 0.500 to 0.489. The calibrator costs 0.9 points. The drift change costs 0.3 points.
 
 **Branch decision scores (clean, mean over leagues).**
 
 | Branch | Score | Gate | Reading |
 |---|---|---|---|
-| team | +2.71 | 0.98 | Does most of the work |
-| player | +1.73 | 0.92 | Clearly useful |
-| streak | +1.36 | 0.88 | Mostly repeats what team record already says |
-| geo | +0.65 | 0.77 | Small |
-| interaction | +0.28 | 0.69 | Not proven |
-| weather | -0.20 | 0.61 | Not proven |
-| schedule | -0.66 | 0.51 | Not proven |
-| decoy_noise | -0.63 | 0.51 | Correctly scored as useless |
+| team | +2.89 | 0.98 | Does most of the work |
+| player | +1.60 | 0.88 | Clearly useful |
+| streak | +1.37 | 0.89 | Mostly repeats what team record already says |
+| geo | +0.70 | 0.78 | Small |
+| interaction | +0.35 | 0.72 | Not proven |
+| weather | -0.34 | 0.58 | Not proven |
+| schedule | -0.66 | 0.50 | Not proven |
+| decoy_noise | -0.87 | 0.47 | Correctly scored as useless |
 
 Rest days and the style x wind effect are real in the simulation, but they are small. About 1,000 games per league cannot separate them from noise, so their scores sit near zero. The system is saying "not proven," which is the honest answer at that sample size.
 
-**Pre-registered criteria.**
+### Round 1, for the record
 
-| | Criterion | Result |
-|---|---|---|
-| C1 | clean calibration: overall within 2 SE, every slice within 3 SE | **FAIL** |
-| C2 | clean skill positive, and not worse than the flat model | PASS |
-| C3 | capture in the last two seasons at least the first two (0.42 to 0.53) | PASS |
-| C4 | spurious feature: capture after it breaks at least 0.95x clean (0.492 vs 0.507) | PASS |
-| C5 | leakage trap: no fake skill, leak branch quarantined (quarantined in 100% of leagues) | PASS |
-| C6 | duplicate branch: capture at least 0.95x clean, calibration holds | PASS |
-| C7 | regime shift: capture recovers (0.42 before, 0.38 right after, 0.49 later) | PASS |
-| C8 | team branch score above 2, noise branch below 1 | PASS |
+- **Core scenarios, seeds 7000-7029 (round-1 model).** Capture 0.483, against 0.387 for the flat model. 7 of 8 criteria pass. C1 failed: the predicted 40-60% slice was over-predicted by 1.2 points (3.98 SE).
+- **Hard scenarios, seeds 8000-8029 (round-1 model).** H1, H2, H3 pass. H4 fails (0.484 before the flip, 0.302 after, ratio 0.62). C1 fails again on the same slice (3.93 SE), so the defect is real. Files: `results/league_study_seeds7000_core.json` and `results/league_study_seeds8000_hard.json`.
 
-**C1 failed, and the reason is specific.** Overall calibration is fine (57.5% predicted against 57.2% realized, 1.5 SE). Eleven of twelve slices are within 3 SE. The failing slice is games the model thinks are close to even: it predicts 52.7% and 51.5% happen, a 1.2-point over-prediction for the home team, at 4.0 SE. Games predicted above 60% are 0.7 points too low (2.3 SE). This is a small but real defect in the middle of the probability range.
+### Rules that were changed, and why
 
-C1 was revised once before the final run. The first draft required 90% of slices within 2 SE, which a perfectly calibrated model fails about 10% of the time. It was replaced by "every slice within 3 SE". The revision came from the dev-seed analysis, not from the final results.
+- **C1** was revised once before the first final run, from "90% of 12 slices within 2 SE" to "every slice within 3 SE". The first rule fails a perfectly calibrated model about 10% of the time.
+- **H1** was revised once, before any fresh-seed run of the hard scenarios. A dev run showed that a permanent sign reversal is relearnable, so a high gate is correct and the first rule was ill-posed. H1 became an alternating sign, which cannot be settled into.
+- No rule was changed after seeing results on a fresh seed block.
 
 ## What the study does not show
 
-- **The hard conditions were not very hard.** The spurious feature and the regime shift barely hurt the learner. Plain online learning handled them about as well as the full set of tripwires (capture 0.509 with every tripwire off). The only trap that broke the system was leakage, and the plausibility cap stopped it. Harder traps are the next step. Candidates: faster and larger shifts, decoys that correlate with several branches at once, and drift in the weather interaction.
-- **The tripwires cost accuracy.** With all five off, capture is 0.509 in the clean case against 0.483 with them on. The cap is worth keeping on its own. The others have not earned their cost yet.
-- **Dev results are optimistic.** The same model scored 0.528 on the dev seeds it was tuned on. The final seeds give 0.483. Use the final number.
-- **The plausibility cap is set from the oracle.** It is 2x the oracle's log-loss gain on dev leagues (0.136 nats per game). Real data has no oracle. The practical analogue is a bound from a strong external benchmark, such as a market price.
+- **The weather flip is not fixed.** A relationship that reverses is the one trap that genuinely hurts. The drift alarm helps a little, and more sensitive alarms cost more accuracy than they recover. A flat model is far worse (4.5%), but 0.375 against 0.520 is still a 28% loss.
+- **The safeguards cost accuracy.** With every safeguard off, clean capture is 0.522 against 0.489. Only the plausibility cap is proven necessary, and it needs a live benchmark.
+- **Dev results are optimistic.** The same model scored 0.519 on the 40 dev leagues it was tuned on and 0.489 on fresh ones. Use the fresh number.
+- **The calibrator leaves a small defect.** The 40-60% slice is still 0.8 points high.
 - **Everything is simulated.** The league was built to have learnable structure. Real leagues may not.
+- **Fast and slow learners were tried and rejected.** Two learners per branch, mixed by recent performance, cost about 2.5 points of capture on dev seeds in every scenario to help one. The switch (`use_fast_slow`) remains, off.
 
 ## Seed ledger
 
 | Seeds | Use |
 |---|---|
-| 1000-1015 | Dev. Used for tuning hyperparameters and for debugging. Not evidence. |
-| 5000-5003 | One 4-league smoke test, before the final block was moved. Retired. |
-| 7000-7029 | Final study. Run once, on frozen code. |
+| 1000-1039 | Dev. Tuning and debugging. Not evidence. |
+| 5000-5003 | One 4-league smoke test. Retired. |
+| 7000-7029 | Round-1 final, core scenarios. Spent. |
+| 8000-8029 | Round-1 model on the hard scenarios. Spent. |
+| 9000-9029 | Round-2 final, all scenarios. Spent. |
+| 10000 and up | Fresh. |
 
-Hyperparameters tuned on dev seeds only: learning rate (0.03 falling to 0.005), gate center 0 and floor 0.3, and a decaying Platt rate (0.05 down to 0.003). The Platt change fixed an under-confident slope of 1.14 on dev data, at a cost of under one point of capture.
+Hyperparameters were tuned on dev seeds only: learning rate (0.03 falling to 0.005), gate center 0 and floor 0.3, a decaying Platt rate (0.05 down to 0.003), a drift alarm at z = 2.0 with a weight reset to 20% and a learning-rate boost of 6, and a binned calibrator with a prior of 200 games.
 
 ## Editing and extending
 
 - **Variables:** `config.json` (three sections: `league`, `model`, `study`). Unknown keys are rejected.
 - **Add a branch:** add its columns to `features.py` (`BASE_BRANCHES` and `features_for`), and the learner picks it up. Its decision score then tells you whether it earns its place.
-- **Add a hard condition:** add a scenario name in `sim.py` and a pass rule in `study.judge`. Write the rule down before running it on a fresh seed block.
-- **Add a tripwire:** add a switch to `ModelConfig` and include it in `study.TRIPWIRE_FLAGS`, so its value is measured.
+- **Add a hard condition:** add a scenario name in `sim.py`, its features in `features.py`, and a pass rule in `study.judge`. Write the rule down before running it on a fresh seed block.
+- **Add a safeguard or change:** add a switch to `ModelConfig`. Include it in `study.variants`, so its value is measured on the same leagues.
 - After any change: run the tests, then the dev study, then a final study on a **new** seed block. Record the block in the ledger above.
