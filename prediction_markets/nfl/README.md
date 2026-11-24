@@ -37,6 +37,26 @@ The 146 market games were used to diagnose the model, so they cannot also test c
 
 Run: `python3 -m prediction_markets.nfl.tune` (about 10 seconds; writes `results/nfl_tune.json`).
 
+## The weakness, tested on history (negative result)
+
+The 146-game diagnosis suggested the model is overconfident. On 1999 to 2025 outcomes, that does not hold:
+
+- A single calibration scale fitted on 2005-2019 is best at **1.00**, which is no change.
+- On the 2020-2025 holdout, the scaled model gains **0.0000** log loss per game (interval -0.0000 to +0.0000).
+
+So the overconfidence seen on 146 games is not a general fault in the model. It is either noise in a small sample or specific to 2026. Nothing in that finding was used to change the model.
+
+## Prospective test (fresh games only)
+
+The only honest test of beating the market is games the model has not seen. `prospective.py` records, for each open Kalshi NFL market, the model's probability and the price, and scores them after the game:
+
+- `python3 -m prediction_markets.nfl.prospective snapshot`: log the open markets (in the 96 hours before close).
+- `python3 -m prediction_markets.nfl.prospective score`: for each game, use the latest snapshot at least 24 hours before close. Only finished games count.
+
+Rules, fixed before any prospective game was logged: one market per event; books wider than 10 cents are skipped; the model is frozen; the decision is made once, after 100 scored games, and the model counts as ahead only if the 95% interval for its Brier difference is entirely below zero. This is not a profit claim. Fees, depth and bet sizing are not modelled.
+
+Status: the log has started (`results/prospective_snapshots.jsonl`, first snapshot 2026-11-24). Nothing is scored yet.
+
 ## Where the model falls behind (post hoc, read with caution)
 
 - **Concentrated in 11 games.** These are the games where the model and the price disagreed by 20 points or more. They account for the whole shortfall: 2.16 of the 0.72 total squared-error difference. The other 135 games favour the model slightly (-0.011 Brier, 95% interval -0.024 to +0.002).
