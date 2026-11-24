@@ -61,7 +61,7 @@ All five can be switched off in `ModelConfig`, so their value can be measured.
 python3 -m unittest discover -s prediction_markets/tests -t .   # 87 tests
 python3 -m prediction_markets.league.study --quick              # 4 dev leagues, about 15 s, writes nothing
 python3 -m prediction_markets.league.study --dev                # 16 dev leagues, about 1 minute, writes nothing
-python3 -m prediction_markets.league.study                      # FINAL seeds, about 2 minutes, writes results/league_study.json
+python3 -m prediction_markets.league.study                      # FINAL seeds, about 2 minutes, writes results/league_study_seeds7000_core.json
 ```
 
 Do not run the final study repeatedly while changing the code. Seeds 7000-7029 have been used once (see the seed ledger).

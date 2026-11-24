@@ -18,6 +18,11 @@ Scenarios modify this world to build hard conditions:
     leakage_trap       a feature that leaks the game outcome
     duplicate_branch   a branch that is a near-copy of the team branch
     regime_shift       hidden team strengths jump mid-season
+Harder conditions:
+    reversal_decoy     a feature that tracks true strength early, then flips sign every season
+    haystack           36 extra pure-noise columns in 9 branches, so false signals have many places to appear
+    severe_shift       two large hidden shocks to 70% of teams, with part of the player talent redrawn
+    weather_flip       a strong style x wind effect that reverses sign partway through
 """
 
 from __future__ import annotations
@@ -34,7 +39,9 @@ def phi_cdf(z: float) -> float:
     return 0.5 * (1.0 + math.erf(z / SQRT2))
 
 
-SCENARIOS = ("clean", "spurious_decoy", "leakage_trap", "duplicate_branch", "regime_shift")
+CORE_SCENARIOS = ("clean", "spurious_decoy", "leakage_trap", "duplicate_branch", "regime_shift")
+HARD_SCENARIOS = ("reversal_decoy", "haystack", "severe_shift", "weather_flip")
+SCENARIOS = CORE_SCENARIOS + HARD_SCENARIOS
 
 
 @dataclass(frozen=True)
@@ -80,6 +87,15 @@ class LeagueConfig:
     spurious_until_season: int = 2
     spurious_strength: float = 0.7
     leak_strength: float = 0.9
+    # harder scenarios
+    severe_shifts: Tuple[Tuple[int, int], ...] = ((2, 10), (4, 5))
+    severe_fraction: float = 0.7
+    severe_shift_sd: float = 6.0
+    severe_talent_reshuffle: float = 0.3
+    haystack_columns: int = 36
+    weather_flip_season: int = 3
+    weather_flip_effect: float = 3.0
+    aux_seed: int = 0
 
     @property
     def n_teams(self) -> int:
@@ -98,6 +114,8 @@ def config_from_dict(raw: dict) -> LeagueConfig:
     raw = dict(raw)
     if "usage_weights" in raw:
         raw["usage_weights"] = tuple(raw["usage_weights"])
+    if "severe_shifts" in raw:
+        raw["severe_shifts"] = tuple(tuple(x) for x in raw["severe_shifts"])
     return LeagueConfig(**raw)
 
 
@@ -140,6 +158,8 @@ class Game:
     # truth, used only for scoring
     p_true: float
     margin_mean: float
+    # extra observable noise columns, present only in the haystack scenario
+    decoy_extra: Tuple[float, ...] = ()
 
 
 @dataclass
@@ -149,6 +169,7 @@ class LeagueData:
     games: List[Game]
     shift_game_index: Optional[int] = None
     meta: Dict[str, float] = field(default_factory=dict)
+    shift_game_indices: List[int] = field(default_factory=list)
 
 
 def _make_pairs(cfg: LeagueConfig, rng: random.Random, conference_of: List[int]) -> List[Tuple[int, int]]:
@@ -200,8 +221,10 @@ def simulate_league(cfg: LeagueConfig, rng: random.Random) -> LeagueData:
 
     games: List[Game] = []
     day = 0
-    shift_game_index: Optional[int] = None
-    shifted = False
+    shift_game_indices: List[int] = []
+    severe = cfg.scenario == "severe_shift"
+    shift_points = (set(cfg.severe_shifts) if severe
+                    else ({(cfg.shift_season, cfg.shift_round)} if cfg.scenario == "regime_shift" else set()))
 
     for season in range(cfg.seasons):
         if season > 0:
@@ -209,13 +232,17 @@ def simulate_league(cfg: LeagueConfig, rng: random.Random) -> LeagueData:
                 team_eff[t] = cfg.team_carryover * team_eff[t] + rng.gauss(0.0, cfg.team_refresh_sd)
                 talent[t] = [cfg.talent_carryover * x + rng.gauss(0.0, cfg.talent_refresh_sd) for x in talent[t]]
         for rnd in range(cfg.rounds_per_season):
-            if (cfg.scenario == "regime_shift" and not shifted
-                    and season == cfg.shift_season and rnd == cfg.shift_round):
+            if (season, rnd) in shift_points:
+                fraction = cfg.severe_fraction if severe else 0.5
+                shock_sd = cfg.severe_shift_sd if severe else cfg.shift_sd
                 for t in range(n):
-                    if rng.random() < 0.5:
-                        team_eff[t] += rng.gauss(0.0, cfg.shift_sd)
-                shifted = True
-                shift_game_index = len(games)
+                    if rng.random() < fraction:
+                        team_eff[t] += rng.gauss(0.0, shock_sd)
+                if severe:
+                    for t in range(n):
+                        if rng.random() < cfg.severe_talent_reshuffle:
+                            talent[t] = [rng.gauss(0.0, 1.0) for _ in range(cfg.players_per_team)]
+                shift_game_indices.append(len(games))
             for t in range(n):
                 for p in range(cfg.players_per_team):
                     if injured_until[t][p] <= day and rng.random() < cfg.injury_prob:
@@ -229,7 +256,9 @@ def simulate_league(cfg: LeagueConfig, rng: random.Random) -> LeagueData:
             for t in range(n):
                 form[t] = cfg.form_phi * form[t] + rng.gauss(0.0, cfg.form_sd)
             day += 1
-    return LeagueData(config=cfg, teams=teams, games=games, shift_game_index=shift_game_index)
+    return LeagueData(config=cfg, teams=teams, games=games,
+                      shift_game_index=shift_game_indices[0] if shift_game_indices else None,
+                      shift_game_indices=shift_game_indices)
 
 
 def _play(cfg, rng, idx, season, rnd, day, h, a, teams, talent, team_eff, conf_eff, region_eff,
@@ -257,10 +286,14 @@ def _play(cfg, rng, idx, season, rnd, day, h, a, teams, talent, team_eff, conf_e
         precip = rng.expovariate(1.0 / 2.0)
         wind_z = (wind - 10.0) / 6.0
 
+    if cfg.scenario == "weather_flip":
+        weather_effect = cfg.weather_flip_effect * (1.0 if season < cfg.weather_flip_season else -1.0)
+    else:
+        weather_effect = cfg.weather_style_effect
     margin_mean = (
         strength(h, avail_h) - strength(a, avail_a) + cfg.home_advantage
         + cfg.rest_effect * (rest_h - rest_a)
-        + cfg.weather_style_effect * (teams[h].style - teams[a].style) * wind_z
+        + weather_effect * (teams[h].style - teams[a].style) * wind_z
     )
     margin = margin_mean + rng.gauss(0.0, cfg.game_sd)
     total = rng.gauss(200.0, 12.0)
@@ -283,9 +316,21 @@ def _play(cfg, rng, idx, season, rnd, day, h, a, teams, talent, team_eff, conf_e
         s = cfg.spurious_strength
         spurious = s * z_mu + math.sqrt(1.0 - s * s) * rng.gauss(0.0, 1.0)
     else:
-        spurious = rng.gauss(0.0, 1.0)
+        noise = rng.gauss(0.0, 1.0)
+        if cfg.scenario == "reversal_decoy":
+            s = cfg.spurious_strength
+            # the sign alternates every season after the break: -, +, -, +, ...
+            sign = -1.0 if (season - cfg.spurious_until_season) % 2 == 0 else 1.0
+            spurious = sign * s * z_mu + math.sqrt(1.0 - s * s) * noise
+        else:
+            spurious = noise
     s_leak = cfg.leak_strength
     leak = s_leak * (2.0 * home_win - 1.0) + math.sqrt(1.0 - s_leak * s_leak) * rng.gauss(0.0, 1.0)
+    if cfg.scenario == "haystack":
+        aux = random.Random(cfg.aux_seed * 1_000_003 + idx)
+        extra = tuple(aux.gauss(0.0, 1.0) for _ in range(cfg.haystack_columns))
+    else:
+        extra = ()
 
     return Game(
         idx=idx, season=season, round=rnd, day=day, home=h, away=a,
@@ -293,4 +338,5 @@ def _play(cfg, rng, idx, season, rnd, day, h, a, teams, talent, team_eff, conf_e
         avail_home=avail_h, avail_away=avail_a, decoy_noise=decoy, spurious=spurious, leak=leak,
         home_pts=(total + margin) / 2.0, away_pts=(total - margin) / 2.0, home_win=home_win,
         eff_home=eff_h, eff_away=eff_a, p_true=p_true, margin_mean=margin_mean,
+        decoy_extra=extra,
     )

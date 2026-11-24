@@ -18,6 +18,19 @@ PRE-REGISTERED CRITERIA, written before the final-seed run (seeds from study.fin
   C8  branch scores         in clean runs, the mean final decision score of the team branch is > 2 and of the
                             pure-noise branch is < 1.
 
+HARD-CONDITION RULES (round 2), written before any run on seed block 8000-8029:
+
+  H1  reversal decoy        the feature's sign alternates every season after the break. Capture after the break
+                            >= 0.90 x the clean-run capture on the same games. (Revised before any fresh-seed run:
+                            the first draft had one permanent reversal and required a low gate. A permanent
+                            reversal is relearnable and as informative as before, so a high gate is correct. An
+                            alternating sign cannot be settled into, which makes it a real trap.)
+  H2  haystack              capture >= 0.90 x the clean-run capture on the same games, and no haystack branch has a
+                            mean final decision score >= 1.5 (no false discovery among 36 noise columns).
+  H3  severe shifts         for each of the two shocks: capture in the 150 games after >= 0.4 x capture in the 150
+                            games before, and capture in the following 150 games >= 0.75 x capture before.
+  H4  weather flip          capture in the 300 games after the effect reverses >= 0.85 x capture in the 300 games before.
+
 "capture" = (brier_base - brier_model) / (brier_base - brier_oracle): the share of the achievable gain captured.
 The oracle is the simulator's true probability. Real data has no oracle, so capture is a simulation-only measure.
 
@@ -25,8 +38,9 @@ The model hyperparameters were tuned on dev seeds only. The plausibility cap is 
 plausible_multiple x the oracle's log-loss gain over the base rate, measured on the dev leagues. In real data the
 analogue would be a bound taken from a strong external benchmark, such as a market price.
 
-    python3 -m prediction_markets.league.study --dev        # dev seeds, no claims, writes nothing
-    python3 -m prediction_markets.league.study              # final seeds, writes results/league_study.json
+    python3 -m prediction_markets.league.study --dev                        # dev seeds, no claims, writes nothing
+    python3 -m prediction_markets.league.study                              # core scenarios, final seeds
+    python3 -m prediction_markets.league.study --scenarios hard --seed-base 8000
 """
 
 from __future__ import annotations
@@ -43,7 +57,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from . import evaluate as ev
 from .features import build_rows, branches_for
 from .model import ModelConfig
-from .sim import SCENARIOS, LeagueConfig, config_from_dict, simulate_league
+from .sim import CORE_SCENARIOS, HARD_SCENARIOS, SCENARIOS, LeagueConfig, config_from_dict, simulate_league
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(HERE, "config.json")
@@ -61,6 +75,10 @@ CRITERIA = {
     "C6": "duplicate_branch: capture >= 0.95 x clean capture, and overall calibration passes",
     "C7": "regime_shift: capture after shift >= 0.5 x before (next 150 games >= 0.8 x before)",
     "C8": "clean: mean final decision score of team branch > 2, of decoy_noise branch < 1",
+    "H1": "reversal_decoy (sign alternates each season): capture after the break >= 0.90 x clean",
+    "H2": "haystack: capture >= 0.90 x clean, and no haystack branch has a decision score >= 1.5",
+    "H3": "severe_shift: capture after each shock >= 0.4 x before (next 150 games >= 0.75 x before)",
+    "H4": "weather_flip: capture in the 300 games after the flip >= 0.85 x the 300 before",
 }
 
 
@@ -73,6 +91,11 @@ def variants(base: ModelConfig) -> Dict[str, ModelConfig]:
     out = {"ens": base, "ens_off": replace(base, **{f: False for f in TRIPWIRE_FLAGS})}
     for f in TRIPWIRE_FLAGS:
         out["no_" + f[4:]] = replace(base, **{f: False})
+    # round-2 changes, switched off one at a time and together, to attribute the improvement
+    v1_drift = dict(drift_z=2.5, drift_reset_factor=1.0, drift_lr_boost=3.0)
+    out["no_bin_cal"] = replace(base, use_bin_calibration=False)
+    out["no_drift_fix"] = replace(base, **v1_drift)
+    out["v1"] = replace(base, use_bin_calibration=False, **v1_drift)
     return out
 
 
@@ -107,12 +130,21 @@ def _windows(ld, rows, seasons, study) -> Dict[str, Tuple[int, int]]:
         w["pre_shift"] = (max(0, k - span), k)
         w["post_shift_1"] = (k, min(n, k + span))
         w["post_shift_2"] = (min(n, k + span), min(n, k + 2 * span))
+    span = study["shift_window_games"]
+    for j, si in enumerate(ld.shift_game_indices, start=1):
+        w[f"shift{j}_pre"] = (max(0, si - span), si)
+        w[f"shift{j}_post_a"] = (si, min(n, si + span))
+        w[f"shift{j}_post_b"] = (min(n, si + span), min(n, si + 2 * span))
+    if cfg.scenario == "weather_flip":
+        f0 = idx(cfg.weather_flip_season)
+        w["flip_pre"] = (max(0, f0 - 300), f0)
+        w["flip_post"] = (f0, min(n, f0 + 300))
     return w
 
 
 def run_league(seed: int, scenario: str, league_cfg: LeagueConfig, model_cfg: ModelConfig,
                cap: float, study: dict, want_samples: bool) -> dict:
-    ld = simulate_league(replace(league_cfg, scenario=scenario), random.Random(seed))
+    ld = simulate_league(replace(league_cfg, scenario=scenario, aux_seed=seed), random.Random(seed))
     rows = build_rows(ld)
     seasons = [g.season for g in ld.games]
     windows = _windows(ld, rows, seasons, study)
@@ -136,6 +168,7 @@ def run_league(seed: int, scenario: str, league_cfg: LeagueConfig, model_cfg: Mo
     if want_samples:
         a, b = windows["post_warmup"]
         out["samples"] = [(rows[i].context, preds["ens"][i], rows[i].y) for i in range(a, b)]
+        out["samples_v1"] = [(rows[i].context, preds["v1"][i], rows[i].y) for i in range(a, b)]
     return out
 
 
@@ -181,8 +214,8 @@ def branch_table(results: Sequence[dict]) -> Dict[str, dict]:
     return out
 
 
-def pooled_calibration(results: Sequence[dict], min_n: int) -> dict:
-    samples = [s for r in results for s in r.get("samples", [])]
+def pooled_calibration(results: Sequence[dict], min_n: int, key: str = "samples") -> dict:
+    samples = [s for r in results for s in r.get(key, [])]
     table = ev.slice_table(samples, min_n)
     passed, total = ev.slice_pass_rate(table)
     return {"table": table, "slices_passed": passed, "slices_evaluated": total}
@@ -239,6 +272,29 @@ def judge(by_scenario: Dict[str, List[dict]], study: dict) -> Dict[str, dict]:
         p1, p2 = cap_of("regime_shift", "post_shift_1"), cap_of("regime_shift", "post_shift_2")
         verdict["C7"] = {"passed": bool(p1 >= 0.5 * pre and p2 >= 0.8 * pre),
                          "value": {"pre": pre, "post_1": p1, "post_2": p2}}
+    if "reversal_decoy" in by_scenario:
+        a, b = cap_of("reversal_decoy", "after_break"), cap_of("clean", "after_break")
+        gate = branch_table(by_scenario["reversal_decoy"])["news"]["mean_gate"]
+        verdict["H1"] = {"passed": bool(a >= 0.90 * b),
+                         "value": {"reversal_capture": a, "clean_capture": b, "news_gate_reported_only": gate}}
+    if "haystack" in by_scenario:
+        a, b = cap_of("haystack", "post_warmup"), cap_of("clean", "post_warmup")
+        bt_h = branch_table(by_scenario["haystack"])
+        scores = [v["mean_score"] for k, v in bt_h.items() if k.startswith("haystack_") and v["mean_score"] is not None]
+        worst_h = max(scores) if scores else None
+        verdict["H2"] = {"passed": bool(a >= 0.90 * b and (worst_h is None or worst_h < 1.5)),
+                         "value": {"haystack_capture": a, "clean_capture": b, "worst_haystack_score": worst_h}}
+    if "severe_shift" in by_scenario:
+        shocks, ok = {}, True
+        for j in (1, 2):
+            pre = cap_of("severe_shift", f"shift{j}_pre")
+            pa, pb = cap_of("severe_shift", f"shift{j}_post_a"), cap_of("severe_shift", f"shift{j}_post_b")
+            shocks[f"shock_{j}"] = {"pre": pre, "post_a": pa, "post_b": pb}
+            ok = ok and pa >= 0.4 * pre and pb >= 0.75 * pre
+        verdict["H3"] = {"passed": bool(ok), "value": shocks}
+    if "weather_flip" in by_scenario:
+        pre, post = cap_of("weather_flip", "flip_pre"), cap_of("weather_flip", "flip_post")
+        verdict["H4"] = {"passed": bool(post >= 0.85 * pre), "value": {"before": pre, "after": post}}
     bt = branch_table(clean)
     team, noise = bt["team"]["mean_score"], bt["decoy_noise"]["mean_score"]
     verdict["C8"] = {"passed": bool(team is not None and noise is not None and team > 2 and noise < 1),
@@ -246,15 +302,23 @@ def judge(by_scenario: Dict[str, List[dict]], study: dict) -> Dict[str, dict]:
     return verdict
 
 
-def run_study(dev: bool = False, quick: bool = False, scenarios: Sequence[str] = SCENARIOS) -> dict:
+def run_study(dev: bool = False, quick: bool = False, scenarios: Optional[Sequence[str]] = None,
+              seed_base: Optional[int] = None, leagues: Optional[int] = None) -> dict:
     cfg = load_config()
     league_cfg = config_from_dict(cfg["league"])
     model_cfg = ModelConfig(**cfg["model"])
     study = cfg["study"]
-    base_seed = study["dev_seed_base"] if (dev or quick) else study["final_seed_base"]
-    n_leagues = study["dev_leagues"] if dev else study["final_leagues"]
-    if quick:
+    scenarios = list(scenarios) if scenarios else list(CORE_SCENARIOS)
+    if seed_base is not None:
+        base_seed = seed_base
+    else:
+        base_seed = study["dev_seed_base"] if (dev or quick) else study["final_seed_base"]
+    if leagues is not None:
+        n_leagues = leagues
+    elif quick:
         n_leagues = 4
+    else:
+        n_leagues = study["dev_leagues"] if dev else study["final_leagues"]
     seeds = list(range(base_seed, base_seed + n_leagues))
     cap, oracle_gain = derive_plausible_cap(league_cfg, study)
 
@@ -269,6 +333,7 @@ def run_study(dev: bool = False, quick: bool = False, scenarios: Sequence[str] =
         "seeds": [seeds[0], seeds[-1]],
         "leagues": n_leagues,
         "seasons": league_cfg.seasons,
+        "scenarios": scenarios,
         "scored_from_season": study["warmup_seasons"],
         "plausible_cap_nats": cap,
         "oracle_gain_nats_on_dev": oracle_gain,
@@ -276,10 +341,12 @@ def run_study(dev: bool = False, quick: bool = False, scenarios: Sequence[str] =
         "model": asdict(model_cfg),
         "seconds": time.time() - t0,
         "summary": summary,
-        "branches_clean": branch_table(by_scenario["clean"]),
-        "calibration_clean": pooled_calibration(by_scenario["clean"], study["min_slice_n"]),
+        "branches_by_scenario": {sc: branch_table(res) for sc, res in by_scenario.items()},
     }
-    if all(s in by_scenario for s in SCENARIOS):
+    if "clean" in by_scenario:
+        out["branches_clean"] = out["branches_by_scenario"]["clean"]
+        out["calibration_clean"] = pooled_calibration(by_scenario["clean"], study["min_slice_n"])
+        out["calibration_clean_v1"] = pooled_calibration(by_scenario["clean"], study["min_slice_n"], key="samples_v1")
         out["verdict"] = judge(by_scenario, study)
     return out
 
@@ -289,31 +356,49 @@ def _print(out: dict) -> None:
           f"seasons={out['seasons']} scored from season {out['scored_from_season']} ({out['seconds']:.0f}s)")
     print(f"plausibility cap {out['plausible_cap_nats']:.4f} nats/game (oracle gain on dev {out['oracle_gain_nats_on_dev']:.4f})\n")
     print("capture of achievable accuracy, post warm-up (1.0 = oracle; leaked 'skill' shows as > 1)")
-    header = f"{'scenario':<18}{'ensemble':>10}{'tripwires off':>15}{'flat model':>12}"
-    print(header)
+    cols = [("ens", "ensemble v2"), ("v1", "round-1 (v1)"), ("ens_off", "tripwires off"), ("no_bin_cal", "no bin cal"),
+            ("no_drift_fix", "no drift fix"), ("flat", "flat model")]
+    print(f"{'scenario':<18}" + "".join(f"{label:>14}" for _, label in cols))
     for sc, ws in out["summary"].items():
         c = ws["post_warmup"]["capture"]
-        print(f"{sc:<18}{c['ens']:>10.3f}{c['ens_off']:>15.3f}{c['flat']:>12.3f}")
-    print("\nbranch decision scores, clean runs (mean over leagues)")
-    print(f"{'branch':<13}{'score':>8}{'gate':>7}{'weight':>8}{'solo gain':>11}{'marg gain':>11}")
-    for n, b in out["branches_clean"].items():
-        sc = "n/a" if b["mean_score"] is None else f"{b['mean_score']:+.2f}"
-        print(f"{n:<13}{sc:>8}{b['mean_gate']:>7.2f}{b['mean_weight']:>8.2f}{b['mean_solo_gain']:>+11.4f}{b['mean_marginal_gain']:>+11.4f}")
+        print(f"{sc:<18}" + "".join(f"{c[k]:>14.3f}" for k, _ in cols))
+    if "branches_clean" in out:
+        print("\nbranch decision scores, clean runs (mean over leagues)")
+        print(f"{'branch':<13}{'score':>8}{'gate':>7}{'weight':>8}{'solo gain':>11}{'marg gain':>11}")
+        for n, b in out["branches_clean"].items():
+            sc = "n/a" if b["mean_score"] is None else f"{b['mean_score']:+.2f}"
+            print(f"{n:<13}{sc:>8}{b['mean_gate']:>7.2f}{b['mean_weight']:>8.2f}{b['mean_solo_gain']:>+11.4f}{b['mean_marginal_gain']:>+11.4f}")
     if "verdict" in out:
         print("\npre-registered criteria")
         for k, v in out["verdict"].items():
             print(f"  {k} {'PASS' if v['passed'] else 'FAIL'}  {out['criteria'][k]}")
+            print(f"      {json.dumps(v['value'], default=lambda x: round(x, 4))}")
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Pre-registered branch-ensemble study.")
     ap.add_argument("--dev", action="store_true", help="use dev seeds; writes nothing")
-    ap.add_argument("--quick", action="store_true", help="4 leagues; writes nothing")
+    ap.add_argument("--quick", action="store_true", help="4 dev leagues; writes nothing")
+    ap.add_argument("--scenarios", default="core", help="core | hard | all | comma-separated names ('clean' is always included)")
+    ap.add_argument("--seed-base", type=int, default=None, help="first league seed; record it in the seed ledger")
+    ap.add_argument("--leagues", type=int, default=None)
     ap.add_argument("--out", default=None)
     args = ap.parse_args(argv)
-    out = run_study(dev=args.dev, quick=args.quick)
+    if args.scenarios == "core":
+        scen = list(CORE_SCENARIOS)
+    elif args.scenarios == "hard":
+        scen = ["clean"] + list(HARD_SCENARIOS)
+    elif args.scenarios == "all":
+        scen = list(SCENARIOS)
+    else:
+        scen = [x.strip() for x in args.scenarios.split(",") if x.strip()]
+        if "clean" not in scen:
+            scen = ["clean"] + scen
+    out = run_study(dev=args.dev, quick=args.quick, scenarios=scen, seed_base=args.seed_base, leagues=args.leagues)
     _print(out)
-    path = args.out if args.out is not None else (None if (args.dev or args.quick) else DEFAULT_OUT)
+    path = args.out
+    if path is None and not (args.dev or args.quick):
+        path = os.path.join(RESULTS_DIR, f"league_study_seeds{out['seeds'][0]}_{args.scenarios.replace(',', '+')}.json")
     if path:
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         with open(path, "w", encoding="utf-8") as fh:

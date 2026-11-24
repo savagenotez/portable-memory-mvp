@@ -70,12 +70,33 @@ class ModelConfig:
     drift_recovery: int = 60
     drift_lr_boost: float = 3.0
     drift_gate_factor: float = 0.5
+    drift_reset_factor: float = 1.0  # on a drift alarm, multiply the branch's weights by this (1.0 = no reset)
     early_shrink_n: float = 2.0
     use_gates: bool = True
     use_drift: bool = True
     use_plausibility_cap: bool = True
     use_early_shrink: bool = True
     use_platt: bool = True
+    # round-2 improvements, off by default so the round-1 model is exactly reproducible
+    use_fast_slow: bool = False      # two learners per branch, mixed by recent performance
+    lr_fast: float = 0.04
+    mix_halflife: float = 60.0
+    mix_sharpness: float = 4.0
+    use_bin_calibration: bool = False  # binned online correction after Platt scaling
+    bin_n0: float = 100.0
+    bin_halflife: float = 1000.0
+
+
+# Edges of the logit bins used by the optional binned calibrator.
+BIN_EDGES = (-1.0, -0.6, -0.3, -0.1, 0.1, 0.3, 0.5, 0.8, 1.2)
+
+
+def _bin_index(z: float) -> int:
+    i = 0
+    for e in BIN_EDGES:
+        if z >= e:
+            i += 1
+    return i
 
 
 class EWMAStat:
@@ -153,6 +174,10 @@ class Branch:
         n = len(features)
         self.w = [0.0] * n
         self.bias = 0.0
+        self.w_fast = [0.0] * n
+        self.bias_fast = 0.0
+        self.loss_slow = 0.0
+        self.loss_fast = 0.0
         self.std = Standardizer(n, cfg.std_halflife, cfg.std_clip)
         self.solo = EWMAStat(cfg.score_halflife)
         self.marg = EWMAStat(cfg.score_halflife)
@@ -172,6 +197,10 @@ class Prediction:
     gates: Dict[str, float]
     xs: Dict[str, List[float]]
     raw: Dict[str, List[float]]
+    zs: Dict[str, float] = field(default_factory=dict)
+    zf: Dict[str, float] = field(default_factory=dict)
+    p_platt: float = 0.0
+    bin_idx: int = -1
 
 
 class BranchEnsemble:
@@ -187,6 +216,10 @@ class BranchEnsemble:
         self.gamma = 0.0
         self.t = 0
         self.wins = 0
+        self.lam_mix = 0.5 ** (1.0 / cfg.mix_halflife)
+        self.lam_bin = 0.5 ** (1.0 / cfg.bin_halflife)
+        self.bin_s = [0.0] * (len(BIN_EDGES) + 1)
+        self.bin_w = [0.0] * (len(BIN_EDGES) + 1)
 
     # ---- gating -------------------------------------------------------------------------
     def decision_score(self, b: Branch) -> Optional[float]:
@@ -218,13 +251,23 @@ class BranchEnsemble:
         gates: Dict[str, float] = {}
         xs: Dict[str, List[float]] = {}
         raw: Dict[str, List[float]] = {}
+        zs: Dict[str, float] = {}
+        zf: Dict[str, float] = {}
         z_meta = self.beta0
         for name, b in self.branches.items():
             r = [features[f] for f in b.features]
             x = b.std.transform(r)
-            z = b.bias + sum(w * v for w, v in zip(b.w, x))
+            z_slow = b.bias + sum(w * v for w, v in zip(b.w, x))
+            if cfg.use_fast_slow:
+                z_fast = b.bias_fast + sum(w * v for w, v in zip(b.w_fast, x))
+                lam = sigmoid(cfg.mix_sharpness * (b.loss_fast - b.loss_slow))
+                z = lam * z_slow + (1.0 - lam) * z_fast
+            else:
+                z_fast = z_slow
+                z = z_slow
             g = self.gate(b)
             zb[name], gates[name], xs[name], raw[name] = z, g, x, r
+            zs[name], zf[name] = z_slow, z_fast
             z_meta += self.a[name] * g * z
         if cfg.use_early_shrink:
             n = context.get("min_games_total", 1e9)
@@ -234,7 +277,14 @@ class BranchEnsemble:
         alpha = self.alpha if cfg.use_platt else 1.0
         gamma = self.gamma if cfg.use_platt else 0.0
         z_final = _clip(alpha * kappa * z_meta + gamma, cfg.logit_clip)
-        return Prediction(sigmoid(z_final), z_meta, z_final, kappa, zb, gates, xs, raw)
+        p_platt = sigmoid(z_final)
+        p = p_platt
+        bin_idx = -1
+        if cfg.use_bin_calibration:
+            bin_idx = _bin_index(z_final)
+            delta = self.bin_s[bin_idx] / (self.bin_w[bin_idx] + cfg.bin_n0)
+            p = min(0.99, max(0.01, p_platt + delta))
+        return Prediction(p, z_meta, z_final, kappa, zb, gates, xs, raw, zs, zf, p_platt, bin_idx)
 
     # ---- update -------------------------------------------------------------------------
     def update(self, pred: Prediction, y: int) -> None:
@@ -243,7 +293,7 @@ class BranchEnsemble:
         lr = max(cfg.lr_min, cfg.lr0 / (1.0 + self.t / cfg.lr_decay_games))
         p0 = (self.wins + 1.0) / (self.t + 1.0)
         loss_base = logloss(p0, y)
-        loss_full = logloss(pred.p, y)
+        loss_full = logloss(pred.p_platt, y)
         alpha = self.alpha if cfg.use_platt else 1.0
         gamma = self.gamma if cfg.use_platt else 0.0
 
@@ -258,12 +308,24 @@ class BranchEnsemble:
             b.marg.add(marg_gain)
 
             boost = cfg.drift_lr_boost if self.t < b.alarm_until else 1.0
-            err = p_b - y
             step = lr * boost
             x = pred.xs[name]
-            for i in range(len(b.w)):
-                b.w[i] -= step * (err * x[i] + cfg.l2 * b.w[i])
-            b.bias -= step * err
+            if cfg.use_fast_slow:
+                p_s = sigmoid(_clip(pred.zs[name], cfg.logit_clip))
+                p_f = sigmoid(_clip(pred.zf[name], cfg.logit_clip))
+                b.loss_slow = self.lam_mix * b.loss_slow + logloss(p_s, y)
+                b.loss_fast = self.lam_mix * b.loss_fast + logloss(p_f, y)
+                err_s, err_f = p_s - y, p_f - y
+                for i in range(len(b.w)):
+                    b.w[i] -= step * (err_s * x[i] + cfg.l2 * b.w[i])
+                    b.w_fast[i] -= cfg.lr_fast * (err_f * x[i] + cfg.l2 * b.w_fast[i])
+                b.bias -= step * err_s
+                b.bias_fast -= cfg.lr_fast * err_f
+            else:
+                err = p_b - y
+                for i in range(len(b.w)):
+                    b.w[i] -= step * (err * x[i] + cfg.l2 * b.w[i])
+                b.bias -= step * err
             b.std.update(pred.raw[name])
 
             self._tripwires(b)
@@ -275,8 +337,13 @@ class BranchEnsemble:
             self.a[name] = min(2.0, max(0.0, self.a[name] - cfg.meta_lr * grad))
         self.beta0 -= cfg.meta_lr * err_m
 
+        if cfg.use_bin_calibration and pred.bin_idx >= 0:
+            i = pred.bin_idx
+            self.bin_s[i] = self.lam_bin * self.bin_s[i] + (y - pred.p_platt)
+            self.bin_w[i] = self.lam_bin * self.bin_w[i] + 1.0
+
         if cfg.use_platt:
-            err_f = pred.p - y
+            err_f = pred.p_platt - y
             plr = max(cfg.platt_lr, cfg.platt_lr0 / (1.0 + self.t / cfg.platt_decay_games))
             self.gamma -= plr * err_f
             self.alpha = min(2.0, max(0.2, self.alpha - plr * err_f * pred.kappa * pred.z_meta))
@@ -294,6 +361,10 @@ class BranchEnsemble:
             se = math.sqrt(max(b.solo.var, 1e-12) / b.solo_short.n_eff)
             if b.solo_short.mean - b.solo.mean < -cfg.drift_z * se:
                 b.alarm_until = self.t + cfg.drift_recovery
+                if cfg.drift_reset_factor != 1.0:
+                    f = cfg.drift_reset_factor
+                    b.w = [w * f for w in b.w]
+                    b.w_fast = [w * f for w in b.w_fast]
                 b.events.append({"t": self.t, "event": "drift_alarm",
                                  "short": b.solo_short.mean, "long": b.solo.mean})
 

@@ -1,5 +1,5 @@
 {
-  "_notice": "Editable assumptions. The league section builds the simulated world; the model section sets the learner; the study section sets seeds and pass rules. Hyperparameters in 'model' were tuned on dev seeds 1000-1015 only. Final results use seeds 7000 and up. Seeds 5000-5003 were used once in a 4-league smoke test and are retired.",
+  "_notice": "Editable assumptions. The league section builds the simulated world; the model section sets the learner; the study section sets seeds and pass rules. Hyperparameters in 'model' were tuned on dev seeds 1000-1039 only. Round-1 (v1) results used seeds 7000-7029 and 8000-8029, which are spent. Round-2 (v2) final results use seeds 9000 and up. Seeds 5000-5003 were used once in a 4-league smoke test and are retired.",
   "league": {
     "regions": 3,
     "conferences_per_region": 2,
@@ -56,11 +56,14 @@
     "gate_slope": 1.5,
     "gate_center": 0.0,
     "gate_floor": 0.3,
-    "drift_z": 2.5,
+    "drift_z": 2.0,
     "drift_recovery": 60,
-    "drift_lr_boost": 3.0,
+    "drift_lr_boost": 6.0,
     "drift_gate_factor": 0.5,
-    "early_shrink_n": 2.0
+    "drift_reset_factor": 0.2,
+    "early_shrink_n": 2.0,
+    "use_bin_calibration": true,
+    "bin_n0": 200.0
   },
   "study": {
     "dev_seed_base": 1000,

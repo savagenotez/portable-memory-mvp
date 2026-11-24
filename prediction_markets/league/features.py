@@ -14,7 +14,9 @@ Branches (families of variables):
     interaction  crossed effects: team style x weather, rest x strength
     decoy_noise  pure noise columns. Their branch score should stay near zero.
 Scenario extras:
-    news         spurious_decoy: tracks true strength early, then becomes noise
+    news         spurious_decoy: tracks true strength early, then becomes noise.
+                 reversal_decoy: tracks it early, then points the opposite way
+    haystack_0-8 haystack: 36 pure-noise columns in 9 branches
     leak         leakage_trap: contains the game outcome
     team_dup     duplicate_branch: near-copy of the team branch
 """
@@ -43,6 +45,8 @@ EXTRA_BRANCHES: Dict[str, Dict[str, List[str]]] = {
     "spurious_decoy": {"news": ["spurious"]},
     "leakage_trap": {"leak": ["leak"]},
     "duplicate_branch": {"team_dup": ["dup_net_diff", "dup_win_diff", "dup_pf_diff", "dup_pa_diff"]},
+    "reversal_decoy": {"news": ["spurious"]},
+    "haystack": {f"haystack_{i}": [f"h{4 * i + j}" for j in range(1, 5)] for i in range(9)},
 }
 
 
@@ -199,6 +203,8 @@ class FeatureBuilder:
             "dup_pf_diff": pf_diff + 0.05 * g.decoy_noise[2],
             "dup_pa_diff": pa_diff + 0.05 * g.decoy_noise[3],
         }
+        for i, v in enumerate(g.decoy_extra):
+            feats[f"h{i + 1}"] = v
         return feats
 
     def context_for(self, g: Game) -> Dict[str, float]:
