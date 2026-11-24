@@ -218,9 +218,11 @@ def compound(count: Dist, per_event: Dist, max_events: int = 60) -> Dist:
 
 
 def _betabinom_pmf(n: int, a: float, b: float) -> List[float]:
-    base = math.lgamma(n + 1) + math.lgamma(a + b) - math.lgamma(a) - math.lgamma(b) - math.lgamma(n + a + b)
-    return [math.exp(base - math.lgamma(m + 1) - math.lgamma(n - m + 1) + math.lgamma(m + a) + math.lgamma(n - m + b))
-            for m in range(n + 1)]
+    """Beta-binomial pmf for m = 0..n. P(0) = G(n+b)G(a+b) / (G(b)G(a+b+n)), then a recurrence: one log-gamma call."""
+    out = [math.exp(math.lgamma(n + b) + math.lgamma(a + b) - math.lgamma(b) - math.lgamma(a + b + n))]
+    for m in range(n):
+        out.append(out[-1] * (n - m) / (m + 1) * (m + a) / (n - m - 1 + b))
+    return out
 
 
 @dataclass
@@ -228,8 +230,29 @@ class MakesForecast:
     attempts: Dist
     makes: Dist
     pct_mean: float                  # expected make percentage on the attempts that happen
-    pct_interval_80: Tuple[float, float]
+    _pct_source: tuple               # (alpha, beta, [(attempts, weight)]) for the lazy percentage interval
     p_no_attempt: float
+
+    @property
+    def pct_interval_80(self) -> Tuple[float, float]:
+        alpha, beta, weights = self._pct_source
+        mass = sum(w for _, w in weights)
+        if not weights or mass <= 0:
+            return float("nan"), float("nan")
+        pct: Dict[float, float] = defaultdict(float)
+        for n, w in weights:
+            for m, pm in enumerate(_betabinom_pmf(n, alpha, beta)):
+                pct[m / n] += w * pm
+        items = sorted(pct.items())
+        c, lo_v, hi_v = 0.0, None, items[-1][0]
+        for v, p in items:
+            c += p / mass
+            if lo_v is None and c >= 0.1:
+                lo_v = v
+            if c >= 0.9:
+                hi_v = v
+                break
+        return (lo_v if lo_v is not None else items[0][0], hi_v)
 
     def summary(self, attempt_lines=(), make_lines=()) -> dict:
         return {"attempts": self.attempts.summary(attempt_lines), "makes": self.makes.summary(make_lines),
@@ -240,38 +263,28 @@ class MakesForecast:
 
 def makes(attempts: Dist, alpha: float, beta: float) -> MakesForecast:
     """Makes out of attempts. The make probability is beta(alpha, beta): alpha/(alpha+beta) is the expected rate and
-    alpha+beta is how much evidence stands behind it (more evidence, narrower)."""
+    alpha+beta is how much evidence stands behind it (more evidence, narrower). The 80% interval of the percentage
+    is computed only when a summary asks for it (it is slow to compute for every player-game)."""
     made: Dict[int, float] = defaultdict(float)
-    pct: Dict[float, float] = defaultdict(float)
     p_none = 0.0
-    for i, pa in enumerate(attempts.pmf):
-        n = attempts.offset + i
+    weights: List[Tuple[int, float]] = []
+    # attempt counts with probability under 1e-6 are dropped (and the rest renormalized): a heavy tail would
+    # otherwise cost hundreds of beta-binomial rows for no visible change
+    keep = [(attempts.offset + i, pa) for i, pa in enumerate(attempts.pmf) if pa >= 1e-6]
+    tot = sum(pa for _, pa in keep) or 1.0
+    for n, pa in ((n, pa / tot) for n, pa in keep):
         if pa <= 0:
             continue
         if n <= 0:
             made[0] += pa
             p_none += pa
             continue
+        weights.append((n, pa))
         for m, pm in enumerate(_betabinom_pmf(n, alpha, beta)):
             made[m] += pa * pm
-            pct[m / n] += pa * pm
     hi = max(made)
     md = _trim([made.get(k, 0.0) for k in range(hi + 1)], 0)
-    if pct:
-        mass = sum(pct.values())
-        items = sorted(pct.items())
-        c, lo_v, hi_v = 0.0, None, items[-1][0]
-        for v, p in items:
-            c += p / mass
-            if lo_v is None and c >= 0.1:
-                lo_v = v
-            if c >= 0.9:
-                hi_v = v
-                break
-        interval = (lo_v if lo_v is not None else items[0][0], hi_v)
-    else:
-        interval = (float("nan"), float("nan"))
-    return MakesForecast(attempts, md, alpha / (alpha + beta), interval, p_none)
+    return MakesForecast(attempts, md, alpha / (alpha + beta), (alpha, beta, weights), p_none)
 
 
 @dataclass
