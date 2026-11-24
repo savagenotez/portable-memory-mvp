@@ -115,3 +115,37 @@ def run(games: Sequence[Game], team_games: Sequence[TeamGame], injury_counts: di
         "injury_holdout_gain": {"mean": inj_gain[0], "ci95": [inj_gain[1], inj_gain[2]], "games": inj_gain[3],
                                 "adopt": inj_gain[2] < 0},
     }
+
+
+def main(argv=None) -> int:
+    import json
+    import os
+    from .data import load_games
+    from .sources import load_injury_counts, load_team_games
+
+    games = load_games(refresh=True)
+    team_games, missing_stats = load_team_games()
+    injuries, missing_inj = load_injury_counts()
+    res = run(games, team_games, injuries)
+    res["label"] = ("DEVELOPMENT ON HISTORY, NOT A BLIND TEST. 2020-2025 were used to choose K = 30, so the holdout "
+                    "here has been looked at before. Judge new features on the sealed 2026 games.")
+    res["missing_stats_seasons"] = missing_stats
+    res["missing_injury_seasons"] = missing_inj
+    out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "nfl_efficiency_dev.json")
+    with open(out, "w", encoding="utf-8") as fh:
+        json.dump(res, fh, indent=2)
+    print(res["label"])
+    print(f"selected efficiency variant: {res['selected_efficiency']} (dev log loss {res['dev_log_loss']})")
+    e, i = res["efficiency_holdout_gain"], res["injury_holdout_gain"]
+    print(f"efficiency vs base, holdout: {e['mean']:+.5f}  95% [{e['ci95'][0]:+.5f}, {e['ci95'][1]:+.5f}]  "
+          f"adopt={e['adopt']}  ({e['games']} games)")
+    print(f"injuries vs base, holdout:   {i['mean']:+.5f}  95% [{i['ci95'][0]:+.5f}, {i['ci95'][1]:+.5f}]  "
+          f"adopt={i['adopt']}  ({i['games']} games)")
+    if missing_stats or missing_inj:
+        print(f"missing seasons: stats {missing_stats}, injuries {missing_inj}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+

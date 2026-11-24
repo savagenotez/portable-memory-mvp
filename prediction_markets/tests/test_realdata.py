@@ -38,6 +38,23 @@ class HostGuardTests(unittest.TestCase):
         self.assertEqual(http.ALLOWED_HOSTS, {"api.elections.kalshi.com", "gamma-api.polymarket.com",
                                                "clob.polymarket.com", "raw.githubusercontent.com"})
 
+    def test_github_is_reachable_only_for_nflverse_release_assets(self):
+        http.check_release_url("https://github.com/nflverse/nflverse-data/releases/download/injuries/injuries_2025.csv")
+        for bad in ("https://github.com/someone/else/releases/download/x/y.csv",
+                    "https://github.com/nflverse/nflverse-data/tree/main/data",
+                    "https://api.github.com/repos/nflverse/nflverse-data"):
+            with self.assertRaises(ValueError):
+                http.check_release_url(bad)
+
+    def test_redirects_are_followed_only_to_the_release_asset_host(self):
+        import urllib.request
+        handler = http._ReleaseRedirects()
+        req = urllib.request.Request("https://github.com/nflverse/nflverse-data/releases/download/x/y.csv")
+        ok = handler.redirect_request(req, None, 302, "Found", {}, "https://release-assets.githubusercontent.com/a")
+        self.assertIsNotNone(ok)
+        with self.assertRaises(urllib.error.URLError):
+            handler.redirect_request(req, None, 302, "Found", {}, "https://evil.example.com/a")
+
     def test_text_fetch_is_guarded_too(self):
         with self.assertRaises(ValueError):
             http.get_text("https://example.com/file.csv")

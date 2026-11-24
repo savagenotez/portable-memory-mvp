@@ -16,6 +16,54 @@ ALLOWED_HOSTS = {
     "clob.polymarket.com",        # Polymarket CLOB API, public prices
     "raw.githubusercontent.com",  # nflverse open game data (approved 2026-11-24), read-only raw files
 }
+
+# Approved 2026-11-24: nflverse release assets, and nothing else on GitHub. A release-download URL may be
+# redirected only to the release-asset host below. Any other GitHub path, or any other redirect, is refused.
+RELEASE_PREFIX = "/nflverse/nflverse-data/releases/download/"
+RELEASE_HOST = "github.com"
+RELEASE_REDIRECT_HOST = "release-assets.githubusercontent.com"
+
+
+def check_release_url(url: str) -> None:
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != "https" or parsed.hostname != RELEASE_HOST:
+        raise ValueError("not a GitHub release URL")
+    if not parsed.path.startswith(RELEASE_PREFIX):
+        raise ValueError(f"only nflverse release downloads are allowed, not {parsed.path!r}")
+
+
+class _ReleaseRedirects(urllib.request.HTTPRedirectHandler):
+    """Follow only the one redirect a GitHub release download makes, and only to the release-asset host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        target = urllib.parse.urlparse(newurl)
+        if target.scheme != "https" or target.hostname != RELEASE_REDIRECT_HOST:
+            raise urllib.error.URLError(f"redirect to {target.hostname!r} refused")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+_release_opener = urllib.request.build_opener(_ReleaseRedirects)
+
+
+def get_release_text(url: str, *, timeout: float = 120.0, retries: int = 3) -> str:
+    """GET an nflverse release asset (a CSV). Same retry rules; only the approved release path is reachable."""
+    check_release_url(url)
+    delay = 1.0
+    for attempt in range(retries + 1):
+        wait = 0.5 - (time.time() - _last_call[0])
+        if wait > 0:
+            time.sleep(wait)
+        _last_call[0] = time.time()
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/csv"})
+        try:
+            with _release_opener.open(req, timeout=timeout) as resp:
+                return resp.read().decode("utf-8")
+        except (urllib.error.HTTPError, urllib.error.URLError, OSError, http.client.HTTPException):
+            if attempt < retries:
+                time.sleep(delay)
+                delay = min(30.0, delay * 2)
+                continue
+            raise
 USER_AGENT = "prediction-markets-research-client"
 _last_call = [0.0]
 
