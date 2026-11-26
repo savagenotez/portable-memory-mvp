@@ -32,6 +32,21 @@ PRE-REGISTERED (written before any player projection was scored):
 
     python3 -m prediction_markets.nfl.player_props evaluate
     python3 -m prediction_markets.nfl.player_props forecast 2026_13_KC_DAL
+
+REVISION 2 (pre-registered before it was run; the rules above are the record of the first attempt, which failed):
+  Why      The first attempt fitted one size per stat, pooled over all players. The fit landed on the grid edge (0.5),
+           which gives a 35-attempt quarterback a standard deviation of about 50 attempts.
+  Changes  (1) the size is fitted per stat and per position group (QB, RB, WR, TE, other), and falls back to the
+           pooled size for a group with fewer than 200 player-game rows in the choosing window;
+           (2) the size grid is (1, 1.5, 2, 3, 5, 8, 13, 25, 50, Poisson): nothing below 1;
+           (3) half-life and k0 are chosen as before, by mean squared error, on the choosing window.
+  Windows  choose on 2012-2017; score on 2018-2019 (the primary test). 2020-2025 is used for neither in this revision.
+  Edges    a chosen size equal to 1 (the new lower edge) is reported as a warning, not hidden.
+  Pass     per stat, the model's log score minus the league-only and season-average baselines, with a paired 95%
+           interval. DEVELOPMENT, not blind: 2018-2019 were looked at by the strict replay.
+
+    python3 -m prediction_markets.nfl.player_props evaluate-r2
+    python3 -m prediction_markets.nfl.player_props forecast-r2 2026_13_KC_DAL
 """
 
 from __future__ import annotations
@@ -48,6 +63,20 @@ from .data import Game, load_games
 from .team_props import RESULTS, WARMUP, DEV, EVAL, paired, _days
 
 GRID = [(h, k) for h in (4, 8, 16) for k in (1, 3, 6)]
+SIZE_GRID = (1, 1.5, 2, 3, 5, 8, 13, 25, 50, E.POISSON)          # revision 2: nothing below 1
+GROUPS = ("QB", "RB", "WR", "TE", "other")
+MIN_OBS_GROUP = 200
+CHOOSE_R2 = range(2012, 2018)
+SCORE_R2 = range(2018, 2020)
+
+
+def group(pos: str) -> str:
+    return {"QB": "QB", "RB": "RB", "FB": "RB", "HB": "RB", "WR": "WR", "TE": "TE"}.get(pos, "other")
+
+
+def player_groups() -> Dict[str, str]:
+    from .sources import load_players
+    return {gs: group(v.get("position", "")) for gs, v in load_players().items()}
 COUNT_STATS = ("att", "pyd", "tgt", "ryd", "car", "ruyd")
 ROLE = {"att": "passer", "pyd": "passer", "cmp": "passer", "tgt": "receiver", "ryd": "receiver", "rec": "receiver",
         "car": "rusher", "ruyd": "rusher"}
@@ -112,7 +141,8 @@ def _count(v: float) -> int:
 
 
 class PlayerModel:
-    def __init__(self, params: Dict[str, Tuple[float, float]], sizes: Optional[Dict[str, float]] = None):
+    def __init__(self, params: Dict[str, Tuple[float, float]], sizes: Optional[dict] = None,
+                 groups: Optional[Dict[str, str]] = None):
         self.params = params
         self.rate = {s: E.DecayedRate(*params[s]) for s in COUNT_STATS}
         self.pair = {s: E.DecayedRate(*params[b]) for s, b in (("tgt", "tgt"), ("rec", "tgt"), ("yd", "ryd"))}
@@ -120,7 +150,8 @@ class PlayerModel:
         self.lg = {s: E.LeagueRate(start=1.0) for s in COUNT_STATS}
         self.lg_make = {"cmp": E.LeagueRate(start=0.62), "rec": E.LeagueRate(start=0.65)}
         self.qshare = {s: [E.LeagueRate(start=0.25) for _ in range(6)] for s in QUARTER_STATS}
-        self.sizes = sizes or {}
+        self.sizes = sizes or {}                 # s -> {"pooled": r, "groups": {group: r}}
+        self.groups = groups or {}               # player id -> position group
         self.recent: Dict[str, deque] = defaultdict(lambda: deque(maxlen=3))   # team -> last 3 games' role sets
         self.primary_qb: Dict[str, str] = {}
 
@@ -134,8 +165,13 @@ class PlayerModel:
     def mean(self, s: str, pid: str) -> float:
         return self.rate[s].rate(pid, self.lg[s].value)
 
-    def size(self, s: str) -> float:
-        return self.sizes.get(s, E.POISSON)
+    def size(self, s: str, pid: Optional[str] = None) -> float:
+        entry = self.sizes.get(s)
+        if not entry:
+            return E.POISSON
+        if pid is None:
+            return entry.get("pooled", E.POISSON)
+        return entry.get("groups", {}).get(self.groups.get(pid, "other"), entry.get("pooled", E.POISSON))
 
     def make_beta(self, s: str, pid: str) -> Tuple[float, float]:
         return self.make[s].beta(pid, self.lg_make[s].value)
@@ -208,25 +244,39 @@ def _walk(games, players, pairs, outs, model: PlayerModel, on_team_game, last_se
             model.update_team_game(team, acts, prs, elig)
 
 
-def choose(games, players, pairs, outs) -> Tuple[Dict[str, Tuple[float, float]], Dict[str, float], dict]:
+def choose(games, players, pairs, outs, groups: Dict[str, str], choose_seasons) -> Tuple[dict, dict, dict]:
+    """Revision 2: half-life and k0 by mean squared error, sizes per stat and per position group. Choosing window only."""
     err = {c: defaultdict(float) for c in GRID}
     obs = {c: defaultdict(list) for c in GRID}
     for c in GRID:
         def collect(g, team, elig, m, c=c):
-            if g.season not in DEV:
+            if g.season not in choose_seasons:
                 return
             acts = players[(g.game_id, team)]
-            for s in COUNT_STATS:
-                for pid in elig[ROLE[s]]:
-                    k = _count(acts[pid][s]) if pid in acts else 0
-                    mu = m.mean(s, pid)
-                    err[c][s] += (mu - k) ** 2
-                    obs[c][s].append((mu, k))
-        _walk(games, players, pairs, outs, PlayerModel({s: c for s in COUNT_STATS}), collect, max(DEV))
-    params = {s: min(GRID, key=lambda c: err[c][s]) for s in COUNT_STATS}
-    sizes = {s: E.fit_size(obs[params[s]][s], grid=(0.5, 1, 1.5, 2, 3, 5, 8, 13, 25, 50, E.POISSON))
-             for s in COUNT_STATS}
-    info = {s: {f"h{c[0]}_k{c[1]}": err[c][s] / max(1, len(obs[c][s])) for c in GRID} for s in COUNT_STATS}
+            for s_ in COUNT_STATS:
+                for pid in elig[ROLE[s_]]:
+                    k = _count(acts[pid][s_]) if pid in acts else 0
+                    mu = m.mean(s_, pid)
+                    err[c][s_] += (mu - k) ** 2
+                    obs[c][(s_, groups.get(pid, "other"))].append((mu, k))
+                    obs[c][(s_, "pooled")].append((mu, k))
+        _walk(games, players, pairs, outs, PlayerModel({s_: c for s_ in COUNT_STATS}), collect, max(choose_seasons))
+    params = {s_: min(GRID, key=lambda c: err[c][s_]) for s_ in COUNT_STATS}
+    sizes, group_obs = {}, {}
+    for s_ in COUNT_STATS:
+        rows = obs[params[s_]]
+        pooled = E.fit_size(rows[(s_, "pooled")], grid=SIZE_GRID)
+        fitted = {}
+        group_obs[s_] = {}
+        for grp in GROUPS:
+            r_ = rows.get((s_, grp), [])
+            group_obs[s_][grp] = len(r_)
+            if len(r_) >= MIN_OBS_GROUP:
+                fitted[grp] = E.fit_size(r_, grid=SIZE_GRID)
+        sizes[s_] = {"pooled": pooled, "groups": fitted}
+    info = {"mse_per_row": {s_: {f"h{c[0]}_k{c[1]}": err[c][s_] / max(1, len(obs[c][(s_, "pooled")]))
+                                 for c in GRID} for s_ in COUNT_STATS},
+            "group_rows": group_obs}
     return params, sizes, info
 
 
@@ -234,14 +284,16 @@ def _line(v: float) -> float:
     return math.floor(v) + 0.5
 
 
-def evaluate(games: Sequence[Game], data: dict) -> dict:
+def evaluate(games: Sequence[Game], data: dict, choose_seasons=DEV, score_seasons=EVAL) -> dict:
     from .blind import assert_not_sealed
-    games = [g for g in games if g.completed and WARMUP <= g.season <= max(EVAL)]
+    last = max(score_seasons)
+    games = [g for g in games if g.completed and WARMUP <= g.season <= last]
     assert_not_sealed([g.game_id for g in games], "player projections")
     players, pairs = player_actuals(data)
-    outs = load_out(range(WARMUP, max(EVAL) + 1))
-    params, sizes, info = choose(games, players, pairs, outs)
-    model = PlayerModel(params, sizes)
+    outs = load_out(range(WARMUP, last + 1))
+    groups = player_groups()
+    params, sizes, info = choose(games, players, pairs, outs, groups, choose_seasons)
+    model = PlayerModel(params, sizes, groups)
     season_avg: Dict[Tuple[int, str, str], List[float]] = defaultdict(lambda: [0.0, 0])
     S: Dict[str, Dict[str, list]] = defaultdict(lambda: {"model": [], "league": [], "season": []})
     calib: Dict[str, list] = defaultdict(lambda: [0.0, 0, 0])
@@ -264,7 +316,7 @@ def evaluate(games: Sequence[Game], data: dict) -> dict:
 
     def score(g, team, elig, m):
         acts = players[(g.game_id, team)]
-        scoring = g.season in EVAL
+        scoring = g.season in score_seasons
         get = lambda pid, s: (acts[pid][s] if pid in acts else 0)
         for s in COUNT_STATS + tuple(MAKES):
             role = ROLE[s]
@@ -277,16 +329,16 @@ def evaluate(games: Sequence[Game], data: dict) -> dict:
                     mu_season = tot / n if n else lg
                     line = _line(mu_season) if n else None
                     if s in COUNT_STATS:
-                        dm = E.nb(m.mean(s, pid), m.size(s))
+                        dm = E.nb(m.mean(s, pid), m.size(s, pid))
                     else:
                         base = MAKES[s][0]
-                        dm = E.makes(E.nb(m.mean(base, pid), m.size(base)), *m.make_beta(s, pid)).makes
+                        dm = E.makes(E.nb(m.mean(base, pid), m.size(base, pid)), *m.make_beta(s, pid)).makes
                     rec(LABEL[s], dm, lg, mu_season, k, line)
                     if s in QUARTER_STATS:
                         sh = m.shares(s)
                         for q in (1, 2, 3, 4):
                             kq = acts[pid][f"q_{s}"][q] if pid in acts else 0
-                            dq = E.period(m.mean(s, pid), m.size(s), sh[q])
+                            dq = E.period(m.mean(s, pid), m.size(s, pid), sh[q])
                             rec(f"{LABEL[s]}, quarter", dq, lg * sh[q], mu_season * sh[q], kq,
                                 _line(mu_season * sh[q]) if n else None)
                 season_avg[key][0] += k
@@ -297,18 +349,19 @@ def evaluate(games: Sequence[Game], data: dict) -> dict:
             for r in elig["receiver"]:
                 pm = m.pair_means(qb, r)
                 pr = prs.get((qb, r), {"tgt": 0, "rec": 0, "yd": 0.0})
-                dt = E.nb(pm["tgt"], m.size("tgt"))
+                dt = E.nb(pm["tgt"], m.size("tgt", r))
                 rec(LABEL["pair_tgt"], dt, m.mean("tgt", r), m.mean("tgt", r), pr["tgt"], None)
                 rec(LABEL["pair_rec"], E.makes(dt, *m.pair_beta(qb, r)).makes,
                     m.mean("tgt", r) * m.lg_make["rec"].value, m.mean("tgt", r) * m.lg_make["rec"].value,
                     pr["rec"], None)
-                rec(LABEL["pair_yd"], E.nb(pm["yd"], m.size("ryd")), m.mean("ryd", r), m.mean("ryd", r),
+                rec(LABEL["pair_yd"], E.nb(pm["yd"], m.size("ryd", r)), m.mean("ryd", r), m.mean("ryd", r),
                     _count(pr["yd"]), None)
 
-    _walk(games, players, pairs, outs, model, score, max(EVAL))
+    _walk(games, players, pairs, outs, model, score, last)
     res = {"label": "DEVELOPMENT, NOT BLIND. Chosen on 2013-2019, scored on 2020-2025. Lower is better. For pairs "
                     "the 'league' and 'season' references are the receiver's own overall rate (no pair information).",
-           "chosen": {s: {"halflife_games": params[s][0], "k0": params[s][1], "size": sizes[s]} for s in COUNT_STATS},
+           "chosen": {s: {"halflife_games": params[s][0], "k0": params[s][1], "pooled": sizes[s]["pooled"],
+                          "groups": sizes[s]["groups"]} for s in COUNT_STATS},
            "grid_mse": info, "scores": {}, "calibration_at_typical_line": {}}
     for k, v in S.items():
         res["scores"][k] = {"n": len(v["model"]),
@@ -327,7 +380,8 @@ def forecast_sheet(game_id: str, games: Sequence[Game], data: dict, chosen: dict
     load_injury_counts([target.season], refresh=True)          # the latest injury report for this season
     outs = load_out(range(WARMUP, target.season + 1))
     params = {s: (v["halflife_games"], v["k0"]) for s, v in chosen.items()}
-    model = PlayerModel(params, {s: v["size"] for s, v in chosen.items()})
+    model = PlayerModel(params, {s: {"pooled": v["pooled"], "groups": v["groups"]} for s, v in chosen.items()},
+                        player_groups())
     past = [g for g in games if g.completed and g.gameday < target.gameday and g.season >= WARMUP]
     _walk(past, players, pairs, outs, model, lambda *a: None, target.season)
     names = data["names"]
@@ -338,21 +392,21 @@ def forecast_sheet(game_id: str, games: Sequence[Game], data: dict, chosen: dict
         rows = {}
         for s in COUNT_STATS:
             for pid in elig[ROLE[s]]:
-                d = E.nb(model.mean(s, pid), model.size(s))
+                d = E.nb(model.mean(s, pid), model.size(s, pid))
                 rows.setdefault(names.get(pid, pid), {})[LABEL[s]] = d.summary([_line(d.mean)])
         for s, (base, _) in MAKES.items():
             for pid in elig[ROLE[s]]:
-                mk = E.makes(E.nb(model.mean(base, pid), model.size(base)), *model.make_beta(s, pid))
+                mk = E.makes(E.nb(model.mean(base, pid), model.size(base, pid)), *model.make_beta(s, pid))
                 rows.setdefault(names.get(pid, pid), {})[LABEL[s]] = mk.summary((), [_line(mk.makes.mean)])
         qb = model.primary_qb.get(team)
         if qb:
             duo = {}
             for r in elig["receiver"]:
                 pm = model.pair_means(qb, r)
-                dt = E.nb(pm["tgt"], model.size("tgt"))
+                dt = E.nb(pm["tgt"], model.size("tgt", r))
                 duo[names.get(r, r)] = {"targets": dt.summary([_line(dt.mean)]),
                                         "receptions": E.makes(dt, *model.pair_beta(qb, r)).summary(),
-                                        "yards": E.nb(pm["yd"], model.size("ryd")).summary()}
+                                        "yards": E.nb(pm["yd"], model.size("ryd", r)).summary()}
             rows[f"pairs with {names.get(qb, qb)}"] = duo
         sheet[team] = rows
     return sheet
@@ -362,18 +416,23 @@ def main(argv=None) -> int:
     import argparse
     from . import pbp
     ap = argparse.ArgumentParser(prog="prediction_markets.nfl.player_props")
-    ap.add_argument("cmd", choices=["evaluate", "forecast"])
+    ap.add_argument("cmd", choices=["evaluate", "forecast", "evaluate-r2", "forecast-r2"])
     ap.add_argument("game_id", nargs="?")
     args = ap.parse_args(argv)
     games = load_games()
-    out_path = os.path.join(RESULTS, "nfl_player_props_dev.json")
-    if args.cmd == "evaluate":
-        res = evaluate(games, pbp.load(range(WARMUP, max(EVAL) + 1)))
+    if args.cmd == "evaluate-r2":
+        res = evaluate(games, pbp.load(range(WARMUP, max(SCORE_R2) + 1)), CHOOSE_R2, SCORE_R2)
+        res["label"] = ("PLAYER PROPS, REVISION 2. Sizes chosen per position group on 2012-2017 (grid down to 1); "
+                        "scored on 2018-2019. DEVELOPMENT, not blind.")
+        out_path = os.path.join(RESULTS, "nfl_player_props_rev2.json")
         with open(out_path, "w", encoding="utf-8") as fh:
             json.dump(res, fh, indent=2)
         print(res["label"])
-        for s, v in res["chosen"].items():
-            print(f"  {LABEL[s]:<16} half-life {v['halflife_games']}, k0 {v['k0']}, size {v['size']:g}")
+        for s_, v in res["chosen"].items():
+            edge = [g_ for g_, r_ in v["groups"].items() if r_ <= 1] + (["pooled"] if v["pooled"] <= 1 else [])
+            print(f"  {LABEL[s_]:<16} half-life {v['halflife_games']}, k0 {v['k0']}, pooled size {v['pooled']:g}, "
+                  f"groups {{{', '.join(f'{g_} {r_:g}' for g_, r_ in v['groups'].items())}}}"
+                  + (f"   WARNING at grid edge: {edge}" if edge else ""))
         for k, v in res["scores"].items():
             a, b = v["minus_league"], v["minus_season_average"]
             print(f"  {k:<44} n={v['n']:>6}  minus league {a['model_minus_baseline']:+.4f} "
@@ -383,13 +442,14 @@ def main(argv=None) -> int:
             print(f"  calibration {k:<30} predicted over {v['predicted']:.3f}  observed {v['observed']:.3f}")
         print("wrote", out_path)
         return 0
-    with open(out_path, encoding="utf-8") as fh:
-        saved = json.load(fh)
-    games = load_games(refresh=True)
-    target = next(g for g in games if g.game_id == args.game_id)
-    print(json.dumps(forecast_sheet(args.game_id, games, pbp.load_through(target.season, WARMUP),
-                                    saved["chosen"]), indent=1))
-    return 0
+    if args.cmd == "forecast-r2":
+        with open(os.path.join(RESULTS, "nfl_player_props_rev2.json"), encoding="utf-8") as fh:
+            saved = json.load(fh)
+        target = next(g for g in games if g.game_id == args.game_id)
+        print(json.dumps(forecast_sheet(args.game_id, load_games(refresh=True),
+                                        pbp.load_through(target.season, WARMUP), saved["chosen"]), indent=1))
+        return 0
+    raise SystemExit("revision 1 is retired; use evaluate-r2 and forecast-r2")
 
 
 if __name__ == "__main__":

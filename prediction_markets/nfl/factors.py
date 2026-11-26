@@ -359,7 +359,8 @@ def build_rows(games: Sequence[Game], data: dict, lines: dict, v1_params: dict) 
     info = load_players()
     pfr = {gs: v["pfr_id"] for gs, v in info.items()}
     v1 = PlayerModel({s: (v["halflife_games"], v["k0"]) for s, v in v1_params.items()},
-                     {s: v["size"] for s, v in v1_params.items()})
+                     {s: {"pooled": v["pooled"], "groups": v["groups"]} for s, v in v1_params.items()},
+                     {gs: group(v.get("position", "")) for gs, v in info.items()})
     fm = FactorModel()
     team_rows, rows = [], []
     for day in _days(games):
@@ -401,8 +402,8 @@ def build_rows(games: Sequence[Game], data: dict, lines: dict, v1_params: dict) 
                                      "eff_n": eff_n, "z": z, "y": k, "yards": yards,
                                      "act_volume": tsnaps, "act_share": sh if tsnaps else None,
                                      "act_usage": (k / sn) if sn > 0 else None,
-                                     "v1_mu": v1.mean(s, pid), "v1_size": v1.size(s),
-                                     "v1_yd_mu": v1.mean(ys, pid), "v1_yd_size": v1.size(ys),
+                                     "v1_mu": v1.mean(s, pid), "v1_size": v1.size(s, pid),
+                                     "v1_yd_mu": v1.mean(ys, pid), "v1_yd_size": v1.size(ys, pid),
                                      "has_snaps": bool(tsnaps) and pfr.get(pid, "") != ""})
                 todo.append((g, team, opp, acts, pairs.get((g.game_id, team), {}), elig, tsnaps, psnaps))
         for g, team, opp, acts, prs, elig, tsnaps, psnaps in todo:
@@ -558,7 +559,7 @@ def evaluate(games: Sequence[Game], data: dict, lines: dict, v1_params: dict) ->
 def main(argv=None) -> int:
     from . import pbp
     games = load_games()
-    with open(os.path.join(RESULTS, "nfl_player_props_dev.json"), encoding="utf-8") as fh:
+    with open(os.path.join(RESULTS, "nfl_player_props_rev2.json"), encoding="utf-8") as fh:
         v1 = json.load(fh)["chosen"]
     res = evaluate(games, pbp.load(range(WARMUP, max(EVAL) + 1)), load_lines(), v1)
     path = os.path.join(RESULTS, "nfl_factors_dev.json")
