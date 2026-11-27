@@ -47,6 +47,21 @@ REVISION 2 (pre-registered before it was run; the rules above are the record of 
 
     python3 -m prediction_markets.nfl.player_props evaluate-r2
     python3 -m prediction_markets.nfl.player_props forecast-r2 2026_13_KC_DAL
+
+REVISION 3 (pre-registered before it was run; revision 2 is kept as the record):
+  Why      A diagnostic on 2012-2017 (no rule changed) found that the lowest k0 won for every stat, even on a much
+           wider grid (k0 0.1 to 100). Shrinkage was pulling each player's rate toward ONE league-wide average of all
+           projected players (about 1 attempt a game), so a 35-attempt quarterback was being pulled toward 1. The
+           prior was the problem, not the amount of shrinkage.
+  Change   The prior for a player's rate is his position group's average rate over the projected players in that
+           group (QB, RB, WR, TE, other), not the league-wide average. Sizes and the size grid are as in revision 2.
+  Grid     half-life {4, 8, 16, 64} games; k0 {0.5, 1, 3, 6, 20} (wider than revision 2, fixed here in advance).
+  Windows  choose on 2012-2017; score on 2020-2025. Revision 2 scored 2018-2019, so those seasons are not used again.
+           2020-2025 has never been scored for player props, though it was used for the team and Elo settings.
+  Edges    as in revision 2: a chosen value at a grid edge is reported as a warning.
+  Pass     as in revision 2. DEVELOPMENT, not blind.
+
+    python3 -m prediction_markets.nfl.player_props evaluate-r3
 """
 
 from __future__ import annotations
@@ -68,6 +83,8 @@ GROUPS = ("QB", "RB", "WR", "TE", "other")
 MIN_OBS_GROUP = 200
 CHOOSE_R2 = range(2012, 2018)
 SCORE_R2 = range(2018, 2020)
+SCORE_R3 = range(2020, 2026)
+GRID3 = [(h, k) for h in (4, 8, 16, 64) for k in (0.5, 1, 3, 6, 20)]
 
 
 def group(pos: str) -> str:
@@ -142,7 +159,7 @@ def _count(v: float) -> int:
 
 class PlayerModel:
     def __init__(self, params: Dict[str, Tuple[float, float]], sizes: Optional[dict] = None,
-                 groups: Optional[Dict[str, str]] = None):
+                 groups: Optional[Dict[str, str]] = None, prior: str = "league"):
         self.params = params
         self.rate = {s: E.DecayedRate(*params[s]) for s in COUNT_STATS}
         self.pair = {s: E.DecayedRate(*params[b]) for s, b in (("tgt", "tgt"), ("rec", "tgt"), ("yd", "ryd"))}
@@ -152,6 +169,8 @@ class PlayerModel:
         self.qshare = {s: [E.LeagueRate(start=0.25) for _ in range(6)] for s in QUARTER_STATS}
         self.sizes = sizes or {}                 # s -> {"pooled": r, "groups": {group: r}}
         self.groups = groups or {}               # player id -> position group
+        self.prior = prior                       # "league" (revisions 1-2) or "group" (revision 3)
+        self.lg_grp = {s: defaultdict(lambda: E.LeagueRate(start=1.0)) for s in COUNT_STATS}
         self.recent: Dict[str, deque] = defaultdict(lambda: deque(maxlen=3))   # team -> last 3 games' role sets
         self.primary_qb: Dict[str, str] = {}
 
@@ -163,6 +182,8 @@ class PlayerModel:
         return {r: ids - out for r, ids in roles.items()}
 
     def mean(self, s: str, pid: str) -> float:
+        if self.prior == "group":
+            return self.rate[s].rate(pid, self.lg_grp[s][self.groups.get(pid, "other")].value)
         return self.rate[s].rate(pid, self.lg[s].value)
 
     def size(self, s: str, pid: Optional[str] = None) -> float:
@@ -200,6 +221,7 @@ class PlayerModel:
                 self.rate[s].update(pid, v)
                 if pid in elig[ROLE[s]]:
                     self.lg[s].update(v)
+                    self.lg_grp[s][self.groups.get(pid, "other")].update(v)
         for s, (base, _) in MAKES.items():
             for pid, a in acts.items():
                 if a[base] > 0:
@@ -244,11 +266,12 @@ def _walk(games, players, pairs, outs, model: PlayerModel, on_team_game, last_se
             model.update_team_game(team, acts, prs, elig)
 
 
-def choose(games, players, pairs, outs, groups: Dict[str, str], choose_seasons) -> Tuple[dict, dict, dict]:
+def choose(games, players, pairs, outs, groups: Dict[str, str], choose_seasons, grid=GRID,
+           prior: str = "league") -> Tuple[dict, dict, dict]:
     """Revision 2: half-life and k0 by mean squared error, sizes per stat and per position group. Choosing window only."""
-    err = {c: defaultdict(float) for c in GRID}
-    obs = {c: defaultdict(list) for c in GRID}
-    for c in GRID:
+    err = {c: defaultdict(float) for c in grid}
+    obs = {c: defaultdict(list) for c in grid}
+    for c in grid:
         def collect(g, team, elig, m, c=c):
             if g.season not in choose_seasons:
                 return
@@ -260,8 +283,9 @@ def choose(games, players, pairs, outs, groups: Dict[str, str], choose_seasons) 
                     err[c][s_] += (mu - k) ** 2
                     obs[c][(s_, groups.get(pid, "other"))].append((mu, k))
                     obs[c][(s_, "pooled")].append((mu, k))
-        _walk(games, players, pairs, outs, PlayerModel({s_: c for s_ in COUNT_STATS}), collect, max(choose_seasons))
-    params = {s_: min(GRID, key=lambda c: err[c][s_]) for s_ in COUNT_STATS}
+        _walk(games, players, pairs, outs, PlayerModel({s_: c for s_ in COUNT_STATS}, None, groups, prior), collect,
+              max(choose_seasons))
+    params = {s_: min(grid, key=lambda c: err[c][s_]) for s_ in COUNT_STATS}
     sizes, group_obs = {}, {}
     for s_ in COUNT_STATS:
         rows = obs[params[s_]]
@@ -275,7 +299,7 @@ def choose(games, players, pairs, outs, groups: Dict[str, str], choose_seasons) 
                 fitted[grp] = E.fit_size(r_, grid=SIZE_GRID)
         sizes[s_] = {"pooled": pooled, "groups": fitted}
     info = {"mse_per_row": {s_: {f"h{c[0]}_k{c[1]}": err[c][s_] / max(1, len(obs[c][(s_, "pooled")]))
-                                 for c in GRID} for s_ in COUNT_STATS},
+                                 for c in grid} for s_ in COUNT_STATS},
             "group_rows": group_obs}
     return params, sizes, info
 
@@ -284,7 +308,8 @@ def _line(v: float) -> float:
     return math.floor(v) + 0.5
 
 
-def evaluate(games: Sequence[Game], data: dict, choose_seasons=DEV, score_seasons=EVAL) -> dict:
+def evaluate(games: Sequence[Game], data: dict, choose_seasons=DEV, score_seasons=EVAL, grid=GRID,
+             prior: str = "league") -> dict:
     from .blind import assert_not_sealed
     last = max(score_seasons)
     games = [g for g in games if g.completed and WARMUP <= g.season <= last]
@@ -292,8 +317,8 @@ def evaluate(games: Sequence[Game], data: dict, choose_seasons=DEV, score_season
     players, pairs = player_actuals(data)
     outs = load_out(range(WARMUP, last + 1))
     groups = player_groups()
-    params, sizes, info = choose(games, players, pairs, outs, groups, choose_seasons)
-    model = PlayerModel(params, sizes, groups)
+    params, sizes, info = choose(games, players, pairs, outs, groups, choose_seasons, grid, prior)
+    model = PlayerModel(params, sizes, groups, prior)
     season_avg: Dict[Tuple[int, str, str], List[float]] = defaultdict(lambda: [0.0, 0])
     S: Dict[str, Dict[str, list]] = defaultdict(lambda: {"model": [], "league": [], "season": []})
     calib: Dict[str, list] = defaultdict(lambda: [0.0, 0, 0])
@@ -416,15 +441,22 @@ def main(argv=None) -> int:
     import argparse
     from . import pbp
     ap = argparse.ArgumentParser(prog="prediction_markets.nfl.player_props")
-    ap.add_argument("cmd", choices=["evaluate", "forecast", "evaluate-r2", "forecast-r2"])
+    ap.add_argument("cmd", choices=["evaluate", "forecast", "evaluate-r2", "forecast-r2", "evaluate-r3"])
     ap.add_argument("game_id", nargs="?")
     args = ap.parse_args(argv)
     games = load_games()
-    if args.cmd == "evaluate-r2":
-        res = evaluate(games, pbp.load(range(WARMUP, max(SCORE_R2) + 1)), CHOOSE_R2, SCORE_R2)
-        res["label"] = ("PLAYER PROPS, REVISION 2. Sizes chosen per position group on 2012-2017 (grid down to 1); "
-                        "scored on 2018-2019. DEVELOPMENT, not blind.")
-        out_path = os.path.join(RESULTS, "nfl_player_props_rev2.json")
+    if args.cmd in ("evaluate-r2", "evaluate-r3"):
+        rev3 = args.cmd == "evaluate-r3"
+        if rev3:
+            res = evaluate(games, pbp.load(range(WARMUP, max(SCORE_R3) + 1)), CHOOSE_R2, SCORE_R3, GRID3, "group")
+            res["label"] = ("PLAYER PROPS, REVISION 3. Prior = position group average; sizes per group, grid down to 1; "
+                            "chosen on 2012-2017, scored on 2020-2025. DEVELOPMENT, not blind.")
+            out_path = os.path.join(RESULTS, "nfl_player_props_rev3.json")
+        else:
+            res = evaluate(games, pbp.load(range(WARMUP, max(SCORE_R2) + 1)), CHOOSE_R2, SCORE_R2)
+            res["label"] = ("PLAYER PROPS, REVISION 2. Sizes chosen per position group on 2012-2017 (grid down to 1); "
+                            "scored on 2018-2019. DEVELOPMENT, not blind.")
+            out_path = os.path.join(RESULTS, "nfl_player_props_rev2.json")
         with open(out_path, "w", encoding="utf-8") as fh:
             json.dump(res, fh, indent=2)
         print(res["label"])
