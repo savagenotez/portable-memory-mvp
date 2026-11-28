@@ -1,0 +1,1346 @@
+{
+  "matched": 146,
+  "unmatched": 0,
+  "unmatched_ids": [],
+  "agreement_with_score": 1.0,
+  "brier_model": 0.21571073551413752,
+  "brier_market": 0.21078253424657534,
+  "brier_base_rate": 0.24620003753049355,
+  "model_skill_vs_base": 0.12383955064417773,
+  "market_skill_vs_base": 0.14385661204268307,
+  "model_minus_market_brier": 0.004928201267562195,
+  "model_minus_market_ci95": [
+    -0.012101607016886694,
+    0.02192310039152298
+  ],
+  "logloss_model": 0.6176875129933811,
+  "logloss_market": 0.6095372270520768,
+  "calibration_model": {
+    "intercept": -0.22459132232444753,
+    "slope": 1.1117834207900152,
+    "slope_se": 0.26288751684526024,
+    "intercept_se": 0.17988303686707038
+  },
+  "calibration_market": {
+    "intercept": -0.13867030046399156,
+    "slope": 0.9961799345476205,
+    "slope_se": 0.2311234445523744,
+    "intercept_se": 0.18176825241625905
+  },
+  "rows": [
+    {
+      "market_id": "KXNFLGAME-26NOV23CINWAS-WAS",
+      "gameday": "2026-11-23",
+      "side": "home",
+      "model": 0.4670461690173212,
+      "market": 0.275,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22MINSF-SF",
+      "gameday": "2026-11-22",
+      "side": "home",
+      "model": 0.4790816562169064,
+      "market": 0.615,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22JACNYG-NYG",
+      "gameday": "2026-11-22",
+      "side": "home",
+      "model": 0.37207777461489144,
+      "market": 0.295,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22LVDEN-LV",
+      "gameday": "2026-11-22",
+      "side": "away",
+      "model": 0.13235364491907597,
+      "market": 0.175,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22NYJLAC-NYJ",
+      "gameday": "2026-11-22",
+      "side": "away",
+      "model": 0.27564016711921957,
+      "market": 0.395,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22PITPHI-PIT",
+      "gameday": "2026-11-22",
+      "side": "away",
+      "model": 0.4801180721505872,
+      "market": 0.655,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22TBDET-TB",
+      "gameday": "2026-11-22",
+      "side": "away",
+      "model": 0.26007328480099656,
+      "market": 0.315,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22BALCAR-CAR",
+      "gameday": "2026-11-22",
+      "side": "home",
+      "model": 0.5186928498135275,
+      "market": 0.575,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22MIABUF-MIA",
+      "gameday": "2026-11-22",
+      "side": "away",
+      "model": 0.1384899929297474,
+      "market": 0.08499999999999999,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22ARIKC-KC",
+      "gameday": "2026-11-22",
+      "side": "home",
+      "model": 0.8091964028105298,
+      "market": 0.915,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22TENDAL-TEN",
+      "gameday": "2026-11-22",
+      "side": "away",
+      "model": 0.22663627229657057,
+      "market": 0.235,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV22NOCHI-NO",
+      "gameday": "2026-11-22",
+      "side": "away",
+      "model": 0.18463556317836416,
+      "market": 0.155,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV19INDHOU-IND",
+      "gameday": "2026-11-19",
+      "side": "away",
+      "model": 0.3285816652096242,
+      "market": 0.155,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV16LACBAL-LAC",
+      "gameday": "2026-11-16",
+      "side": "away",
+      "model": 0.30501620372233984,
+      "market": 0.335,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15PITCIN-PIT",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.5471199768394664,
+      "market": 0.365,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15SFDAL-SF",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.6228663498230594,
+      "market": 0.655,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15LARARI-LAR",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.6996406757249736,
+      "market": 0.805,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15SEALV-SEA",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.7116669511894329,
+      "market": 0.725,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15BUFNYJ-NYJ",
+      "gameday": "2026-11-15",
+      "side": "home",
+      "model": 0.16207402745001023,
+      "market": 0.20500000000000002,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15MIAIND-MIA",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.413487996050909,
+      "market": 0.335,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15HOUCLE-HOU",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.5308881970918842,
+      "market": 0.675,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15KCATL-KC",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.5956994340775605,
+      "market": 0.625,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15JACTEN-TEN",
+      "gameday": "2026-11-15",
+      "side": "home",
+      "model": 0.22934064671931786,
+      "market": 0.165,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15CARNO-NO",
+      "gameday": "2026-11-15",
+      "side": "home",
+      "model": 0.5472362394346854,
+      "market": 0.545,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15MINGB-MIN",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.47385234114521224,
+      "market": 0.415,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV15NEDET-NE",
+      "gameday": "2026-11-15",
+      "side": "away",
+      "model": 0.5072948432371925,
+      "market": 0.425,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV12WASNYG-WAS",
+      "gameday": "2026-11-12",
+      "side": "away",
+      "model": 0.4330158116719043,
+      "market": 0.445,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV09BUFMIN-MIN",
+      "gameday": "2026-11-09",
+      "side": "home",
+      "model": 0.5081404321915721,
+      "market": 0.385,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08TBCHI-TB",
+      "gameday": "2026-11-08",
+      "side": "away",
+      "model": 0.29236218309757245,
+      "market": 0.28500000000000003,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08GBNE-NE",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.6104669191877988,
+      "market": 0.605,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08ARISEA-SEA",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.7900633461079862,
+      "market": 0.785,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08LVSF-SF",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.8430015395836677,
+      "market": 0.795,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08HOULAC-LAC",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.4399416135917691,
+      "market": 0.305,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08LARWAS-WAS",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.4186195670110812,
+      "market": 0.335,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08NYGPHI-PHI",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.6142163877527415,
+      "market": 0.385,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08DETMIA-MIA",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.33865657057816295,
+      "market": 0.265,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08DALIND-IND",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.533762852452345,
+      "market": 0.325,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08DENCAR-DEN",
+      "gameday": "2026-11-08",
+      "side": "away",
+      "model": 0.6733223142073175,
+      "market": 0.575,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08CLENO-NO",
+      "gameday": "2026-11-08",
+      "side": "home",
+      "model": 0.5421467784649118,
+      "market": 0.615,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08NYJKC-NYJ",
+      "gameday": "2026-11-08",
+      "side": "away",
+      "model": 0.17788342338612828,
+      "market": 0.195,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV08CINATL-CIN",
+      "gameday": "2026-11-08",
+      "side": "away",
+      "model": 0.6443164007444635,
+      "market": 0.615,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV05JACBAL-JAC",
+      "gameday": "2026-11-05",
+      "side": "away",
+      "model": 0.4805093814781688,
+      "market": 0.815,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV02CHISEA-SEA",
+      "gameday": "2026-11-02",
+      "side": "home",
+      "model": 0.6531787521269833,
+      "market": 0.615,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01PHIWAS-WAS",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.48033427779034765,
+      "market": 0.705,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01NEMIA-NE",
+      "gameday": "2026-11-01",
+      "side": "away",
+      "model": 0.6603685436314707,
+      "market": 0.755,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01KCDEN-KC",
+      "gameday": "2026-11-01",
+      "side": "away",
+      "model": 0.3774108223290016,
+      "market": 0.525,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01LACLAR-LAR",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.6688281016566459,
+      "market": 0.725,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01ATLTB-TB",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.525258382024337,
+      "market": 0.555,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01CLEPIT-PIT",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.6693639030418346,
+      "market": 0.645,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01LVNYJ-NYJ",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.5442636819662653,
+      "market": 0.535,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01INDJAC-JAC",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.7410899587593822,
+      "market": 0.805,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01MINDET-MIN",
+      "gameday": "2026-11-01",
+      "side": "away",
+      "model": 0.5051950445921629,
+      "market": 0.375,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01TENCIN-TEN",
+      "gameday": "2026-11-01",
+      "side": "away",
+      "model": 0.19403329115077073,
+      "market": 0.135,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01BALBUF-BUF",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.7538848670405116,
+      "market": 0.615,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26NOV01ARIDAL-DAL",
+      "gameday": "2026-11-01",
+      "side": "home",
+      "model": 0.7004722875563755,
+      "market": 0.745,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT29CARGB-GB",
+      "gameday": "2026-10-29",
+      "side": "home",
+      "model": 0.6954336603708831,
+      "market": 0.645,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT26DALPHI-PHI",
+      "gameday": "2026-10-26",
+      "side": "home",
+      "model": 0.6587879747972597,
+      "market": 0.325,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25KCSEA-SEA",
+      "gameday": "2026-10-25",
+      "side": "home",
+      "model": 0.6311908288128774,
+      "market": 0.585,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25GBDET-GB",
+      "gameday": "2026-10-25",
+      "side": "away",
+      "model": 0.38373557229181166,
+      "market": 0.375,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25LARLV-LV",
+      "gameday": "2026-10-25",
+      "side": "home",
+      "model": 0.376762306960625,
+      "market": 0.395,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25DENARI-DEN",
+      "gameday": "2026-10-25",
+      "side": "away",
+      "model": 0.7318933109377315,
+      "market": 0.675,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25MIANYJ-NYJ",
+      "gameday": "2026-10-25",
+      "side": "home",
+      "model": 0.4598492622121133,
+      "market": 0.665,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25TBCAR-TB",
+      "gameday": "2026-10-25",
+      "side": "away",
+      "model": 0.40308196070451996,
+      "market": 0.405,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25CINBAL-CIN",
+      "gameday": "2026-10-25",
+      "side": "away",
+      "model": 0.4110360670227391,
+      "market": 0.525,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25SFATL-SF",
+      "gameday": "2026-10-25",
+      "side": "away",
+      "model": 0.6591258809192942,
+      "market": 0.575,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25CLETEN-TEN",
+      "gameday": "2026-10-25",
+      "side": "home",
+      "model": 0.397368150558858,
+      "market": 0.455,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25INDMIN-MIN",
+      "gameday": "2026-10-25",
+      "side": "home",
+      "model": 0.8036170374692706,
+      "market": 0.715,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25NYGHOU-NYG",
+      "gameday": "2026-10-25",
+      "side": "away",
+      "model": 0.2664371816644745,
+      "market": 0.195,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT25PITNO-PIT",
+      "gameday": "2026-10-25",
+      "side": "away",
+      "model": 0.7263992532105169,
+      "market": 0.605,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT22NECHI-NE",
+      "gameday": "2026-10-22",
+      "side": "away",
+      "model": 0.49057950843678344,
+      "market": 0.405,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT19WASSF-WAS",
+      "gameday": "2026-10-19",
+      "side": "away",
+      "model": 0.21318572494305843,
+      "market": 0.215,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18DALGB-GB",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.6528721633416942,
+      "market": 0.515,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18LACKC-LAC",
+      "gameday": "2026-10-18",
+      "side": "away",
+      "model": 0.2707821139297709,
+      "market": 0.215,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18BUFLV-LV",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.2825509632875625,
+      "market": 0.325,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18ARILAR-LAR",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.7857491483952971,
+      "market": 0.875,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18PITTB-TB",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.4700606560233226,
+      "market": 0.435,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18CARPHI-PHI",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.6913056205395539,
+      "market": 0.385,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18NONYG-NYG",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.6129453537911748,
+      "market": 0.505,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18NYJNE-NYJ",
+      "gameday": "2026-10-18",
+      "side": "away",
+      "model": 0.21278897080687886,
+      "market": 0.245,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18TENIND-TEN",
+      "gameday": "2026-10-18",
+      "side": "away",
+      "model": 0.24975168428929417,
+      "market": 0.255,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18BALCLE-CLE",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.38327504566491566,
+      "market": 0.385,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18CHIATL-CHI",
+      "gameday": "2026-10-18",
+      "side": "away",
+      "model": 0.49530034768140974,
+      "market": 0.515,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT18HOUJAC-JAC",
+      "gameday": "2026-10-18",
+      "side": "home",
+      "model": 0.4977488117865217,
+      "market": 0.565,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT15SEADEN-SEA",
+      "gameday": "2026-10-15",
+      "side": "away",
+      "model": 0.45476561778396796,
+      "market": 0.565,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT12BUFLAR-LAR",
+      "gameday": "2026-10-12",
+      "side": "home",
+      "model": 0.5276957712778602,
+      "market": 0.615,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11BALATL-BAL",
+      "gameday": "2026-10-11",
+      "side": "away",
+      "model": 0.522064802229666,
+      "market": 0.385,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11CHIGB-GB",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.54449342460803,
+      "market": 0.46499999999999997,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11SFSEA-SF",
+      "gameday": "2026-10-11",
+      "side": "away",
+      "model": 0.3949111658518287,
+      "market": 0.385,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11DETARI-DET",
+      "gameday": "2026-10-11",
+      "side": "away",
+      "model": 0.6589042999920162,
+      "market": 0.695,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11DENLAC-LAC",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.40574122885566943,
+      "market": 0.365,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11INDPIT-PIT",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.6582652171912053,
+      "market": 0.585,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11CLENYJ-NYJ",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.43516010799287713,
+      "market": 0.565,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11LVNE-NE",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.7643395198628609,
+      "market": 0.625,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11CINMIA-MIA",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.5082328425690689,
+      "market": 0.245,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11HOUTEN-TEN",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.30805871716180344,
+      "market": 0.245,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11MINNO-NO",
+      "gameday": "2026-10-11",
+      "side": "home",
+      "model": 0.3190597285269112,
+      "market": 0.435,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT11PHIJAC-PHI",
+      "gameday": "2026-10-11",
+      "side": "away",
+      "model": 0.5814735455313342,
+      "market": 0.235,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT08TBDAL-TB",
+      "gameday": "2026-10-08",
+      "side": "away",
+      "model": 0.34109254792630883,
+      "market": 0.20500000000000002,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT05ATLNO-NO",
+      "gameday": "2026-10-05",
+      "side": "home",
+      "model": 0.48125648729611464,
+      "market": 0.535,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04DETCAR-DET",
+      "gameday": "2026-10-04",
+      "side": "away",
+      "model": 0.6184851833801592,
+      "market": 0.645,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04DENSF-SF",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.5701513503092641,
+      "market": 0.575,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04LACSEA-SEA",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.7566350197685132,
+      "market": 0.755,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04KCLV-LV",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.37581332630230263,
+      "market": 0.335,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04MIAMIN-MIN",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.7633304298449856,
+      "market": 0.835,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04JACCIN-JAC",
+      "gameday": "2026-10-04",
+      "side": "away",
+      "model": 0.48438649159512415,
+      "market": 0.425,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04TENBAL-TEN",
+      "gameday": "2026-10-04",
+      "side": "away",
+      "model": 0.17776659437409503,
+      "market": 0.14500000000000002,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04GBTB-TB",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.4665892062383024,
+      "market": 0.395,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04LARPHI-PHI",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.6136771475889797,
+      "market": 0.365,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04DALHOU-HOU",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.6474906295720141,
+      "market": 0.585,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04NYJCHI-NYJ",
+      "gameday": "2026-10-04",
+      "side": "away",
+      "model": 0.24632602807842574,
+      "market": 0.365,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04NEBUF-NE",
+      "gameday": "2026-10-04",
+      "side": "away",
+      "model": 0.3307474847820536,
+      "market": 0.265,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04ARINYG-NYG",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.6033129531029736,
+      "market": 0.425,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT04INDWAS-WAS",
+      "gameday": "2026-10-04",
+      "side": "home",
+      "model": 0.4453460324440877,
+      "market": 0.345,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26OCT01PITCLE-PIT",
+      "gameday": "2026-10-01",
+      "side": "away",
+      "model": 0.5799887095242433,
+      "market": 0.575,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP28PHICHI-PHI",
+      "gameday": "2026-09-28",
+      "side": "away",
+      "model": 0.5596205761899599,
+      "market": 0.655,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27LARDEN-LAR",
+      "gameday": "2026-09-27",
+      "side": "away",
+      "model": 0.4027512590618667,
+      "market": 0.545,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27BALDAL-DAL",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.3788303513363634,
+      "market": 0.375,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27LVNO-NO",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.6242531358105226,
+      "market": 0.615,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27MINTB-TB",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.41240486721805103,
+      "market": 0.475,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27ARISF-SF",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.7774159666525189,
+      "market": 0.785,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27CINPIT-PIT",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.5832668947731364,
+      "market": 0.385,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27SEAWAS-WAS",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.3013067374593418,
+      "market": 0.235,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27HOUIND-IND",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.4287939188604928,
+      "market": 0.46499999999999997,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27NYJDET-NYJ",
+      "gameday": "2026-09-27",
+      "side": "away",
+      "model": 0.20189960235575877,
+      "market": 0.275,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27LACBUF-LAC",
+      "gameday": "2026-09-27",
+      "side": "away",
+      "model": 0.24422994772850304,
+      "market": 0.245,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27NEJAC-NE",
+      "gameday": "2026-09-27",
+      "side": "away",
+      "model": 0.4721461710762389,
+      "market": 0.405,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27TENNYG-TEN",
+      "gameday": "2026-09-27",
+      "side": "away",
+      "model": 0.34556284924446223,
+      "market": 0.445,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27CARCLE-CLE",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.5671602801960464,
+      "market": 0.445,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP27KCMIA-MIA",
+      "gameday": "2026-09-27",
+      "side": "home",
+      "model": 0.44922208108672446,
+      "market": 0.14500000000000002,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP24ATLGB-GB",
+      "gameday": "2026-09-24",
+      "side": "home",
+      "model": 0.6853990492715608,
+      "market": 0.695,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP21NYGLAR-NYG",
+      "gameday": "2026-09-21",
+      "side": "away",
+      "model": 0.21883367704587808,
+      "market": 0.265,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20INDKC-KC",
+      "gameday": "2026-09-20",
+      "side": "home",
+      "model": 0.6737678499884272,
+      "market": 0.715,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20WASDAL-WAS",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.4252502763956779,
+      "market": 0.345,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20MIASF-SF",
+      "gameday": "2026-09-20",
+      "side": "home",
+      "model": 0.7345613969419312,
+      "market": 0.895,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20SEAARI-SEA",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.7616497033866019,
+      "market": 0.655,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20LVLAC-LV",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.2850327895554946,
+      "market": 0.275,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20JACDEN-JAC",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.3794662425612063,
+      "market": 0.415,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20CLETB-TB",
+      "gameday": "2026-09-20",
+      "side": "home",
+      "model": 0.6622339492866595,
+      "market": 0.785,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20CINHOU-HOU",
+      "gameday": "2026-09-20",
+      "side": "home",
+      "model": 0.6680400908501042,
+      "market": 0.585,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20NOBAL-NO",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.26419400778691016,
+      "market": 0.215,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20GBNYJ-NYJ",
+      "gameday": "2026-09-20",
+      "side": "home",
+      "model": 0.4147857706036661,
+      "market": 0.385,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20CARATL-CAR",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.38367212134551654,
+      "market": 0.575,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20MINCHI-MIN",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.49226207278019596,
+      "market": 0.335,
+      "outcome": 1,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20PITNE-PIT",
+      "gameday": "2026-09-20",
+      "side": "away",
+      "model": 0.385307058369763,
+      "market": 0.315,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP20PHITEN-TEN",
+      "gameday": "2026-09-20",
+      "side": "home",
+      "model": 0.2523772679856633,
+      "market": 0.245,
+      "outcome": 0,
+      "agrees_with_score": true
+    },
+    {
+      "market_id": "KXNFLGAME-26SEP17DETBUF-DET",
+      "gameday": "2026-09-17",
+      "side": "away",
+      "model": 0.3616576322082946,
+      "market": 0.315,
+      "outcome": 0,
+      "agrees_with_score": true
+    }
+  ]
+}

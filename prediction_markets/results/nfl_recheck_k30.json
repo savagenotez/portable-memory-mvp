@@ -1,0 +1,21 @@
+{
+  "K20_diagnosis": {
+    "brier_model": 0.21571073551413752,
+    "brier_market": 0.21078253424657534,
+    "model_minus_market_brier": 0.004928201267562195,
+    "model_minus_market_ci95": [
+      -0.012101607016886694,
+      0.02192310039152298
+    ]
+  },
+  "K30_tuned": {
+    "brier_model": 0.21468948808256136,
+    "brier_market": 0.21078253424657534,
+    "model_minus_market_brier": 0.003906953835986009,
+    "model_minus_market_ci95": [
+      -0.012583147897935836,
+      0.020344305221626446
+    ]
+  },
+  "note": "146 games used for diagnosis; this is a re-check, not validation"
+}

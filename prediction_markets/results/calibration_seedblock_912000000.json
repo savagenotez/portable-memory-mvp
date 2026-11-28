@@ -1,0 +1,272 @@
+{
+  "criterion": "pre-registered: |mean(pred) - realized| <= 2 * SE per domain",
+  "seed_base": 912000000,
+  "replicates": 500,
+  "mc_trials_per_prediction": 200,
+  "variants": {
+    "spec_plug_in": {
+      "settings": {
+        "dependence": "iid",
+        "mu_uncertainty": false
+      },
+      "passes_all_domains": false,
+      "domains_passing": 3,
+      "mean_brier_skill": -0.23254881003225347,
+      "domains": {
+        "sports_star": {
+          "replicates": 500,
+          "predicted_mean": 0.13088999999999998,
+          "realized_rate": 0.106,
+          "gap": 0.02488999999999998,
+          "standard_error": 0.013766916866168693,
+          "gap_in_se": 1.807957456412448,
+          "passes": true,
+          "brier": 0.10124854999999999,
+          "brier_skill_vs_base_rate": -0.06842841163310953
+        },
+        "sports_role_player": {
+          "replicates": 500,
+          "predicted_mean": 0.18663999999999997,
+          "realized_rate": 0.188,
+          "gap": -0.0013600000000000279,
+          "standard_error": 0.01747317944737019,
+          "gap_in_se": -0.07783357368339254,
+          "passes": true,
+          "brier": 0.1703498,
+          "brier_skill_vs_base_rate": -0.11590635153547835
+        },
+        "weather_precipitation": {
+          "replicates": 500,
+          "predicted_mean": 0.51424,
+          "realized_rate": 0.438,
+          "gap": 0.07624000000000003,
+          "standard_error": 0.02218810492133116,
+          "gap_in_se": 3.4360753327204865,
+          "passes": false,
+          "brier": 0.2298005,
+          "brier_skill_vs_base_rate": 0.06644363736817316
+        },
+        "politics_poll_share": {
+          "replicates": 500,
+          "predicted_mean": 0.09071,
+          "realized_rate": 0.086,
+          "gap": 0.004710000000000006,
+          "standard_error": 0.012538261442480771,
+          "gap_in_se": 0.3756501666205569,
+          "passes": true,
+          "brier": 0.08807485,
+          "brier_skill_vs_base_rate": -0.12048814309704348
+        },
+        "systems_throughput": {
+          "replicates": 500,
+          "predicted_mean": 0.32738,
+          "realized_rate": 0.124,
+          "gap": 0.20338,
+          "standard_error": 0.014739335127474372,
+          "gap_in_se": 13.798451439027003,
+          "passes": false,
+          "brier": 0.2090322,
+          "brier_skill_vs_base_rate": -0.9243647812638092
+        }
+      }
+    },
+    "mu_uncertainty": {
+      "settings": {
+        "dependence": "iid",
+        "mu_uncertainty": true
+      },
+      "passes_all_domains": false,
+      "domains_passing": 0,
+      "mean_brier_skill": -0.1354203980395587,
+      "domains": {
+        "sports_star": {
+          "replicates": 500,
+          "predicted_mean": 0.17638,
+          "realized_rate": 0.106,
+          "gap": 0.07038000000000001,
+          "standard_error": 0.013766916866168693,
+          "gap_in_se": 5.1122557566214635,
+          "passes": false,
+          "brier": 0.0964363,
+          "brier_skill_vs_base_rate": -0.01764699674982073
+        },
+        "sports_role_player": {
+          "replicates": 500,
+          "predicted_mean": 0.23025,
+          "realized_rate": 0.188,
+          "gap": 0.04225000000000001,
+          "standard_error": 0.01747317944737019,
+          "gap_in_se": 2.417991535384756,
+          "passes": false,
+          "brier": 0.15794155,
+          "brier_skill_vs_base_rate": -0.034623925689131196
+        },
+        "weather_precipitation": {
+          "replicates": 500,
+          "predicted_mean": 0.51498,
+          "realized_rate": 0.438,
+          "gap": 0.07697999999999999,
+          "standard_error": 0.02218810492133116,
+          "gap_in_se": 3.469426536107331,
+          "passes": false,
+          "brier": 0.2098609,
+          "brier_skill_vs_base_rate": 0.14744755358390627
+        },
+        "politics_poll_share": {
+          "replicates": 500,
+          "predicted_mean": 0.11965,
+          "realized_rate": 0.086,
+          "gap": 0.03365000000000001,
+          "standard_error": 0.012538261442480771,
+          "gap_in_se": 2.6837851606755265,
+          "passes": false,
+          "brier": 0.08398215,
+          "brier_skill_vs_base_rate": -0.06842081827896807
+        },
+        "systems_throughput": {
+          "replicates": 500,
+          "predicted_mean": 0.33661,
+          "realized_rate": 0.124,
+          "gap": 0.21261000000000002,
+          "standard_error": 0.014739335127474372,
+          "gap_in_se": 14.424666931121699,
+          "passes": false,
+          "brier": 0.18507985,
+          "brier_skill_vs_base_rate": -0.7038578030637797
+        }
+      }
+    },
+    "ar1_momentum": {
+      "settings": {
+        "dependence": "ar1",
+        "mu_uncertainty": false
+      },
+      "passes_all_domains": false,
+      "domains_passing": 2,
+      "mean_brier_skill": -0.17776394277526153,
+      "domains": {
+        "sports_star": {
+          "replicates": 500,
+          "predicted_mean": 0.13609000000000002,
+          "realized_rate": 0.106,
+          "gap": 0.03009000000000002,
+          "standard_error": 0.013766916866168693,
+          "gap_in_se": 2.185674562613525,
+          "passes": false,
+          "brier": 0.10082105,
+          "brier_skill_vs_base_rate": -0.06391720484572194
+        },
+        "sports_role_player": {
+          "replicates": 500,
+          "predicted_mean": 0.19083,
+          "realized_rate": 0.188,
+          "gap": 0.002829999999999999,
+          "standard_error": 0.01747317944737019,
+          "gap_in_se": 0.16196250994411493,
+          "passes": true,
+          "brier": 0.16862135,
+          "brier_skill_vs_base_rate": -0.10458383555182893
+        },
+        "weather_precipitation": {
+          "replicates": 500,
+          "predicted_mean": 0.51084,
+          "realized_rate": 0.438,
+          "gap": 0.07283999999999996,
+          "standard_error": 0.02218810492133116,
+          "gap_in_se": 3.2828400739160544,
+          "passes": false,
+          "brier": 0.2213398,
+          "brier_skill_vs_base_rate": 0.10081493036935929
+        },
+        "politics_poll_share": {
+          "replicates": 500,
+          "predicted_mean": 0.09720000000000001,
+          "realized_rate": 0.086,
+          "gap": 0.011200000000000015,
+          "standard_error": 0.012538261442480771,
+          "gap_in_se": 0.893265788991558,
+          "passes": true,
+          "brier": 0.0880161,
+          "brier_skill_vs_base_rate": -0.11974072566281624
+        },
+        "systems_throughput": {
+          "replicates": 500,
+          "predicted_mean": 0.32230000000000003,
+          "realized_rate": 0.124,
+          "gap": 0.19830000000000003,
+          "standard_error": 0.014739335127474372,
+          "gap_in_se": 13.45379545854585,
+          "passes": false,
+          "brier": 0.1848121,
+          "brier_skill_vs_base_rate": -0.7013928781852998
+        }
+      }
+    },
+    "ar1_momentum_and_mu_uncertainty": {
+      "settings": {
+        "dependence": "ar1",
+        "mu_uncertainty": true
+      },
+      "passes_all_domains": false,
+      "domains_passing": 0,
+      "mean_brier_skill": -0.11301579072818926,
+      "domains": {
+        "sports_star": {
+          "replicates": 500,
+          "predicted_mean": 0.17968,
+          "realized_rate": 0.106,
+          "gap": 0.07368000000000001,
+          "standard_error": 0.013766916866168693,
+          "gap_in_se": 5.351960843249068,
+          "passes": false,
+          "brier": 0.0967546,
+          "brier_skill_vs_base_rate": -0.021005867206956186
+        },
+        "sports_role_player": {
+          "replicates": 500,
+          "predicted_mean": 0.23303000000000001,
+          "realized_rate": 0.188,
+          "gap": 0.045030000000000014,
+          "standard_error": 0.01747317944737019,
+          "gap_in_se": 2.577092516884629,
+          "passes": false,
+          "brier": 0.15742835,
+          "brier_skill_vs_base_rate": -0.03126211875065499
+        },
+        "weather_precipitation": {
+          "replicates": 500,
+          "predicted_mean": 0.51169,
+          "realized_rate": 0.438,
+          "gap": 0.07368999999999998,
+          "standard_error": 0.02218810492133116,
+          "gap_in_se": 3.3211488886171625,
+          "passes": false,
+          "brier": 0.20578955,
+          "brier_skill_vs_base_rate": 0.16398726823640308
+        },
+        "politics_poll_share": {
+          "replicates": 500,
+          "predicted_mean": 0.12486,
+          "realized_rate": 0.086,
+          "gap": 0.038860000000000006,
+          "standard_error": 0.012538261442480771,
+          "gap_in_se": 3.0993132643046337,
+          "passes": false,
+          "brier": 0.0845346,
+          "brier_skill_vs_base_rate": -0.07544908656048044
+        },
+        "systems_throughput": {
+          "replicates": 500,
+          "predicted_mean": 0.33282999999999996,
+          "realized_rate": 0.124,
+          "gap": 0.20882999999999996,
+          "standard_error": 0.014739335127474372,
+          "gap_in_se": 14.168210315724302,
+          "passes": false,
+          "brier": 0.17394495000000001,
+          "brier_skill_vs_base_rate": -0.6013491493592578
+        }
+      }
+    }
+  }
+}

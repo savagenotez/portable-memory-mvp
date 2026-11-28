@@ -1,0 +1,788 @@
+{
+  "label": "PLAYER PROPS, REVISION 2. Sizes chosen per position group on 2012-2017 (grid down to 1); scored on 2018-2019. DEVELOPMENT, not blind.",
+  "chosen": {
+    "att": {
+      "halflife_games": 4,
+      "k0": 1,
+      "pooled": 1,
+      "groups": {
+        "QB": 1
+      }
+    },
+    "pyd": {
+      "halflife_games": 4,
+      "k0": 1,
+      "pooled": 1,
+      "groups": {
+        "QB": 1
+      }
+    },
+    "tgt": {
+      "halflife_games": 4,
+      "k0": 1,
+      "pooled": 2,
+      "groups": {
+        "RB": 1.5,
+        "WR": 3,
+        "TE": 2,
+        "other": 1
+      }
+    },
+    "ryd": {
+      "halflife_games": 4,
+      "k0": 1,
+      "pooled": 1,
+      "groups": {
+        "RB": 1,
+        "WR": 1,
+        "TE": 1,
+        "other": 1
+      }
+    },
+    "car": {
+      "halflife_games": 4,
+      "k0": 1,
+      "pooled": 1,
+      "groups": {
+        "QB": 2,
+        "RB": 1,
+        "WR": 1,
+        "other": 1
+      }
+    },
+    "ruyd": {
+      "halflife_games": 4,
+      "k0": 1,
+      "pooled": 1,
+      "groups": {
+        "QB": 1,
+        "RB": 1,
+        "WR": 1,
+        "other": 1
+      }
+    }
+  },
+  "grid_mse": {
+    "mse_per_row": {
+      "att": {
+        "h4_k1": 149.8698656666263,
+        "h4_k3": 174.8666701048308,
+        "h4_k6": 202.41532759994237,
+        "h8_k1": 155.850366191033,
+        "h8_k3": 175.24839941245907,
+        "h8_k6": 196.368976746081,
+        "h16_k1": 161.83840201956818,
+        "h16_k3": 178.799052998747,
+        "h16_k6": 196.2515080281136
+      },
+      "pyd": {
+        "h4_k1": 8779.983853851365,
+        "h4_k3": 10073.207859787828,
+        "h4_k6": 11530.129698336164,
+        "h8_k1": 9073.468213520773,
+        "h8_k3": 10062.973859738844,
+        "h8_k6": 11161.74688916305,
+        "h16_k1": 9371.422773644215,
+        "h16_k3": 10230.225530790834,
+        "h16_k6": 11125.182888630576
+      },
+      "tgt": {
+        "h4_k1": 6.617393131694372,
+        "h4_k3": 7.139296082179149,
+        "h4_k6": 7.944780339617345,
+        "h8_k1": 6.765852763655382,
+        "h8_k3": 7.073865897171683,
+        "h8_k6": 7.5961209276476245,
+        "h16_k1": 6.976304444912526,
+        "h16_k3": 7.1948860236972605,
+        "h16_k6": 7.554939983396747
+      },
+      "ryd": {
+        "h4_k1": 662.9565641197673,
+        "h4_k3": 690.3435014646448,
+        "h4_k6": 741.4258125778885,
+        "h8_k1": 666.2577514034742,
+        "h8_k3": 681.2509163379888,
+        "h8_k6": 713.7082693131509,
+        "h16_k1": 677.3904899391677,
+        "h16_k3": 687.0523056264132,
+        "h16_k6": 708.6027556203246
+      },
+      "car": {
+        "h4_k1": 18.283815986309616,
+        "h4_k3": 20.61266198143867,
+        "h4_k6": 24.009123524033093,
+        "h8_k1": 19.176351540787024,
+        "h8_k3": 20.58133330370505,
+        "h8_k6": 22.814738569106247,
+        "h16_k1": 20.115784882890114,
+        "h16_k3": 21.15159528488222,
+        "h16_k6": 22.741105629580247
+      },
+      "ruyd": {
+        "h4_k1": 547.461963318509,
+        "h4_k3": 582.0336639973214,
+        "h4_k6": 640.6968138897141,
+        "h8_k1": 561.3050049794942,
+        "h8_k3": 580.4830440980322,
+        "h8_k6": 618.0362763345848,
+        "h16_k1": 579.1920973342752,
+        "h16_k3": 592.1139462393402,
+        "h16_k6": 617.7680596261087
+      }
+    },
+    "group_rows": {
+      "att": {
+        "QB": 3966,
+        "RB": 65,
+        "WR": 195,
+        "TE": 12,
+        "other": 132
+      },
+      "pyd": {
+        "QB": 3966,
+        "RB": 65,
+        "WR": 195,
+        "TE": 12,
+        "other": 132
+      },
+      "tgt": {
+        "QB": 122,
+        "RB": 9127,
+        "WR": 13646,
+        "TE": 7428,
+        "other": 220
+      },
+      "ryd": {
+        "QB": 122,
+        "RB": 9127,
+        "WR": 13646,
+        "TE": 7428,
+        "other": 220
+      },
+      "car": {
+        "QB": 3783,
+        "RB": 9498,
+        "WR": 2645,
+        "TE": 173,
+        "other": 285
+      },
+      "ruyd": {
+        "QB": 3783,
+        "RB": 9498,
+        "WR": 2645,
+        "TE": 173,
+        "other": 285
+      }
+    }
+  },
+  "scores": {
+    "pass attempts log score": {
+      "n": 1685,
+      "model": 3.6694322483828166,
+      "minus_league": {
+        "model_minus_baseline": -9.158599562429599,
+        "ci95": [
+          -9.562368811961218,
+          -8.745757114360844
+        ],
+        "n": 1685,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -3.5702712229106206,
+        "ci95": [
+          -3.9684585500293807,
+          -3.1570456260132884
+        ],
+        "n": 1685,
+        "model_better": true
+      }
+    },
+    "pass attempts, quarter log score": {
+      "n": 6740,
+      "model": 2.4067253682543686,
+      "minus_league": {
+        "model_minus_baseline": -1.9630313275443907,
+        "ci95": [
+          -2.0214169035983467,
+          -1.9012101193239186
+        ],
+        "n": 6740,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.8454024754146612,
+        "ci95": [
+          -0.9331190102715948,
+          -0.7541371482264563
+        ],
+        "n": 6740,
+        "model_better": true
+      }
+    },
+    "passing yards log score": {
+      "n": 1685,
+      "model": 5.602323436280412,
+      "minus_league": {
+        "model_minus_baseline": -17.49910355343576,
+        "ci95": [
+          -17.911514698840215,
+          -17.07998321331585
+        ],
+        "n": 1685,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -8.860921213634517,
+        "ci95": [
+          -9.36482509381942,
+          -8.342083516404045
+        ],
+        "n": 1685,
+        "model_better": true
+      }
+    },
+    "targets log score": {
+      "n": 11031,
+      "model": 2.008720149174316,
+      "minus_league": {
+        "model_minus_baseline": -0.9627110058763744,
+        "ci95": [
+          -0.9964105820214126,
+          -0.930195349697655
+        ],
+        "n": 11031,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.9310167233476039,
+        "ci95": [
+          -1.0141748048843924,
+          -0.8470942350337478
+        ],
+        "n": 11031,
+        "model_better": true
+      }
+    },
+    "targets, quarter log score": {
+      "n": 44124,
+      "model": 1.052375357216094,
+      "minus_league": {
+        "model_minus_baseline": -0.2137845019951672,
+        "ci95": [
+          -0.22036092708970656,
+          -0.207383584730048
+        ],
+        "n": 44124,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.33511678010943885,
+        "ci95": [
+          -0.3619882120939465,
+          -0.30923284808805107
+        ],
+        "n": 44124,
+        "model_better": true
+      }
+    },
+    "receiving yards log score": {
+      "n": 11031,
+      "model": 3.8071943661800147,
+      "minus_league": {
+        "model_minus_baseline": -12.386265099031412,
+        "ci95": [
+          -12.549606483121941,
+          -12.22120525823364
+        ],
+        "n": 11031,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -7.894041629907178,
+        "ci95": [
+          -8.076561262203274,
+          -7.717221362949099
+        ],
+        "n": 11031,
+        "model_better": true
+      }
+    },
+    "carries log score": {
+      "n": 6041,
+      "model": 2.100464334439865,
+      "minus_league": {
+        "model_minus_baseline": -2.7301395931311614,
+        "ci95": [
+          -2.82850338846873,
+          -2.6243915833366613
+        ],
+        "n": 6041,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -1.386573036903775,
+        "ci95": [
+          -1.5114816296592586,
+          -1.2628753589150479
+        ],
+        "n": 6041,
+        "model_better": true
+      }
+    },
+    "carries, quarter log score": {
+      "n": 24164,
+      "model": 1.1479257665316065,
+      "minus_league": {
+        "model_minus_baseline": -0.6066471399567899,
+        "ci95": [
+          -0.6231221379503357,
+          -0.5900626570842105
+        ],
+        "n": 24164,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.41543757243281865,
+        "ci95": [
+          -0.4544078366427607,
+          -0.3767377198052155
+        ],
+        "n": 24164,
+        "model_better": true
+      }
+    },
+    "rushing yards log score": {
+      "n": 6041,
+      "model": 3.39500171821869,
+      "minus_league": {
+        "model_minus_baseline": -11.701560167988008,
+        "ci95": [
+          -11.88852485242518,
+          -11.51255419263228
+        ],
+        "n": 6041,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -6.317069595961296,
+        "ci95": [
+          -6.5277073671582135,
+          -6.101312153661368
+        ],
+        "n": 6041,
+        "model_better": true
+      }
+    },
+    "completions log score": {
+      "n": 1685,
+      "model": 3.2375085843904876,
+      "minus_league": {
+        "model_minus_baseline": -5.505779567459944,
+        "ci95": [
+          -5.767376951369907,
+          -5.2409814169549955
+        ],
+        "n": 1685,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -2.0789398078373638,
+        "ci95": [
+          -2.371004739010925,
+          -1.7860287985039776
+        ],
+        "n": 1685,
+        "model_better": true
+      }
+    },
+    "receptions log score": {
+      "n": 11031,
+      "model": 1.6796712853918465,
+      "minus_league": {
+        "model_minus_baseline": -0.6068796681424076,
+        "ci95": [
+          -0.6312588294005167,
+          -0.5826817158057087
+        ],
+        "n": 11031,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.9094359676943194,
+        "ci95": [
+          -0.9966870686205518,
+          -0.825915213607599
+        ],
+        "n": 11031,
+        "model_better": true
+      }
+    },
+    "pair targets log score": {
+      "n": 10057,
+      "model": 1.9711437175196276,
+      "minus_league": {
+        "model_minus_baseline": -0.21618419471037784,
+        "ci95": [
+          -0.23281638922634837,
+          -0.20008448633983428
+        ],
+        "n": 10057,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.21618419471037784,
+        "ci95": [
+          -0.23281638922634837,
+          -0.20008448633983428
+        ],
+        "n": 10057,
+        "model_better": true
+      }
+    },
+    "pair receptions log score": {
+      "n": 10057,
+      "model": 1.6520586845229819,
+      "minus_league": {
+        "model_minus_baseline": -0.12136047492031568,
+        "ci95": [
+          -0.13339507258206862,
+          -0.10813905456312478
+        ],
+        "n": 10057,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.12136047492031568,
+        "ci95": [
+          -0.13339507258206862,
+          -0.10813905456312478
+        ],
+        "n": 10057,
+        "model_better": true
+      }
+    },
+    "pair yards log score": {
+      "n": 10057,
+      "model": 3.776342308807557,
+      "minus_league": {
+        "model_minus_baseline": -8.02878982585954,
+        "ci95": [
+          -8.175340431481875,
+          -7.87059573562152
+        ],
+        "n": 10057,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -8.02878982585954,
+        "ci95": [
+          -8.175340431481875,
+          -7.87059573562152
+        ],
+        "n": 10057,
+        "model_better": true
+      }
+    },
+    "pass attempts over typical line (Brier)": {
+      "n": 1454,
+      "model": 0.3642302032405937,
+      "minus_league": {
+        "model_minus_baseline": -0.19282366321660357,
+        "ci95": [
+          -0.2075567723119757,
+          -0.1781441609256831
+        ],
+        "n": 1454,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.15035666608241788,
+        "ci95": [
+          0.13013228205555175,
+          0.16923240441360693
+        ],
+        "n": 1454,
+        "model_better": false
+      }
+    },
+    "pass attempts, quarter over typical line (Brier)": {
+      "n": 5816,
+      "model": 0.2807326833773825,
+      "minus_league": {
+        "model_minus_baseline": -0.22880507895998475,
+        "ci95": [
+          -0.2364258839495228,
+          -0.2204311418840677
+        ],
+        "n": 5816,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.08206853263317096,
+        "ci95": [
+          0.07592411922972458,
+          0.08841793277197976
+        ],
+        "n": 5816,
+        "model_better": false
+      }
+    },
+    "passing yards over typical line (Brier)": {
+      "n": 1454,
+      "model": 0.41550001151394406,
+      "minus_league": {
+        "model_minus_baseline": -0.16313258565836566,
+        "ci95": [
+          -0.17924723188267377,
+          -0.14695662899565853
+        ],
+        "n": 1454,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.20974722209264632,
+        "ci95": [
+          0.18557056111466416,
+          0.2324742904426587
+        ],
+        "n": 1454,
+        "model_better": false
+      }
+    },
+    "targets over typical line (Brier)": {
+      "n": 9885,
+      "model": 0.2503815535984492,
+      "minus_league": {
+        "model_minus_baseline": -0.14178178101362077,
+        "ci95": [
+          -0.14747818953018338,
+          -0.1356186838818999
+        ],
+        "n": 9885,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.005375488614803368,
+        "ci95": [
+          0.00027109319295739515,
+          0.010253103222396519
+        ],
+        "n": 9885,
+        "model_better": false
+      }
+    },
+    "targets, quarter over typical line (Brier)": {
+      "n": 39540,
+      "model": 0.20226521349743654,
+      "minus_league": {
+        "model_minus_baseline": -0.062553557135631,
+        "ci95": [
+          -0.0643875079771343,
+          -0.06080381401083478
+        ],
+        "n": 39540,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.001490593358945328,
+        "ci95": [
+          -0.0027327847103761653,
+          -0.00029008073304262873
+        ],
+        "n": 39540,
+        "model_better": true
+      }
+    },
+    "receiving yards over typical line (Brier)": {
+      "n": 9885,
+      "model": 0.30362369856338095,
+      "minus_league": {
+        "model_minus_baseline": -0.2026654146356284,
+        "ci95": [
+          -0.2097374791777894,
+          -0.19487076014987692
+        ],
+        "n": 9885,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.06116755859857593,
+        "ci95": [
+          0.05384455994095039,
+          0.06837512356308127
+        ],
+        "n": 9885,
+        "model_better": false
+      }
+    },
+    "carries over typical line (Brier)": {
+      "n": 5291,
+      "model": 0.2635711880456769,
+      "minus_league": {
+        "model_minus_baseline": -0.25339772276183525,
+        "ci95": [
+          -0.2630727504754258,
+          -0.24354115522240027
+        ],
+        "n": 5291,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.036794161138477166,
+        "ci95": [
+          0.029463503727964083,
+          0.04393088411349539
+        ],
+        "n": 5291,
+        "model_better": false
+      }
+    },
+    "carries, quarter over typical line (Brier)": {
+      "n": 21164,
+      "model": 0.19212864804052315,
+      "minus_league": {
+        "model_minus_baseline": -0.15679675387909786,
+        "ci95": [
+          -0.16021494191086896,
+          -0.15343345130702507
+        ],
+        "n": 21164,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.010860806915730393,
+        "ci95": [
+          0.008961508011032258,
+          0.012659793456140904
+        ],
+        "n": 21164,
+        "model_better": false
+      }
+    },
+    "rushing yards over typical line (Brier)": {
+      "n": 5291,
+      "model": 0.33595446411999375,
+      "minus_league": {
+        "model_minus_baseline": -0.2487179347355046,
+        "ci95": [
+          -0.25849458456919894,
+          -0.23934250485768033
+        ],
+        "n": 5291,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.1146518648114783,
+        "ci95": [
+          0.10429307669030717,
+          0.12559266556944254
+        ],
+        "n": 5291,
+        "model_better": false
+      }
+    },
+    "completions over typical line (Brier)": {
+      "n": 1454,
+      "model": 0.3389169855414265,
+      "minus_league": {
+        "model_minus_baseline": -0.20381543312359332,
+        "ci95": [
+          -0.2184471600724206,
+          -0.18913037415964262
+        ],
+        "n": 1454,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": 0.13420732992755757,
+        "ci95": [
+          0.11657186041311039,
+          0.1511193126098673
+        ],
+        "n": 1454,
+        "model_better": false
+      }
+    },
+    "receptions over typical line (Brier)": {
+      "n": 9885,
+      "model": 0.23433394209019434,
+      "minus_league": {
+        "model_minus_baseline": -0.12044312269885293,
+        "ci95": [
+          -0.12576765742318965,
+          -0.11504246294068828
+        ],
+        "n": 9885,
+        "model_better": true
+      },
+      "minus_season_average": {
+        "model_minus_baseline": -0.003843353241864082,
+        "ci95": [
+          -0.008232605853202698,
+          0.0004360194119835811
+        ],
+        "n": 9885,
+        "model_better": false
+      }
+    }
+  },
+  "calibration_at_typical_line": {
+    "pass attempts": {
+      "predicted": 0.49279903567997346,
+      "observed": 0.37551581843191195,
+      "n": 1454
+    },
+    "pass attempts, quarter": {
+      "predicted": 0.4268250271243811,
+      "observed": 0.3359697386519945,
+      "n": 5816
+    },
+    "passing yards": {
+      "predicted": 0.5265698973134878,
+      "observed": 0.34800550206327374,
+      "n": 1454
+    },
+    "targets": {
+      "predicted": 0.44966553589072045,
+      "observed": 0.39828022255943346,
+      "n": 9885
+    },
+    "targets, quarter": {
+      "predicted": 0.34466921653108157,
+      "observed": 0.31413758219524535,
+      "n": 39540
+    },
+    "receiving yards": {
+      "predicted": 0.4925676489050328,
+      "observed": 0.35174506828528074,
+      "n": 9885
+    },
+    "carries": {
+      "predicted": 0.4552032824289494,
+      "observed": 0.3538083538083538,
+      "n": 5291
+    },
+    "carries, quarter": {
+      "predicted": 0.3360896632489683,
+      "observed": 0.2843035343035343,
+      "n": 21164
+    },
+    "rushing yards": {
+      "predicted": 0.5353897463789864,
+      "observed": 0.31411831411831415,
+      "n": 5291
+    },
+    "completions": {
+      "predicted": 0.4713427308151888,
+      "observed": 0.35144429160935353,
+      "n": 1454
+    },
+    "receptions": {
+      "predicted": 0.413512677782088,
+      "observed": 0.37329286798179057,
+      "n": 9885
+    }
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "rule": "Points from scoring drives (v2) against touchdowns and field goals counted separately (v1). Written before either stage was run. Stage 1, dev seasons 2013-2019: v2 goes forward only if its quarter-points log score is better than v1 with the 95% interval below zero. Stage 2, run once, on the 2026 games already played (never used for any projection): v2 replaces v1 for points only if the same test passes there. The calibration gap for 'team scores in the quarter' is reported at both stages.",
+  "seasons": [
+    2013,
+    2019
+  ],
+  "log_score": {
+    "team points, game": {
+      "v1": 3.5375579839228277,
+      "v2": 3.5365871220098057,
+      "v2_minus_v1": {
+        "model_minus_baseline": -0.0009708619130221497,
+        "ci95": [
+          -0.004925480326344752,
+          0.0032934452885678357
+        ],
+        "n": 3304,
+        "model_better": false
+      }
+    },
+    "team points, half": {
+      "v1": 2.882414861011722,
+      "v2": 2.8805067812825382,
+      "v2_minus_v1": {
+        "model_minus_baseline": -0.0019080797291835686,
+        "ci95": [
+          -0.004974597619880848,
+          0.0011652765915311238
+        ],
+        "n": 6608,
+        "model_better": false
+      }
+    },
+    "team points, quarter": {
+      "v1": 2.0994276668054503,
+      "v2": 2.0991147808626236,
+      "v2_minus_v1": {
+        "model_minus_baseline": -0.00031288594282629387,
+        "ci95": [
+          -0.00210213075719166,
+          0.0015040820016520287
+        ],
+        "n": 13216,
+        "model_better": false
+      }
+    },
+    "game total": {
+      "v1": 4.049525712576774,
+      "v2": 4.047170175940631,
+      "v2_minus_v1": {
+        "model_minus_baseline": -0.002355536636142083,
+        "ci95": [
+          -0.006059229889166859,
+          0.0014328847796505526
+        ],
+        "n": 1652,
+        "model_better": false
+      }
+    },
+    "game margin": {
+      "v1": 4.01188213422693,
+      "v2": 4.014261974770068,
+      "v2_minus_v1": {
+        "model_minus_baseline": 0.0023798405431372494,
+        "ci95": [
+          -0.0018301093644524813,
+          0.007163318277505189
+        ],
+        "n": 1652,
+        "model_better": false
+      }
+    }
+  },
+  "calibration": {
+    "team points, game over 17.5": {
+      "v1": {
+        "predicted": 0.6075612796990632,
+        "observed": 0.6625302663438256,
+        "n": 3304
+      },
+      "v2": {
+        "predicted": 0.609839172966322,
+        "observed": 0.6625302663438256,
+        "n": 3304
+      }
+    },
+    "team points, game over 20.5": {
+      "v1": {
+        "predicted": 0.5248890370584381,
+        "observed": 0.5602300242130751,
+        "n": 3304
+      },
+      "v2": {
+        "predicted": 0.5264633553996563,
+        "observed": 0.5602300242130751,
+        "n": 3304
+      }
+    },
+    "team points, game over 23.5": {
+      "v1": {
+        "predicted": 0.4387179853120256,
+        "observed": 0.45671912832929784,
+        "n": 3304
+      },
+      "v2": {
+        "predicted": 0.44008465024234267,
+        "observed": 0.45671912832929784,
+        "n": 3304
+      }
+    },
+    "team points, game over 27.5": {
+      "v1": {
+        "predicted": 0.3109553104193367,
+        "observed": 0.2860169491525424,
+        "n": 3304
+      },
+      "v2": {
+        "predicted": 0.3117201569943907,
+        "observed": 0.2860169491525424,
+        "n": 3304
+      }
+    },
+    "team points, half over 3.5": {
+      "v1": {
+        "predicted": 0.7694805583216748,
+        "observed": 0.823547215496368,
+        "n": 6608
+      },
+      "v2": {
+        "predicted": 0.7696687253845542,
+        "observed": 0.823547215496368,
+        "n": 6608
+      }
+    },
+    "team points, half over 7.5": {
+      "v1": {
+        "predicted": 0.5734616743854533,
+        "observed": 0.6331719128329297,
+        "n": 6608
+      },
+      "v2": {
+        "predicted": 0.5748945090079584,
+        "observed": 0.6331719128329297,
+        "n": 6608
+      }
+    },
+    "team points, half over 10.5": {
+      "v1": {
+        "predicted": 0.4367874958002775,
+        "observed": 0.463226392251816,
+        "n": 6608
+      },
+      "v2": {
+        "predicted": 0.43657797954128863,
+        "observed": 0.463226392251816,
+        "n": 6608
+      }
+    },
+    "team points, half over 13.5": {
+      "v1": {
+        "predicted": 0.37088917171987995,
+        "observed": 0.37363801452784506,
+        "n": 6608
+      },
+      "v2": {
+        "predicted": 0.36931159091122856,
+        "observed": 0.37363801452784506,
+        "n": 6608
+      }
+    },
+    "team points, half over 17.5": {
+      "v1": {
+        "predicted": 0.19053295235109954,
+        "observed": 0.16101694915254236,
+        "n": 6608
+      },
+      "v2": {
+        "predicted": 0.18997216998715238,
+        "observed": 0.16101694915254236,
+        "n": 6608
+      }
+    },
+    "team points, quarter over 0.5": {
+      "v1": {
+        "predicted": 0.6354982839289942,
+        "observed": 0.7139073849878934,
+        "n": 13216
+      },
+      "v2": {
+        "predicted": 0.637619140955256,
+        "observed": 0.7139073849878934,
+        "n": 13216
+      }
+    },
+    "team points, quarter over 3.5": {
+      "v1": {
+        "predicted": 0.49899790093724644,
+        "observed": 0.5371519370460048,
+        "n": 13216
+      },
+      "v2": {
+        "predicted": 0.49699600420996887,
+        "observed": 0.5371519370460048,
+        "n": 13216
+      }
+    },
+    "team points, quarter over 6.5": {
+      "v1": {
+        "predicted": 0.4576088986095141,
+        "observed": 0.48131053268765134,
+        "n": 13216
+      },
+      "v2": {
+        "predicted": 0.4548886551658746,
+        "observed": 0.48131053268765134,
+        "n": 13216
+      }
+    },
+    "team points, quarter over 7.5": {
+      "v1": {
+        "predicted": 0.2555969212306782,
+        "observed": 0.24969733656174334,
+        "n": 13216
+      },
+      "v2": {
+        "predicted": 0.2562732261249635,
+        "observed": 0.24969733656174334,
+        "n": 13216
+      }
+    },
+    "team points, quarter over 10.5": {
+      "v1": {
+        "predicted": 0.16128119584665646,
+        "observed": 0.13937651331719128,
+        "n": 13216
+      },
+      "v2": {
+        "predicted": 0.16050998786314533,
+        "observed": 0.13937651331719128,
+        "n": 13216
+      }
+    }
+  },
+  "passes": false
+}

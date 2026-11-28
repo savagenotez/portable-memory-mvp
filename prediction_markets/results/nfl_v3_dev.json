@@ -1,0 +1,35 @@
+{
+  "label": "DEVELOPMENT ON HISTORY, NOT BLIND. The 2020-2025 holdout was used to choose K = 30.",
+  "frozen_definition": {
+    "name": "v3",
+    "k": 30.0,
+    "home_adv": 65.0,
+    "eff_halflife": 10,
+    "train_from": 2010,
+    "features": [
+      "intercept",
+      "elo_diff_100",
+      "rest_diff_norm",
+      "division",
+      "efficiency_diff",
+      "injury_diff"
+    ]
+  },
+  "v3_minus_base_all_seasons_training": {
+    "mean": -0.0069871860662883405,
+    "ci95": [
+      -0.01291502757382271,
+      -0.0015698479583426976
+    ],
+    "games": 1688
+  },
+  "v3_minus_base_same_window_2010_training": {
+    "mean": -0.006142890441165521,
+    "ci95": [
+      -0.011939793211284574,
+      -0.000703318864872244
+    ],
+    "games": 1688
+  },
+  "note": "The fair comparison is the second line: same 2010 training window, base features only."
+}

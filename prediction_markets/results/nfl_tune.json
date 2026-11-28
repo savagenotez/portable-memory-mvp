@@ -1,0 +1,104 @@
+{
+  "variants": {
+    "V0": {
+      "settings": {
+        "k": 20.0,
+        "home_adv": 65.0,
+        "flags": []
+      },
+      "dev_log_loss": 0.6346772995884492,
+      "dev_games": 3996,
+      "holdout_log_loss": 0.6454793113438033,
+      "holdout_games": 1688
+    },
+    "V1": {
+      "settings": {
+        "k": 12.0,
+        "home_adv": 65.0,
+        "flags": []
+      },
+      "dev_log_loss": 0.6368843531054177,
+      "dev_games": 3996,
+      "holdout_log_loss": 0.6492084172926404,
+      "holdout_games": 1688
+    },
+    "V2": {
+      "settings": {
+        "k": 30.0,
+        "home_adv": 65.0,
+        "flags": []
+      },
+      "dev_log_loss": 0.6331114114819715,
+      "dev_games": 3996,
+      "holdout_log_loss": 0.6430036361427023,
+      "holdout_games": 1688
+    },
+    "V3": {
+      "settings": {
+        "k": 20.0,
+        "home_adv": 48.0,
+        "flags": []
+      },
+      "dev_log_loss": 0.6346685806265882,
+      "dev_games": 3996,
+      "holdout_log_loss": 0.6450027676365739,
+      "holdout_games": 1688
+    },
+    "V4": {
+      "settings": {
+        "k": 20.0,
+        "home_adv": 65.0,
+        "flags": [
+          "short",
+          "bye"
+        ]
+      },
+      "dev_log_loss": 0.6348573748522583,
+      "dev_games": 3996,
+      "holdout_log_loss": 0.6453890157864727,
+      "holdout_games": 1688
+    },
+    "V5": {
+      "settings": {
+        "k": 20.0,
+        "home_adv": 65.0,
+        "flags": [
+          "indoor"
+        ]
+      },
+      "dev_log_loss": 0.6347891673793491,
+      "dev_games": 3996,
+      "holdout_log_loss": 0.6454435855190385,
+      "holdout_games": 1688
+    },
+    "V6": {
+      "settings": {
+        "k": 20.0,
+        "home_adv": 65.0,
+        "flags": [
+          "short",
+          "bye",
+          "indoor"
+        ]
+      },
+      "dev_log_loss": 0.6349688089102088,
+      "dev_games": 3996,
+      "holdout_log_loss": 0.6453461075955897,
+      "holdout_games": 1688
+    }
+  },
+  "rules": "see module docstring",
+  "selected_on_dev": "V2",
+  "holdout_comparison": {
+    "selected": "V2",
+    "baseline": "V0",
+    "games": 1688,
+    "log_loss_gain_selected_minus_V0": -0.0024756752011010153,
+    "ci95": [
+      -0.004201123859809682,
+      -0.0009037447009694904
+    ],
+    "adopt_selected": true,
+    "decision": "V2"
+  }
+}

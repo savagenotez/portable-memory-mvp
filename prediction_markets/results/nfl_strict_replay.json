@@ -1,0 +1,203 @@
+{
+  "label": "STRICT REPLAY, DEVELOPMENT. Chosen on 2012-2017, scored on 2018-2019. Not blind; no market prices exist for these seasons.",
+  "leak_check": {
+    "game_day": "2012-12-09",
+    "forecast_unchanged_by_that_days_results": true
+  },
+  "team": {
+    "chosen": {
+      "halflife_games": 8,
+      "k0": 8,
+      "size_td": 1000000000.0,
+      "size_fga": 1000000000.0,
+      "mse": {
+        "h4_k2": 10848.02848810895,
+        "h4_k4": 10536.18000001384,
+        "h4_k8": 10350.33889250763,
+        "h8_k2": 10677.632168607404,
+        "h8_k4": 10479.592660593187,
+        "h8_k8": 10333.829646933562,
+        "h16_k2": 10635.197431804021,
+        "h16_k4": 10483.71872229066,
+        "h16_k8": 10359.79007471123
+      }
+    },
+    "kick_model_fit_on": "2012-2017",
+    "scores": {
+      "team points, game": {
+        "n": 1004,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.03245109268218434,
+          "ci95": [
+            -0.04628375581923825,
+            -0.019335040170766395
+          ],
+          "n": 1004,
+          "model_better": true
+        }
+      },
+      "team points, quarter": {
+        "n": 4016,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.0053024080396812815,
+          "ci95": [
+            -0.008915128962119455,
+            -0.0014025118200965661
+          ],
+          "n": 4016,
+          "model_better": true
+        }
+      },
+      "touchdowns, game": {
+        "n": 1004,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.03200400553572008,
+          "ci95": [
+            -0.044990994748327684,
+            -0.019284757637667155
+          ],
+          "n": 1004,
+          "model_better": true
+        }
+      },
+      "field-goal attempts, game": {
+        "n": 1004,
+        "model_minus_league_only": {
+          "model_minus_baseline": 0.007337774108506611,
+          "ci95": [
+            -0.0031418568692765346,
+            0.017493703386886075
+          ],
+          "n": 1004,
+          "model_better": false
+        }
+      },
+      "team points, game over 17.5 (Brier)": {
+        "n": 1004,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.011968023140958883,
+          "ci95": [
+            -0.016891032296234506,
+            -0.007060534401736487
+          ],
+          "n": 1004,
+          "model_better": true
+        }
+      },
+      "team points, game over 20.5 (Brier)": {
+        "n": 1004,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.015313023566661954,
+          "ci95": [
+            -0.020533736550458707,
+            -0.0100184121074055
+          ],
+          "n": 1004,
+          "model_better": true
+        }
+      },
+      "team points, game over 23.5 (Brier)": {
+        "n": 1004,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.016889631970236674,
+          "ci95": [
+            -0.02203775176976907,
+            -0.011749707606448483
+          ],
+          "n": 1004,
+          "model_better": true
+        }
+      },
+      "team points, game over 27.5 (Brier)": {
+        "n": 1004,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.014420307364827042,
+          "ci95": [
+            -0.018904358421365317,
+            -0.01000568023361806
+          ],
+          "n": 1004,
+          "model_better": true
+        }
+      },
+      "game total": {
+        "n": 502,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.0168289792808242,
+          "ci95": [
+            -0.03523778696341447,
+            -0.0007294459626823224
+          ],
+          "n": 502,
+          "model_better": true
+        }
+      },
+      "game margin": {
+        "n": 502,
+        "model_minus_league_only": {
+          "model_minus_baseline": -0.04909405040796212,
+          "ci95": [
+            -0.07112264363696238,
+            -0.028134864257683762
+          ],
+          "n": 502,
+          "model_better": true
+        }
+      }
+    }
+  },
+  "inplay": {
+    "fitted_on": "2012-2017",
+    "sigmas": {
+      "s_strength": 2.0,
+      "s_noise": 14
+    },
+    "boundaries": {
+      "Q1": {
+        "n": 530,
+        "brier_model": 0.19147351691217904,
+        "brier_pregame_prior": 0.2273061747888359,
+        "brier_nflverse": 0.20505246118131581,
+        "model_minus_nflverse": {
+          "model_minus_baseline": -0.013578944269136787,
+          "ci95": [
+            -0.021707475647246444,
+            -0.005172962193512801
+          ],
+          "n": 530,
+          "model_better": true
+        }
+      },
+      "H1": {
+        "n": 530,
+        "brier_model": 0.1425085360510518,
+        "brier_pregame_prior": 0.2273061747888359,
+        "brier_nflverse": 0.14776212926031557,
+        "model_minus_nflverse": {
+          "model_minus_baseline": -0.005253593209263766,
+          "ci95": [
+            -0.00918024709081739,
+            -0.001134465799107823
+          ],
+          "n": 530,
+          "model_better": true
+        }
+      },
+      "Q3": {
+        "n": 530,
+        "brier_model": 0.12147124792477025,
+        "brier_pregame_prior": 0.2273061747888359,
+        "brier_nflverse": 0.11349856896916057,
+        "model_minus_nflverse": {
+          "model_minus_baseline": 0.007972678955609694,
+          "ci95": [
+            0.002183790669770271,
+            0.013558285063688892
+          ],
+          "n": 530,
+          "model_better": false
+        }
+      }
+    }
+  }
+}
