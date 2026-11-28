@@ -323,11 +323,17 @@ def evaluate(games: Sequence[Game], data: dict, choose_seasons=DEV, score_season
     S: Dict[str, Dict[str, list]] = defaultdict(lambda: {"model": [], "league": [], "season": []})
     calib: Dict[str, list] = defaultdict(lambda: [0.0, 0, 0])
 
+    FIRST = [False]    # True while scoring a player's first game of the season (reported separately)
+
     def rec(key, dm: E.Dist, mu_league: float, mu_season: float, k: int, line: Optional[float]):
         dl, ds = E.nb(mu_league, E.POISSON), E.nb(mu_season, E.POISSON)
         S[f"{key} log score"]["model"].append(E.log_score(dm, k))
         S[f"{key} log score"]["league"].append(E.log_score(dl, k))
         S[f"{key} log score"]["season"].append(E.log_score(ds, k))
+        part = "first game of season" if FIRST[0] else "later games"
+        S[f"{key} log score, {part}"]["model"].append(E.log_score(dm, k))
+        S[f"{key} log score, {part}"]["league"].append(E.log_score(dl, k))
+        S[f"{key} log score, {part}"]["season"].append(E.log_score(ds, k))
         if line is not None:
             y = int(k > line)
             p = dm.prob_over(line)
@@ -348,6 +354,7 @@ def evaluate(games: Sequence[Game], data: dict, choose_seasons=DEV, score_season
             for pid in elig[role]:
                 key = (g.season, pid, s)
                 tot, n = season_avg[key]
+                FIRST[0] = n == 0
                 k = _count(get(pid, s))
                 if scoring:
                     lg = m.lg[s].value if s in COUNT_STATS else m.lg[MAKES[s][0]].value * m.lg_make[s].value
@@ -369,6 +376,7 @@ def evaluate(games: Sequence[Game], data: dict, choose_seasons=DEV, score_season
                 season_avg[key][0] += k
                 season_avg[key][1] += 1
         qb = m.primary_qb.get(team)
+        FIRST[0] = False
         if scoring and qb is not None and get(qb, "att") > 0:
             prs = pairs.get((g.game_id, team), {})
             for r in elig["receiver"]:
